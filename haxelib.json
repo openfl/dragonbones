@@ -1,0 +1,10 @@
+{
+	"name": "dragonbones",
+	"url": "http://www.dragonbones.com",
+	"license": "MIT",
+	"tags": [],
+	"description": "DragonBones Haxe Runtime",
+	"version": "1.0.0",
+	"releasenote": "Initial release",
+	"contributors": [ "singmajesty" ]
+}
