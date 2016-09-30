@@ -157,11 +157,16 @@ class StarlingSlot extends Slot
     {
         if (_starlingDisplay != null)
         {
-            switch (blendMode)
+            switch (value)
             {
                 case starling.display.BlendMode.NONE, starling.display.BlendMode.AUTO, starling.display.BlendMode.ADD, starling.display.BlendMode.ERASE, starling.display.BlendMode.MULTIPLY, starling.display.BlendMode.NORMAL, starling.display.BlendMode.SCREEN:
                     _starlingDisplay.blendMode = blendMode;
-                /*
+                default:
+            }
+            
+            var blendMode:flash.display.BlendMode = value;
+            switch (blendMode)
+            {
                 case flash.display.BlendMode.ADD:
                     _starlingDisplay.blendMode = starling.display.BlendMode.ADD;
                 
@@ -176,8 +181,6 @@ class StarlingSlot extends Slot
                 
                 case flash.display.BlendMode.SCREEN:
                     _starlingDisplay.blendMode = starling.display.BlendMode.SCREEN;
-                    */
-                case flash.display.BlendMode.ALPHA, flash.display.BlendMode.DARKEN, flash.display.BlendMode.DIFFERENCE, flash.display.BlendMode.HARDLIGHT, flash.display.BlendMode.INVERT, flash.display.BlendMode.LAYER, flash.display.BlendMode.LIGHTEN, flash.display.BlendMode.OVERLAY, flash.display.BlendMode.SHADER, flash.display.BlendMode.SUBTRACT:
                 
                 default:
             }
