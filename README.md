@@ -9,18 +9,24 @@ Haxe runtime support for DragonBones, a skeletal animation editor.
 Installation
 ------------
 
-_This library has not been published on haxelib yet._
+You can easily install DragonBones using haxelib:
+
+    haxelib install dragonbones
+
+To add it to a Lime or OpenFL project, add this to your project file:
+
+    <haxelib name="dragonbones" />
 
 
 Development Builds
 ------------------
 
-Clone the dragonbones repository:
+Clone the DragonBones repository:
 
     git clone https://github.com/openfl/dragonbones
 
 
-Tell haxelib where your development copy of dragonbones is installed:
+Tell haxelib where your development copy of DragonBones is installed:
 
     haxelib dev dragonbones dragonbones
 
