@@ -1,5 +1,5 @@
-﻿package dragonBones.animation
-{
+﻿package dragonBones.animation;
+
 import dragonBones.Armature;
 import dragonBones.Bone;
 import dragonBones.core.DragonBones;
@@ -13,7 +13,7 @@ import dragonBones.objects.TimelineData;
 /**
  * @private
  */
-public final class BoneTimelineState extends TweenTimelineState
+@:final class BoneTimelineState extends TweenTimelineState
 {
 	public var bone:Bone;
 	
@@ -21,15 +21,12 @@ public final class BoneTimelineState extends TweenTimelineState
 	private var _tweenTransform:Int;
 	private var _tweenRotate:Int;
 	private var _tweenScale:Int;
-	private inline var _transform:Transform = new Transform();
-	private inline var _durationTransform:Transform = new Transform();
+	private var _transform:Transform = new Transform();
+	private var _durationTransform:Transform = new Transform();
 	private var _boneTransform:Transform;
 	private var _originalTransform:Transform;
 	
-	public function BoneTimelineState()
-	{
-		super(this);
-	}
+	private function new() {}}
 	
 	override private function _onClear():Void
 	{
@@ -51,17 +48,17 @@ public final class BoneTimelineState extends TweenTimelineState
 	{
 		super._onArriveAtFrame();
 		
-		inline var currentFrame:BoneFrameData = _currentFrame as BoneFrameData;
+		var currentFrame:BoneFrameData = cast(_currentFrame, BoneFrameData);
 		
 		_tweenTransform = TWEEN_TYPE_ONCE;
 		_tweenRotate = TWEEN_TYPE_ONCE;
 		_tweenScale = TWEEN_TYPE_ONCE;
 		
-		if (_keyFrameCount > 1 && (_tweenEasing !== DragonBones.NO_TWEEN || _curve))
+		if (_keyFrameCount > 1 && (_tweenEasing !== DragonBones.NO_TWEEN || _curve != null))
 		{
-			inline var currentTransform:Transform = currentFrame.transform;
-			inline var nextFrame:BoneFrameData = currentFrame.next as BoneFrameData;
-			inline var nextTransform:Transform = nextFrame.transform;
+			var currentTransform:Transform = currentFrame.transform;
+			var nextFrame:BoneFrameData = currentFrame.next as BoneFrameData;
+			var nextTransform:Transform = nextFrame.transform;
 			
 			// Transform.
 			_durationTransform.x = nextTransform.x - currentTransform.x;
@@ -73,7 +70,7 @@ public final class BoneTimelineState extends TweenTimelineState
 			
 			// Rotate.
 			var tweenRotate:Float = currentFrame.tweenRotate;
-			if (tweenRotate !== DragonBones.NO_TWEEN) 
+			if (tweenRotate != DragonBones.NO_TWEEN) 
 			{
 				if (tweenRotate) 
 				{
@@ -103,7 +100,7 @@ public final class BoneTimelineState extends TweenTimelineState
 			}
 			
 			// Scale.
-			if (currentFrame.tweenScale) 
+			if (currentFrame.tweenScale != null) 
 			{
 				_durationTransform.scaleX = nextTransform.scaleX - currentTransform.scaleX;
 				_durationTransform.scaleY = nextTransform.scaleY - currentTransform.scaleY;
@@ -134,11 +131,11 @@ public final class BoneTimelineState extends TweenTimelineState
 		super._onUpdateFrame();
 		
 		var tweenProgress:Float = 0.0;
-		inline var currentTransform:Transform = (_currentFrame as BoneFrameData).transform;
+		var currentTransform:Transform = cast(_currentFrame, BoneFrameData).transform;
 		
-		if (_tweenTransform !== TWEEN_TYPE_NONE) 
+		if (_tweenTransform != TWEEN_TYPE_NONE) 
 		{
-			if (_tweenTransform === TWEEN_TYPE_ONCE) 
+			if (_tweenTransform == TWEEN_TYPE_ONCE) 
 			{
 				_tweenTransform = TWEEN_TYPE_NONE;
 				tweenProgress = 0.0;
@@ -162,9 +159,9 @@ public final class BoneTimelineState extends TweenTimelineState
 			_transformDirty = true;
 		}
 		
-		if (_tweenRotate !== TWEEN_TYPE_NONE) 
+		if (_tweenRotate != TWEEN_TYPE_NONE) 
 		{
-			if (_tweenRotate === TWEEN_TYPE_ONCE) 
+			if (_tweenRotate == TWEEN_TYPE_ONCE) 
 			{
 				_tweenRotate = TWEEN_TYPE_NONE;
 				tweenProgress = 0.0;
@@ -188,9 +185,9 @@ public final class BoneTimelineState extends TweenTimelineState
 			_transformDirty = true;
 		}
 		
-		if (_tweenScale !== TWEEN_TYPE_NONE) 
+		if (_tweenScale != TWEEN_TYPE_NONE) 
 		{
-			if (_tweenScale === TWEEN_TYPE_ONCE) 
+			if (_tweenScale == TWEEN_TYPE_ONCE) 
 			{
 				_tweenScale = TWEEN_TYPE_NONE;
 				tweenProgress = 0.0;
@@ -219,7 +216,7 @@ public final class BoneTimelineState extends TweenTimelineState
 	{
 		super._init(armature, animationState, timelineData);
 		
-		_originalTransform = (_timelineData as BoneTimelineData).originalTransform;
+		_originalTransform = cast(_timelineData, BoneTimelineData).originalTransform;
 		_boneTransform = bone._animationPose;
 	}
 	
@@ -232,7 +229,7 @@ public final class BoneTimelineState extends TweenTimelineState
 	override public function update(passedTime:Float):Void	
 	{
 		// Blend animation state.
-		inline var animationLayer:Int = _animationState._layer;
+		var animationLayer:Int = _animationState._layer;
 		var weight:Float = _animationState._weightResult;
 		
 		if (bone._updateState <= 0) 
@@ -296,5 +293,4 @@ public final class BoneTimelineState extends TweenTimelineState
 			}
 		}
 	}
-}
 }

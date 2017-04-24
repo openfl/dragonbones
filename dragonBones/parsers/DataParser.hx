@@ -2,6 +2,7 @@
 {
 import openfl.geom.Matrix;
 import openfl.geom.Point;
+import openfl.Vector;
 
 import dragonBones.animation.TweenTimelineState;
 import dragonBones.core.BaseObject;

@@ -1,5 +1,7 @@
 package dragonBones.objects
 {
+	import openfl.Vector;
+	
 /**
  * @private
  */

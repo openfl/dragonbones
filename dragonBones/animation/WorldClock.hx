@@ -1,5 +1,8 @@
-﻿package dragonBones.animation
-{
+﻿package dragonBones.animation;
+
+import openfl.Lib;
+import openfl.Vector;
+	
 import dragonBones.core.DragonBones;
 
 /**
@@ -9,20 +12,20 @@ import dragonBones.core.DragonBones;
  * @see dragonBones.Armature
  * @version DragonBones 3.0
  */
-public final class WorldClock implements IAnimateble
+@:final class WorldClock implements IAnimateble
 {
 	/**
 	 * @language zh_CN
 	 * 一个可以直接使用的全局 WorldClock 实例.
 	 * @version DragonBones 3.0
 	 */
-	public static inline var clock:WorldClock = new WorldClock();
+	public static var clock:WorldClock = new WorldClock();
 	/**
 	 * @language zh_CN
 	 * 当前时间。 (以秒为单位)
 	 * @version DragonBones 3.0
 	 */
-	public var time:Float = new Date().getTime() / DragonBones.SECOND_TO_MILLISECOND;	
+	public var time:Float = Lib.getTimer() / DragonBones.SECOND_TO_MILLISECOND;	
 	/**
 	 * @language zh_CN
 	 * 时间流逝速度，用于控制动画变速播放。 [0: 停止播放, (0~1): 慢速播放, 1: 正常播放, (1~N): 快速播放]
@@ -31,7 +34,7 @@ public final class WorldClock implements IAnimateble
 	 */
 	public var timeScale:Float = 1;
 	
-	private inline var _animatebles:Vector<IAnimateble> = new Vector<IAnimateble>();
+	private var _animatebles:Vector<IAnimateble> = new Vector<IAnimateble>();
 	private var _clock: WorldClock = null;
 	/**
 	 * @language zh_CN
@@ -58,7 +61,7 @@ public final class WorldClock implements IAnimateble
 		
 		if (passedTime < 0.0) 
 		{
-			passedTime = new Date().getTime() / DragonBones.SECOND_TO_MILLISECOND - time;
+			passedTime = Lib.getTimer() / DragonBones.SECOND_TO_MILLISECOND - time;
 		}
 		
 		if (timeScale != 1.0) 
@@ -79,7 +82,7 @@ public final class WorldClock implements IAnimateble
 		{
 			var i:UInt = 0, r:UInt = 0, l:UInt = _animatebles.length;
 			var animateble:IAnimateble
-			for (; i < l; ++i) 
+			for (i in 0...l) 
 			{
 				animateble = _animatebles[i];
 				if (animateble) 
@@ -101,12 +104,12 @@ public final class WorldClock implements IAnimateble
 			if (r > 0) 
 			{
 				l = _animatebles.length;
-				for (; i < l; ++i) 
+				for (j in i...l) 
 				{
-					animateble = _animatebles[i];
+					animateble = _animatebles[j];
 					if (animateble) 
 					{
-						_animatebles[i - r] = animateble;
+						_animatebles[j - r] = animateble;
 					}
 					else 
 					{
@@ -163,9 +166,11 @@ public final class WorldClock implements IAnimateble
 	 */
 	public function clear():Void
 	{
-		for (var i: uint = 0, l: uint = _animatebles.length; i < l; ++i)
+		var l:UInt = _animatebles.length;
+		var animateble:IAnimateble;
+		for (i in 0...l)
 		{
-			inline var animateble:IAnimateble = _animatebles[i];
+			animateble = _animatebles[i];
 			_animatebles[i] = null;
 			if (animateble != null) 
 			{
@@ -176,14 +181,15 @@ public final class WorldClock implements IAnimateble
 	/**
 	 * @inheritDoc
 	 */
-	public function get clock(): WorldClock 
+	private var clock(get, set):WorldClock;
+	private function get_clock(): WorldClock 
 	{
 		return _clock;
 	}
-	public function set clock(value: WorldClock):Void
+	private function set_clock(value: WorldClock):WorldClock
 	{
 		if (_clock == value) {
-			return;
+			return value;
 		}
 		
 		inline var prevClock:WorldClock = _clock;
@@ -196,6 +202,6 @@ public final class WorldClock implements IAnimateble
 		if (_clock) {
 			_clock.add(this);
 		}
+		return value;
 	}
-}
 }

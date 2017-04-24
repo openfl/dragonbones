@@ -2,6 +2,7 @@
 {
 import openfl.geom.ColorTransform;
 import openfl.geom.Matrix;
+import openfl.Vector;
 
 import dragonBones.core.BaseObject;
 import dragonBones.core.DragonBones;

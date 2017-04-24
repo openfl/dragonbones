@@ -5,6 +5,7 @@ import openfl.display.Shape;
 import openfl.events.Event;
 import openfl.geom.Matrix;
 import openfl.utils.getTimer;
+import openfl.Vector;
 
 import dragonBones.Armature;
 import dragonBones.Slot;

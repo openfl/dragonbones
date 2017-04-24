@@ -1,5 +1,5 @@
-﻿package dragonBones.animation
-{
+﻿package dragonBones.animation;
+
 import openfl.geom.ColorTransform;
 
 import dragonBones.Armature;
@@ -13,20 +13,17 @@ import dragonBones.objects.TimelineData;
 /**
  * @private
  */
-public final class SlotTimelineState extends TweenTimelineState
+@:final class SlotTimelineState extends TweenTimelineState
 {
 	public var slot:Slot;
 	
 	private var _colorDirty:Bool;
 	private var _tweenColor:Int;
-	private inline var _color:ColorTransform = new ColorTransform();
-	private inline var _durationColor:ColorTransform = new ColorTransform();
+	private var _color:ColorTransform = new ColorTransform();
+	private var _durationColor:ColorTransform = new ColorTransform();
 	private var _slotColor:ColorTransform;
 	
-	public function SlotTimelineState()
-	{
-		super(this);
-	}
+	private function new() {}
 	
 	override private function _onClear():Void
 	{
@@ -67,8 +64,8 @@ public final class SlotTimelineState extends TweenTimelineState
 			return;
 		}
 		
-		inline var currentFrame:SlotFrameData = _currentFrame as SlotFrameData;
-		inline var displayIndex:Int = currentFrame.displayIndex;
+		var currentFrame:SlotFrameData = _currentFrame as SlotFrameData;
+		var displayIndex:Int = currentFrame.displayIndex;
 		if (_playState >= 0 && slot.displayIndex !== displayIndex) 
 		{
 			slot._setDisplayIndex(displayIndex);
@@ -78,12 +75,12 @@ public final class SlotTimelineState extends TweenTimelineState
 		{
 			_tweenColor = TWEEN_TYPE_NONE;
 			
-			inline var currentColor:ColorTransform = currentFrame.color;
+			var currentColor:ColorTransform = currentFrame.color;
 			
 			if (_tweenEasing !== DragonBones.NO_TWEEN || _curve)
 			{
-				inline var nextFrame:SlotFrameData = currentFrame.next as SlotFrameData;
-				inline var nextColor:ColorTransform = nextFrame.color;
+				var nextFrame:SlotFrameData = currentFrame.next as SlotFrameData;
+				var nextColor:ColorTransform = nextFrame.color;
 				if (currentColor !== nextColor)
 				{
 					_durationColor.alphaMultiplier = nextColor.alphaMultiplier - currentColor.alphaMultiplier;
@@ -96,14 +93,14 @@ public final class SlotTimelineState extends TweenTimelineState
 					_durationColor.blueOffset = nextColor.blueOffset - currentColor.blueOffset;
 					
 					if (
-						_durationColor.alphaMultiplier !== 0.0 ||
-						_durationColor.redMultiplier !== 0.0 ||
-						_durationColor.greenMultiplier !== 0.0 ||
-						_durationColor.blueMultiplier !== 0.0 ||
-						_durationColor.alphaOffset !== 0 ||
-						_durationColor.redOffset !== 0 ||
-						_durationColor.greenOffset !== 0 ||
-						_durationColor.blueOffset !== 0
+						_durationColor.alphaMultiplier != 0.0 ||
+						_durationColor.redMultiplier != 0.0 ||
+						_durationColor.greenMultiplier != 0.0 ||
+						_durationColor.blueMultiplier != 0.0 ||
+						_durationColor.alphaOffset != 0 ||
+						_durationColor.redOffset != 0 ||
+						_durationColor.greenOffset != 0 ||
+						_durationColor.blueOffset != 0
 					)
 					{
 						_tweenColor = TWEEN_TYPE_ALWAYS;
@@ -114,14 +111,14 @@ public final class SlotTimelineState extends TweenTimelineState
 			if (_tweenColor === TWEEN_TYPE_NONE)
 			{
 				if (
-					_slotColor.alphaMultiplier !== currentColor.alphaMultiplier ||
-					_slotColor.redMultiplier !== currentColor.redMultiplier ||
-					_slotColor.greenMultiplier !== currentColor.greenMultiplier ||
-					_slotColor.blueMultiplier !== currentColor.blueMultiplier ||
-					_slotColor.alphaOffset !== currentColor.alphaOffset ||
-					_slotColor.redOffset !== currentColor.redOffset ||
-					_slotColor.greenOffset !== currentColor.greenOffset ||
-					_slotColor.blueOffset !== currentColor.blueOffset
+					_slotColor.alphaMultiplier != currentColor.alphaMultiplier ||
+					_slotColor.redMultiplier != currentColor.redMultiplier ||
+					_slotColor.greenMultiplier != currentColor.greenMultiplier ||
+					_slotColor.blueMultiplier != currentColor.blueMultiplier ||
+					_slotColor.alphaOffset != currentColor.alphaOffset ||
+					_slotColor.redOffset != currentColor.redOffset ||
+					_slotColor.greenOffset != currentColor.greenOffset ||
+					_slotColor.blueOffset != currentColor.blueOffset
 				)
 				{
 					_tweenColor = TWEEN_TYPE_ONCE;
@@ -140,7 +137,7 @@ public final class SlotTimelineState extends TweenTimelineState
 	{
 		super._onUpdateFrame();
 		
-		inline var currentFrame:SlotFrameData = _currentFrame as SlotFrameData;
+		var currentFrame:SlotFrameData = _currentFrame as SlotFrameData;
 		
 		var tweenProgress:Float = 0.0;
 		
@@ -156,7 +153,7 @@ public final class SlotTimelineState extends TweenTimelineState
 				tweenProgress = _tweenProgress;
 			}
 			
-			inline var currentColor:ColorTransform = currentFrame.color;
+			var currentColor:ColorTransform = currentFrame.color;
 			_color.alphaMultiplier = currentColor.alphaMultiplier + _durationColor.alphaMultiplier * tweenProgress;
 			_color.redMultiplier = currentColor.redMultiplier + _durationColor.redMultiplier * tweenProgress;
 			_color.greenMultiplier = currentColor.greenMultiplier + _durationColor.greenMultiplier * tweenProgress;
@@ -187,11 +184,11 @@ public final class SlotTimelineState extends TweenTimelineState
 		super.update(passedTime);
 		
 		// Fade animation.
-		if (_tweenColor !== TWEEN_TYPE_NONE || _colorDirty)
+		if (_tweenColor != TWEEN_TYPE_NONE || _colorDirty)
 		{
-			if (_animationState._fadeState !== 0 || _animationState._subFadeState !== 0)
+			if (_animationState._fadeState != 0 || _animationState._subFadeState !== 0)
 			{
-				inline var fadeProgress:Float = _animationState._fadeProgress;
+				var fadeProgress:Float = _animationState._fadeProgress;
 				
 				_slotColor.alphaMultiplier += (_color.alphaMultiplier - _slotColor.alphaMultiplier) * fadeProgress;
 				_slotColor.redMultiplier += (_color.redMultiplier - _slotColor.redMultiplier) * fadeProgress;
@@ -221,5 +218,4 @@ public final class SlotTimelineState extends TweenTimelineState
 			}
 		}
 	}
-}
 }

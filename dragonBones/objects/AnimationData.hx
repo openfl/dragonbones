@@ -1,5 +1,7 @@
 ﻿package dragonBones.objects
 {
+	import openfl.Vector;
+	
 /**
  * @language zh_CN
  * 动画数据。

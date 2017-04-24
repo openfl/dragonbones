@@ -1,5 +1,5 @@
-﻿package dragonBones.animation
-{
+﻿package dragonBones.animation;
+
 import dragonBones.Armature;
 import dragonBones.core.BaseObject;
 import dragonBones.core.DragonBones;
@@ -9,12 +9,12 @@ import dragonBones.objects.TimelineData;
 /**
  * @private
  */
-public class TimelineState extends BaseObject
+class TimelineState extends BaseObject
 {
-	internal var _playState:Int; // -1 start 0 play 1 complete
-	internal var _currentPlayTimes:UInt;
-	internal var _currentTime:Float;
-	internal var _timelineData:TimelineData;
+	@:allow("dragonBones.animation") private var _playState:Int; // -1 start 0 play 1 complete
+	@:allow("dragonBones.animation") private var _currentPlayTimes:UInt;
+	@:allow("dragonBones.animation") private var _currentTime:Float;
+	@:allow("dragonBones.animation") private var _timelineData:TimelineData;
 	
 	private var _frameRate:UInt;
 	private var _keyFrameCount:UInt;
@@ -57,7 +57,7 @@ public class TimelineState extends BaseObject
 	
 	private function _setCurrentTime(passedTime:Float):Bool
 	{
-		inline var prevState:Int = _playState;
+		var prevState:Int = _playState;
 		var currentPlayTimes:UInt = 0;
 		var currentTime:Float = 0.0;
 		
@@ -69,8 +69,8 @@ public class TimelineState extends BaseObject
 		}
 		else if (_mainTimeline == null || _timeScale !== 1.0 || _timeOffset !== 0.0)  // Scale and offset.
 		{
-			inline var playTimes:UInt = _animationState.playTimes;
-			inline var totalTime:Float = playTimes * _duration;
+			var playTimes:UInt = _animationState.playTimes;
+			var totalTime:Float = playTimes * _duration;
 			
 			passedTime *= _timeScale;
 			if (_timeOffset !== 0.0) 
@@ -179,8 +179,8 @@ public class TimelineState extends BaseObject
 	{
 		if (_playState <= 0 && _setCurrentTime(passedTime)) 
 		{
-			inline var currentFrameIndex:UInt = _keyFrameCount > 1 ? uint(_currentTime * _frameRate) : 0;
-			inline var currentFrame:FrameData = _timelineData.frames[currentFrameIndex];
+			var currentFrameIndex:UInt = _keyFrameCount > 1 ? uint(_currentTime * _frameRate) : 0;
+			var currentFrame:FrameData = _timelineData.frames[currentFrameIndex];
 			
 			if (_currentFrame != currentFrame) 
 			{
@@ -191,5 +191,4 @@ public class TimelineState extends BaseObject
 			_onUpdateFrame();
 		}
 	}
-}
 }

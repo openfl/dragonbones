@@ -1,5 +1,7 @@
-package dragonBones.animation
-{
+package dragonBones.animation;
+
+import openfl.Vector;
+	
 import dragonBones.core.DragonBones;
 import dragonBones.core.dragonBones_internal;
 import dragonBones.objects.TweenFrameData;
@@ -8,7 +10,7 @@ import dragonBones.objects.TweenFrameData;
 /**
  * @private
  */
-public class TweenTimelineState extends TimelineState
+class TweenTimelineState extends TimelineState
 {
 	private static inline var TWEEN_TYPE_NONE:Int = 0;
 	private static inline var TWEEN_TYPE_ONCE:Int = 1;
@@ -69,10 +71,10 @@ public class TweenTimelineState extends TimelineState
 			return 1.0;
 		}
 		
-		inline var segmentCount:UInt = samples.length + 1; // + 2 - 1
-		inline var valueIndex:UInt = Math.floor(progress * segmentCount);
-		inline var fromValue:Float = valueIndex === 0 ? 0.0 : samples[valueIndex - 1];
-		inline var toValue:Float = (valueIndex === segmentCount - 1) ? 1.0 : samples[valueIndex];
+		var segmentCount:UInt = samples.length + 1; // + 2 - 1
+		var valueIndex:UInt = Math.floor(progress * segmentCount);
+		var fromValue:Float = valueIndex == 0 ? 0.0 : samples[valueIndex - 1];
+		var toValue:Float = (valueIndex == segmentCount - 1) ? 1.0 : samples[valueIndex];
 		
 		return fromValue + (toValue - fromValue) * (progress - valueIndex / segmentCount);
 	}
@@ -81,15 +83,7 @@ public class TweenTimelineState extends TimelineState
 	private var _tweenEasing:Float;
 	private var _curve:Vector<Float>;
 	
-	public function TweenTimelineState(self:TimelineState)
-	{
-		super(self);
-		
-		if (self != this)
-		{
-			throw new Error(DragonBones.ABSTRACT_CLASS_ERROR);
-		}
-	}
+	private function new() {}
 	
 	override private function _onClear():Void
 	{
@@ -111,7 +105,7 @@ public class TweenTimelineState extends TimelineState
 			)
 		) 
 		{
-			inline var currentFrame:TweenFrameData = _currentFrame as TweenFrameData;
+			var currentFrame:TweenFrameData = _currentFrame as TweenFrameData;
 			_tweenEasing = currentFrame.tweenEasing;
 			_curve = currentFrame.curve;
 		}
@@ -143,5 +137,4 @@ public class TweenTimelineState extends TimelineState
 			_tweenProgress = 0.0;
 		}
 	}
-}
 }

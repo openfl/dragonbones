@@ -1,5 +1,7 @@
 package dragonBones.objects
 {
+	import openfl.Vector;
+	
 import dragonBones.Armature;
 import dragonBones.Bone;
 import dragonBones.animation.AnimationFadeOutMode;

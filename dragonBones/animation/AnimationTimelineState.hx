@@ -1,5 +1,7 @@
 ﻿package dragonBones.animation
-{
+
+import openfl.Vector;
+
 import dragonBones.core.BaseObject;
 import dragonBones.core.dragonBones_internal;
 import dragonBones.enum.EventType;
@@ -14,18 +16,15 @@ import dragonBones.objects.FrameData;
 /**
  * @private
  */
-public final class AnimationTimelineState extends TimelineState
+@:final class AnimationTimelineState extends TimelineState
 {
-	public function AnimationTimelineState()
-	{
-		super(this);
-	}
+	private function new() {}
 	
 	private function _onCrossFrame(frame:FrameData):Void
 	{
 		if (_animationState.actionEnabled)
 		{
-			inline var actions:Vector<ActionData> = (frame as AnimationFrameData).actions;
+			var actions:Vector<ActionData> = (frame as AnimationFrameData).actions;
 			l:UInt = actions.length;
 			for (i in 0...l)
 			{
@@ -33,28 +32,27 @@ public final class AnimationTimelineState extends TimelineState
 			}
 		}
 		
-		inline var eventDispatcher:IEventDispatcher = _armature.eventDispatcher;
-		inline var events:Vector<EventData> = (frame as AnimationFrameData).events;
+		var eventDispatcher:IEventDispatcher = _armature.eventDispatcher;
+		var events:Vector<EventData> = (frame as AnimationFrameData).events;
 		var l = events.length;
+		var eventData:EventData, eventType:String, eventObject:EventObject;
 		for (i in 0...l)
 		{
-			inline var eventData:EventData = events[i];
+			eventData = events[i];
 			
-			var eventType:String = null;
+			eventType = null;
 			switch (eventData.type) 
 			{
 				case EventType.Frame:
 					eventType = EventObject.FRAME_EVENT;
-					break;
 				
 				case EventType.Sound:
 					eventType = EventObject.SOUND_EVENT;
-					break;
 			}
 			
-			if (eventDispatcher.hasEvent(eventType) || eventData.type === EventType.Sound) 
+			if (eventDispatcher.hasEvent(eventType) || eventData.type == EventType.Sound) 
 			{
-				inline var eventObject:EventObject = BaseObject.borrowObject(EventObject) as EventObject;
+				eventObject = cast BaseObject.borrowObject(EventObject);
 				eventObject.name = eventData.name;
 				eventObject.frame = frame as AnimationFrameData;
 				eventObject.data = eventData.data;
@@ -77,15 +75,15 @@ public final class AnimationTimelineState extends TimelineState
 	
 	override public function update(passedTime:Float):Void
 	{
-		inline var prevState:Int = _playState;
-		inline var prevPlayTimes:UInt = _currentPlayTimes;
-		inline var prevTime:Float = _currentTime;
+		var prevState:Int = _playState;
+		var prevPlayTimes:UInt = _currentPlayTimes;
+		var prevTime:Float = _currentTime;
 		
 		if (_playState <= 0 && _setCurrentTime(passedTime)) 
 		{
-			inline var eventDispatcher:IEventDispatcher = _armature.eventDispatcher;
+			var eventDispatcher:IEventDispatcher = _armature.eventDispatcher;
 			
-			if (prevState < 0 && _playState !== prevState) 
+			if (prevState < 0 && _playState != prevState) 
 			{
 				if (_animationState.displayControl != null)
 				{
@@ -94,7 +92,7 @@ public final class AnimationTimelineState extends TimelineState
 				
 				if (eventDispatcher.hasEvent(EventObject.START)) 
 				{
-					var eventObject:EventObject = BaseObject.borrowObject(EventObject) as EventObject;
+					var eventObject:EventObject = cast BaseObject.borrowObject(EventObject);
 					eventObject.animationState = _animationState;
 					_armature._bufferEvent(eventObject, EventObject.START);
 				}
@@ -107,17 +105,17 @@ public final class AnimationTimelineState extends TimelineState
 			
 			if (_keyFrameCount > 1) 
 			{
-				inline var currentFrameIndex:UInt = Math.floor(_currentTime * _frameRate);
-				inline var currentFrame:AnimationFrameData = _timelineData.frames[currentFrameIndex] as AnimationFrameData;
+				var currentFrameIndex:UInt = Math.floor(_currentTime * _frameRate);
+				var currentFrame:AnimationFrameData = _timelineData.frames[currentFrameIndex] as AnimationFrameData;
 				if (_currentFrame !== currentFrame) 
 				{
-					inline var isReverse:Bool = _currentPlayTimes === prevPlayTimes && prevTime > _currentTime;
+					var isReverse:Bool = _currentPlayTimes == prevPlayTimes && prevTime > _currentTime;
 					var crossedFrame:AnimationFrameData = _currentFrame as AnimationFrameData;
 					_currentFrame = currentFrame;
 					
 					if (crossedFrame == null) 
 					{
-						inline var prevFrameIndex:UInt = Math.floor(prevTime * _frameRate);
+						var prevFrameIndex:UInt = Math.floor(prevTime * _frameRate);
 						crossedFrame = _timelineData.frames[prevFrameIndex] as AnimationFrameData;
 						
 						if (isReverse) 
@@ -163,14 +161,14 @@ public final class AnimationTimelineState extends TimelineState
 			{
 				if (eventDispatcher.hasEvent(EventObject.LOOP_COMPLETE)) 
 				{
-					eventObject = BaseObject.borrowObject(EventObject) as EventObject;
+					eventObject = cast BaseObject.borrowObject(EventObject);
 					eventObject.animationState = _animationState;
 					_armature._bufferEvent(eventObject, EventObject.LOOP_COMPLETE);
 				}
 				
 				if (_playState > 0 && eventDispatcher.hasEvent(EventObject.COMPLETE)) 
 				{
-					eventObject = BaseObject.borrowObject(EventObject) as EventObject;
+					eventObject = cast BaseObject.borrowObject(EventObject);
 					eventObject.animationState = _animationState;
 					_armature._bufferEvent(eventObject, EventObject.COMPLETE);
 				}
@@ -183,5 +181,4 @@ public final class AnimationTimelineState extends TimelineState
 		_setCurrentTime(value);
 		_currentFrame = null;
 	}
-}
 }

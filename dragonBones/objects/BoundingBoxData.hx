@@ -1,6 +1,7 @@
 package dragonBones.objects
 {
 import openfl.geom.Point;
+import openfl.Vector;
 
 import dragonBones.core.BaseObject;
 import dragonBones.enum.BoundingBoxType;

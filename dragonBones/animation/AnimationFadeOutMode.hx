@@ -1,11 +1,11 @@
-package dragonBones.animation
-{
+package dragonBones.animation;
+
 /**
  * @language zh_CN
  * 动画混合的淡出方式。
  * @version DragonBones 4.5
  */
-public final class AnimationFadeOutMode
+@:final class AnimationFadeOutMode
 {
 	/**
 	 * @language zh_CN
@@ -37,5 +37,4 @@ public final class AnimationFadeOutMode
 	 * @version DragonBones 4.5
 	 */
 	public static inline var All:Int = 4;
-}
 }

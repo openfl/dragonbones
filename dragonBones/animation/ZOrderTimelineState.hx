@@ -1,5 +1,5 @@
-package dragonBones.animation
-{
+package dragonBones.animation;
+
 import dragonBones.core.dragonBones_internal;
 import dragonBones.objects.ZOrderFrameData;
 
@@ -7,18 +7,14 @@ import dragonBones.objects.ZOrderFrameData;
 /**
  * @private
  */
-public final class ZOrderTimelineState extends TimelineState
+@:final class ZOrderTimelineState extends TimelineState
 {
-	public function ZOrderTimelineState()
-	{
-		super(this);
-	}
+	private function new(){}
 	
 	override private function _onArriveAtFrame():Void
 	{
 		super._onArriveAtFrame();
 		
-		_armature._sortZOrder((_currentFrame as ZOrderFrameData).zOrder);            
+		_armature._sortZOrder(cast(_currentFrame, ZOrderFrameData).zOrder);            
 	}
-}
 }

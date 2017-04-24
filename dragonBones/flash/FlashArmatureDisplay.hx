@@ -2,6 +2,7 @@
 {
 import openfl.display.Shape;
 import openfl.display.Sprite;
+import openfl.Vector;
 
 import dragonBones.Armature;
 import dragonBones.Bone;

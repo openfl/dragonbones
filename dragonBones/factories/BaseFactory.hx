@@ -11,6 +11,7 @@ import openfl.geom.Rectangle;
 import openfl.utils.ByteArray;
 import openfl.utils.clearTimeout;
 import openfl.utils.setTimeout;
+import openfl.Vector;
 
 import dragonBones.Armature;
 import dragonBones.Bone;

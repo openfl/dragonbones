@@ -8,7 +8,7 @@ package dragonBones.animation
  * @see dragonBones.Armature
  * @version DragonBones 3.0
  */
-public interface IAnimateble
+interface IAnimateble
 {
 	/**
 	 * @language zh_CN
@@ -20,7 +20,5 @@ public interface IAnimateble
 	/**
 	 * @private
 	 */
-	function get clock():WorldClock;
-	function set clock(value:WorldClock):Void;
-}
+	private var clock(get, set):WorldClock;
 }

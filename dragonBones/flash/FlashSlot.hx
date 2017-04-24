@@ -6,6 +6,7 @@ import openfl.display.DisplayObject;
 import openfl.display.GraphicsTrianglePath;
 import openfl.display.Shape;
 import openfl.geom.Matrix;
+import openfl.Vector;
 
 import dragonBones.Bone;
 import dragonBones.Slot;
