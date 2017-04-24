@@ -1,16 +1,16 @@
-package dragonBones.events
-{
+package dragonBones.events;
+
 /**
  * @language zh_CN
  * 事件接口。
  * @version DragonBones 4.5
  */
-public interface IEventDispatcher
+interface IEventDispatcher
 {
 	/**
 	 * @private
 	 */
-	function _dispatchEvent(type:String, value:EventObject):Void;
+	private function _dispatchEvent(type:String, value:EventObject):Void;
 	/**
 	 * @language zh_CN
 	 * 是否包含指定类型的事件。
@@ -34,5 +34,4 @@ public interface IEventDispatcher
 	 * @version DragonBones 4.5
 	 */
 	function removeEvent(type:String, listener:Function):Void;
-}
 }

@@ -1,5 +1,5 @@
-package dragonBones.events
-{
+package dragonBones.events;
+
 import dragonBones.Armature;
 import dragonBones.Bone;
 import dragonBones.Slot;
@@ -13,7 +13,7 @@ import dragonBones.objects.CustomData;
  * 事件数据。
  * @version DragonBones 4.5
  */
-public class EventObject extends BaseObject
+class EventObject extends BaseObject
 {
 	/**
 	 * @language zh_CN
@@ -120,10 +120,7 @@ public class EventObject extends BaseObject
 	/**
 	 * @private
 	 */
-	public function EventObject()
-	{
-		super(this);
-	}
+	private function new() {}
 	/**
 	 * @private
 	 */
@@ -138,5 +135,4 @@ public class EventObject extends BaseObject
 		slot = null;
 		animationState = null;
 	}
-}
 }

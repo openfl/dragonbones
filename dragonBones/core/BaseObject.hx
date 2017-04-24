@@ -1,5 +1,6 @@
 ﻿package dragonBones.core;
 
+import openfl.utils.Dictionary;
 import openfl.Vector;
 
 /**
@@ -7,19 +8,29 @@ import openfl.Vector;
  * 基础对象。
  * @version DragonBones 4.5
  */
-public class BaseObject
+class BaseObject
 {
 	private static var _hashCode:UInt = 0;
 	private static var _defaultMaxCount:UInt = 5000;
-	private static inline var _maxCountMap:Map<Class<Dynamic>> = new Map();
-	private static inline var _poolsMap:Map<Class<Dynamic>> = new Map();
+	private static inline var _maxCountMap:Dictionary<Class<Dynamic>> = new Dictionary();
+	private static inline var _poolsMap:Dictionary<Class<Dynamic>> = new Dictionary();
 	
 	private static function _returnObject(object:BaseObject):Void
 	{
 		//inline var objectConstructor:Class = getDefinitionByName(getQualifiedClassName(object));
-		inline var objectConstructor:Class<Dynamic> = Type.getClass(object);
-		inline var maxCount:UInt = _maxCountMap[objectConstructor] == null? _defaultMaxCount: _maxCountMap[objectConstructor];
-		inline var pool:Vector<BaseObject> = _poolsMap[objectConstructor] = _poolsMap[objectConstructor] || new Vector<BaseObject>;
+		var objectConstructor:Class<Dynamic> = Type.getClass(object);
+		var maxCount:UInt = _maxCountMap.exists(objectConstructor) ? _maxCountMap[objectConstructor] : _defaultMaxCount;
+		var pool:Vector<BaseObject>;
+		
+		if (_poolsMap.exists(objectConstructor))
+		{
+			pool = _poolsMap[objectConstructor];
+		}
+		else
+		{
+			pool = new Vector<BaseObject>();
+			_poolsMap[objectConstructor] = pool;
+		}
 		
 		if (pool.length < maxCount)
 		{
@@ -89,7 +100,7 @@ public class BaseObject
 		}
 		else
 		{
-			for (pool in _poolsMap)
+			for (pool in _poolsMap.values())
 			{
 				pool.length = 0;
 			}

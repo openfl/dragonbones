@@ -1,5 +1,5 @@
-﻿package dragonBones.factories
-{
+package dragonBones.factories;
+
 import openfl.display.Loader;
 import openfl.system.System;
 import openfl.utils.ByteArray;
@@ -7,7 +7,7 @@ import openfl.utils.ByteArray;
 /**
  * @private
  */
-public final class DecodedData extends Loader
+@:final class DecodedData extends Loader
 {
 	public static inline var JPG:Int = 1;
 	public static inline var PNG:Int = 2;
@@ -19,10 +19,10 @@ public final class DecodedData extends Loader
 	public static function getFormat(bytes:ByteArray):Int
 	{
 		var type:Int = 0;
-		inline var b1:UInt = bytes[0];
-		inline var b2:UInt = bytes[1];
-		inline var b3:UInt = bytes[2];
-		inline var b4:UInt = bytes[3];
+		var b1:UInt = bytes[0];
+		var b2:UInt = bytes[1];
+		var b3:UInt = bytes[2];
+		var b4:UInt = bytes[3];
 		if ((b1 == 0x46 || b1 == 0x43 || b1 == 0x5A) && b2 == 0x57 && b3 == 0x53)
 		{
 			//CWS FWS ZWS
@@ -65,9 +65,9 @@ public final class DecodedData extends Loader
 	 */
 	public static function encode(dragonBonesData:Dynamic, textureAtlasData:Dynamic, textureAtlasBytes:ByteArray):ByteArray
 	{
-		inline var outputBytes:ByteArray = new ByteArray();
-		inline var dbDataBytes:ByteArray = new ByteArray();
-		inline var helpBytes:ByteArray = new ByteArray();
+		var outputBytes:ByteArray = new ByteArray();
+		var dbDataBytes:ByteArray = new ByteArray();
+		var helpBytes:ByteArray = new ByteArray();
 		
 		dbDataBytes.writeByte(0x44); // D
 		dbDataBytes.writeByte(0x42); // B
@@ -104,19 +104,16 @@ public final class DecodedData extends Loader
 	 */
 	public static function decode(inputBytes:ByteArray):DecodedData
 	{
-		inline var intSize:UInt = 4;
-		inline var format:Int = getFormat(inputBytes);
+		var intSize:UInt = 4;
+		var format:Int = getFormat(inputBytes);
 		switch (format)
 		{
-			case SWF:
-			case PNG:
-			case JPG:
-			case ATF:
+			case SWF, PNG, JPG, ATF:
 				try
 				{
-					inline var decodedBytes:ByteArray = new ByteArray();
-					inline var decodedData:DecodedData = new DecodedData();
-					inline var helpBytes:ByteArray = new ByteArray();
+					var decodedBytes:ByteArray = new ByteArray();
+					var decodedData:DecodedData = new DecodedData();
+					var helpBytes:ByteArray = new ByteArray();
 					decodedBytes.writeBytes(inputBytes);
 					decodedBytes.position = decodedBytes.length - intSize;
 					var dataSize:Int = decodedBytes.readInt();
@@ -215,15 +212,15 @@ public final class DecodedData extends Loader
 	
 	public function dispose():Void
 	{
-		if (dragonBonesData != null && dragonBonesData is XML)
-		{
-			System.disposeXML(dragonBonesData as XML);
-		}
+		//if (dragonBonesData != null && dragonBonesData is XML)
+		//{
+			//System.disposeXML(dragonBonesData as XML);
+		//}
 		
-		if (textureAtlasData != null && textureAtlasData is XML)
-		{
-			System.disposeXML(textureAtlasData as XML);
-		}
+		//if (textureAtlasData != null && textureAtlasData is XML)
+		//{
+			//System.disposeXML(textureAtlasData as XML);
+		//}
 		
 		if (textureAtlasBytes != null)
 		{
@@ -234,5 +231,4 @@ public final class DecodedData extends Loader
 		textureAtlasData = null;
 		textureAtlasBytes = null;
 	}
-}
 }

@@ -1,9 +1,9 @@
-package dragonBones.enum
-{
+package dragonBones.enum;
+
 /**
  * @private
  */
-public final class BlendMode
+@:final class BlendMode
 {
 	public static inline var None:Int = -1;
 	public static inline var Normal:Int = 0;
@@ -20,5 +20,4 @@ public final class BlendMode
 	public static inline var Overlay:Int = 11;
 	public static inline var Screen:Int = 12;
 	public static inline var Subtract:Int = 13;
-}
 }
