@@ -1,59 +1,47 @@
-package dragonBones.objects;
+package dragonBones.objects
+{
+import dragonBones.core.BaseObject;
 
-/** @private */
-class SkinData
+/**
+ * @private
+ */
+public final class SkinData extends BaseObject
 {
 	public var name:String;
-
-	private var _slotDataList:Array<SlotData>;
-	public var slotDataList(get, null):Array<SlotData>;
-	public function get_slotDataList():Array<SlotData>
+	public inline var slots:Object = {};
+	
+	public function SkinData()
 	{
-		return _slotDataList;
+		super(this);
 	}
-
-	public function new()
+	
+	override private function _onClear():Void
 	{
-		_slotDataList = new Array<SlotData>();
-	}
-
-	public function dispose():Void
-	{
-		var i:Int = _slotDataList.length;
-		while(i -- > 0)
+		for (var k:String in slots)
 		{
-			_slotDataList[i].dispose();
+			(slots[k] as SkinSlotData).returnToPool();
+			delete slots[k];
 		}
-		_slotDataList = null;
+		
+		name = null;
+		//slots.clear();
 	}
-
-	public function getSlotData(slotName:String):SlotData
+	
+	public function addSlot(value:SkinSlotData):Void
 	{
-		var i:Int = _slotDataList.length;
-		while(i -- > 0)
+		if (value && value.slot && !slots[value.slot.name])
 		{
-			if(_slotDataList[i].name == slotName)
-			{
-				return _slotDataList[i];
-			}
-		}
-		return null;
-	}
-
-	public function addSlotData(slotData:SlotData):Void
-	{
-		if(slotData == null)
-		{
-			throw "ArgumentError";
-		}
-
-		if (_slotDataList.indexOf(slotData) < 0)
-		{
-			_slotDataList.push(slotData);
+			slots[value.slot.name] = value;
 		}
 		else
 		{
-			throw "ArgumentError";
+			throw new ArgumentError();
 		}
 	}
+	
+	public function getSlot(name:String):SkinSlotData
+	{
+		return slots[name] as SkinSlotData;
+	}
+}
 }

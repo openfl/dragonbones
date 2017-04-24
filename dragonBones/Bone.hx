@@ -1,674 +1,602 @@
 ﻿package dragonBones;
 
-import dragonBones.animation.AnimationState;
-import dragonBones.animation.TimelineState;
-import dragonBones.core.DBObject;
-import dragonBones.events.FrameEvent;
-import dragonBones.events.SoundEvent;
-import dragonBones.events.SoundEventManager;
-import dragonBones.objects.DBTransform;
-import dragonBones.objects.Frame;
-import dragonBones.objects.FrameCached;
-import dragonBones.objects.TimelineCached;
-import dragonBones.objects.TransformFrame;
-import dragonBones.utils.TransformUtil;
-
 import openfl.geom.Matrix;
-import openfl.geom.Point;
+import openfl.Vector;
 
-class Bone extends DBObject
+import dragonBones.core.TransformObject;
+import dragonBones.core.dragonBones_internal;
+import dragonBones.geom.Transform;
+import dragonBones.objects.BoneData;
+
+
+/**
+ * @language zh_CN
+ * 骨骼，一个骨架中可以包含多个骨骼，骨骼以树状结构组成骨架。
+ * 骨骼在骨骼动画体系中是最重要的逻辑单元之一，负责动画中的平移旋转缩放的实现。
+ * @see dragonBones.objects.BoneData
+ * @see dragonBones.Armature
+ * @see dragonBones.Slot
+ * @version DragonBones 3.0
+ */
+@:final class Bone extends TransformObject
 {
 	/**
-	 * The instance dispatch sound event.
+	 * @language zh_CN
+	 * 是否继承父骨骼的平移。
+	 * @version DragonBones 3.0
 	 */
-	private static var _soundManager:SoundEventManager = SoundEventManager.getInstance();
-
-
+	public var inheritTranslation:Bool;
 	/**
-	 * Unrecommended API. Recommend use slot.childArmature.
+	 * @language zh_CN
+	 * 是否继承父骨骼的旋转。
+	 * @version DragonBones 3.0
 	 */
-    public var childArmature(get, null):Armature;
-	public function get_childArmature():Armature
-	{
-		var slot:Slot = this.slot;
-		if(slot != null)
-		{
-			return slot.childArmature;
-		}
-		return null;
-	}
-
+	public var inheritRotation:Bool;
 	/**
-	 * Unrecommended API. Recommend use slot.display.
+	 * @language zh_CN
+	 * 是否继承父骨骼的缩放。
+	 * @version DragonBones 4.5
 	 */
-    public var display(get, set):Dynamic;
-	public function get_display():Dynamic
-	{
-		var slot:Slot = this.slot;
-		if(slot != null)
-		{
-			return slot.display;
-		}
-		return null;
-	}
-	public function set_display(value:Dynamic):Dynamic
-	{
-		var slot:Slot = this.slot;
-		if(slot != null)
-		{
-			slot.display = value;
-		}
-		return value;
-	}
-
+	public var inheritScale:Bool;
 	/**
-	 * Unrecommended API. Recommend use offset.
+	 * @private
 	 */
-    public var node(get, null):DBTransform;
-	public function get_node():DBTransform
-	{
-		return _offset;
-	}
-
+	public var ikBendPositive:Bool;
 	/**
-	 * AnimationState that slots belong to the bone will be controlled by.
-	 * Sometimes, we want slots controlled by a spedific animation state when animation is doing mix or addition.
+	 * @language zh_CN
+	 * 骨骼长度。
+	 * @version DragonBones 4.5
 	 */
-	public var displayController:String;
-
-	/** @private */
-	public var _tween:DBTransform;
-
-	/** @private */
-	public var _tweenPivot:Point;
-
-	/** @private */
-	public var _needUpdate:Int;
-
-	/** @private */
-	public var _isColorChanged:Bool;
-
-	/** @private */
-	public var _frameCachedPosition:Int;
-
-	/** @private */
-	public var _frameCachedDuration:Int;
-
-	/** @private */
-	public var _timelineCached:TimelineCached;
-
-	/** @private */
-	public var _boneList:Array<Bone>;
-
-	/** @private */
-	public var _slotList:Array<Slot>;
-
-	/** @private */
-	public var _timelineStateList:Array<TimelineState>;
-
-	private var _tempGlobalTransformForChild:DBTransform;
-	public var _globalTransformForChild:DBTransform;
-	private var _tempGlobalTransformMatrixForChild:Matrix;
-	public var _globalTransformMatrixForChild:Matrix;
-
-	public var applyOffsetTranslationToChild:Bool = true;
-	public var applyOffsetRotationToChild:Bool = true;
-	public var applyOffsetScaleToChild:Bool = false;
-
-	/** @private */
-
-	override public function set_visible(value:Bool):Bool
+	public var length:Float;
+	/**
+	 * @private
+	 */
+	public var ikWeight:Float;
+	/**
+	 * @private [2: update self, 1: update children, ik children, mesh, ..., 0: stop update]
+	 */
+	@:allow("dragonBones") private var _transformDirty:Int;
+	private var _visible:Bool;
+	private var _cachedFrameIndex:Int;
+	private var _ikChain:UInt;
+	private var _ikChainIndex:Int;
+	/**
+	 * @private
+	 */
+	@:allow("dragonBones") private var _updateState:Int;
+	/**
+	 * @private
+	 */
+	@:allow("dragonBones") private var _blendLayer:Int;
+	/**
+	 * @private
+	 */
+	@:allow("dragonBones") private var _blendLeftWeight:Float;
+	/**
+	 * @private
+	 */
+	@:allow("dragonBones") private var _blendTotalWeight:Float;
+	/**
+	 * @private
+	 */
+	@:allow("dragonBones") private var _animationPose:Transform = new Transform();
+	private var _bones:Vector<Bone> = new Vector<Bone>();
+	private var _slots:Vector<Slot> = new Vector<Slot>();
+	private var _boneData:BoneData;
+	private var _ik:Bone;
+	/**
+	 * @private
+	 */
+	@:allow("dragonBones") private var _cachedFrameIndices:Vector<Int>;
+	/**
+	 * @private
+	 */
+	private function new() {}
+	/**
+	 * @private
+	 */
+	override private function _onClear():Void
 	{
-		if(this._visible != value)
+		super._onClear();
+		
+		inheritTranslation = false;
+		inheritRotation = false;
+		inheritScale = false;
+		ikBendPositive = false;
+		length = 0.0;
+		ikWeight = 0.0;
+		
+		_transformDirty = 0;
+		_visible = true;
+		_cachedFrameIndex = -1;
+		_ikChain = 0;
+		_ikChainIndex = 0;
+		_updateState = -1;
+		_blendLayer = 0;
+		_blendLeftWeight = 1.0;
+		_blendTotalWeight = 0.0;
+		_animationPose.identity();
+		_bones.length = 0;
+		_slots.length = 0;
+		_boneData = null;
+		_ik = null;
+		_cachedFrameIndices = null;
+	}
+	/**
+	 * @private
+	 */
+	private function _updateGlobalTransformMatrix():Void
+	{
+		global.x = origin.x + offset.x + _animationPose.x;
+		global.y = origin.y + offset.y + _animationPose.y;
+		global.skewX = origin.skewX + offset.skewX + _animationPose.skewX;
+		global.skewY = origin.skewY + offset.skewY + _animationPose.skewY;
+		global.scaleX = origin.scaleX * offset.scaleX * _animationPose.scaleX;
+		global.scaleY = origin.scaleY * offset.scaleY * _animationPose.scaleY;
+		
+		if (_parent != null)
 		{
-			this._visible = value;
-			for (slot in _slotList)
+			var parentRotation:Float = _parent.global.skewY; // Only inherit skew y
+			var parentMatrix:Matrix = _parent.globalTransformMatrix;
+			
+			if (inheritScale)
 			{
-				slot.updateDisplayVisible(this._visible);
+				if (!inheritRotation)
+				{
+					global.skewX -= parentRotation;
+					global.skewY -= parentRotation;
+				}
+				
+				global.toMatrix(globalTransformMatrix);
+				globalTransformMatrix.concat(parentMatrix);
+				
+				if (!inheritTranslation)
+				{
+					globalTransformMatrix.tx = global.x;
+					globalTransformMatrix.ty = global.y;
+				}
+				
+				global.fromMatrix(globalTransformMatrix);
+			}
+			else
+			{
+				if (inheritTranslation)
+				{
+					var x:Float = global.x;
+					var y:Float = global.y;
+					global.x = parentMatrix.a * x + parentMatrix.c * y + parentMatrix.tx;
+					global.y = parentMatrix.d * y + parentMatrix.b * x + parentMatrix.ty;
+				}
+				
+				if (inheritRotation)
+				{
+					global.skewX += parentRotation;
+					global.skewY += parentRotation;
+				}
+				
+				global.toMatrix(globalTransformMatrix);
 			}
 		}
-		return value;
-	}
-
-	/** @private */
-	override public function setArmature(value:Armature):Void
-	{
-		super.setArmature(value);
-
-		var i:Int = _boneList.length;
-		while(i -- > 0)
+		else
 		{
-			_boneList[i].setArmature(this._armature);
+			global.toMatrix(globalTransformMatrix);
 		}
-
-		i = _slotList.length;
-		while(i -- > 0)
+		
+		if (_ik != null && _ikChainIndex == _ikChain && ikWeight > 0)
 		{
-			_slotList[i].setArmature(this._armature);
+			if (inheritTranslation && _ikChain > 0 && _parent)
+			{
+				_computeIKB();
+			}
+			else
+			{
+				_computeIKA();
+			}
 		}
 	}
-
-	public var slot(get, null):Slot;
-	public function get_slot():Slot
-	{
-		return _slotList.length > 0?_slotList[0]:null;
-	}
-
 	/**
-	 * Creates a Bone blank instance.
+	 * @private
 	 */
-	public function new()
+	private function _computeIKA():Void
 	{
-		super();
-
-		_tween = new DBTransform();
-		_tweenPivot = new Point();
-		_tween.scaleX = _tween.scaleY = 1;
-
-		_boneList = new Array<Bone>();
-		_slotList = new Array<Slot>();
-		_timelineStateList = new Array<TimelineState>();
-
-		_needUpdate = 2;
-		_isColorChanged = false;
-		_frameCachedPosition = -1;
-		_frameCachedDuration = -1;
+		var ikGlobal:Transform = _ik.global;
+		var x:Float = globalTransformMatrix.a * length;
+		var y:Float = globalTransformMatrix.b * length;
+		
+		var ikRadian:Float = 
+			(
+				Math.atan2(ikGlobal.y - global.y, ikGlobal.x - global.x) + 
+				offset.skewY - 
+				global.skewY * 2 + 
+				Math.atan2(y, x)
+			) * ikWeight; // Support offset.
+		
+		global.skewX += ikRadian;
+		global.skewY += ikRadian;
+		global.toMatrix(globalTransformMatrix);
 	}
-
 	/**
-	 * @inheritDoc
+	 * @private
 	 */
-	override public function dispose():Void
+	private function _computeIKB():Void
 	{
-		if(_boneList == null)
+		// TODO IK
+		var parentGlobal:Transform = _parent.global;
+		var ikGlobal:Transform = _ik.global;
+		
+		var x:Float = globalTransformMatrix.a * length;
+		var y:Float = globalTransformMatrix.b * length;
+		
+		var lLL:Float = x * x + y * y;
+		var lL:Float = Math.sqrt(lLL);
+		
+		var dX:Float = global.x - parentGlobal.x;
+		var dY:Float = global.y - parentGlobal.y;
+		var lPP:Float = dX * dX + dY * dY;
+		var lP:Float = Math.sqrt(lPP);
+		
+		dX = ikGlobal.x - parentGlobal.x;
+		dY = ikGlobal.y - parentGlobal.y;
+		var lTT:Float = dX * dX + dY * dY;
+		var lT:Float = Math.sqrt(lTT);
+		
+		var ikRadianA:Float = 0;
+		if (lL + lP <= lT || lT + lL <= lP || lT + lP <= lL)
+		{
+			ikRadianA = Math.atan2(ikGlobal.y - parentGlobal.y, ikGlobal.x - parentGlobal.x) + _parent.offset.skewY; // Support offset.
+			if (lL + lP <= lT)
+			{
+			}
+			else if (lP < lL)
+			{
+				ikRadianA += Math.PI;
+			}
+		}
+		else
+		{
+			var h:Float = (lPP - lLL + lTT) / (2 * lTT);
+			var r:Float = Math.sqrt(lPP - h * h * lTT) / lT;
+			var hX:Float = parentGlobal.x + (dX * h);
+			var hY:Float = parentGlobal.y + (dY * h);
+			var rX:Float = -dY * r;
+			var rY:Float = dX * r;
+			
+			if (ikBendPositive)
+			{
+				global.x = hX - rX;
+				global.y = hY - rY;
+			}
+			else
+			{
+				global.x = hX + rX;
+				global.y = hY + rY;
+			}
+			
+			ikRadianA = Math.atan2(global.y - parentGlobal.y, global.x - parentGlobal.x) + _parent.offset.skewY; // Support offset
+		}
+		
+		ikRadianA = (ikRadianA - parentGlobal.skewY) * ikWeight;
+		
+		parentGlobal.skewX += ikRadianA;
+		parentGlobal.skewY += ikRadianA;
+		parentGlobal.toMatrix(_parent.globalTransformMatrix);
+		_parent._transformDirty = 1;
+		
+		global.x = parentGlobal.x + Math.cos(parentGlobal.skewY) * lP;
+		global.y = parentGlobal.y + Math.sin(parentGlobal.skewY) * lP;
+		
+		var ikRadianB:Float = 
+			(
+				Math.atan2(ikGlobal.y - global.y, ikGlobal.x - global.x) + offset.skewY - 
+				global.skewY * 2 + Math.atan2(y, x)
+			) * ikWeight; // Support offset.
+		
+		global.skewX += ikRadianB;
+		global.skewY += ikRadianB;
+		
+		global.toMatrix(globalTransformMatrix);
+	}
+	/**
+	 * @private
+	 */
+	@:allow("dragonBones") private function _init(boneData: BoneData):Void 
+	{
+		if (_boneData != null) 
 		{
 			return;
 		}
-
-		super.dispose();
-		var i:Int = _boneList.length;
-		while(i -- > 0)
-		{
-			_boneList[i].dispose();
-		}
-
-		i = _slotList.length;
-		while(i -- > 0)
-		{
-			_slotList[i].dispose();
-		}
-
-		_tween = null;
-		_tweenPivot = null;
-		_boneList = null;
-		_slotList = null;
-		_timelineStateList = null;
-		_timelineCached = null;
+		
+		_boneData = boneData;
+		
+		inheritTranslation = _boneData.inheritTranslation;
+		inheritRotation = _boneData.inheritRotation;
+		inheritScale = _boneData.inheritScale;
+		length = _boneData.length;
+		name = _boneData.name;
+		origin = _boneData.transform;
 	}
-
 	/**
-	 * Force update the bone in next frame even if the bone is not moving.
+	 * @private
+	 */
+	override @:allow("dragonBones") private function _setArmature(value:Armature):Void
+	{
+		_armature = value;
+		_armature._addBoneToBoneList(this);
+	}
+	/**
+	 * @private
+	 */
+	@:allow("dragonBones") private function _setIK(value:Bone, chain:UInt, chainIndex:UInt):Void
+	{
+		if (value != null)
+		{
+			if (chain == chainIndex)
+			{
+				var chainEnd:Bone = _parent;
+				if (chain > 0 && chainEnd != null)
+				{
+					chain = 1;
+				}
+				else
+				{
+					chain = 0;
+					chainIndex = 0;
+					chainEnd = this;
+				}
+				
+				if (chainEnd == value || chainEnd.contains(value))
+				{
+					value = null;
+					chain = 0;
+					chainIndex = 0;
+				}
+				else
+				{
+					var ancestor:Bone = value;
+					while(ancestor.ik != null && ancestor.ikChain != null)
+					{
+						if (chainEnd.contains(ancestor.ik))
+						{
+							value = null;
+							chain = 0;
+							chainIndex = 0;
+							break;
+						}
+						
+						ancestor = ancestor.parent;
+					}
+				}
+			}
+		}
+		else
+		{
+			chain = 0;
+			chainIndex = 0;
+		}
+		
+		_ik = value;
+		_ikChain = chain;
+		_ikChainIndex = chainIndex;
+		
+		if (_armature != null)
+		{
+			_armature._bonesDirty = true;
+		}
+	}
+	/**
+	 * @private
+	 */
+	@:allow("dragonBones") private function _update(cacheFrameIndex:Int):Void
+	{
+		_updateState = -1;
+		
+		if (cacheFrameIndex >= 0 && _cachedFrameIndices) 
+		{
+			inline var cachedFrameIndex:Int = _cachedFrameIndices[cacheFrameIndex];
+			if (cachedFrameIndex >= 0 && _cachedFrameIndex === cachedFrameIndex) // Same cache.
+			{
+				_transformDirty = 0;
+			}
+			else if (cachedFrameIndex >= 0) // Has been Cached.
+			{
+				_transformDirty = 2;
+				_cachedFrameIndex = cachedFrameIndex;
+			}
+			else if (
+				_transformDirty === 2 ||
+				(_parent && _parent._transformDirty !== 0) ||
+				(_ik && ikWeight > 0 && _ik._transformDirty !== 0)
+			) // Dirty.
+			{
+				_transformDirty = 2;
+				_cachedFrameIndex = -1;
+			}
+			else if (_cachedFrameIndex >= 0) // Same cache, but not set index yet.
+			{
+				_transformDirty = 0;
+				_cachedFrameIndices[cacheFrameIndex] = _cachedFrameIndex;
+			}
+			else // Dirty.
+			{
+				_transformDirty = 2;
+				_cachedFrameIndex = -1;
+			}
+		}
+		else if (
+			_transformDirty === 2 ||
+			(_parent && _parent._transformDirty !== 0) ||
+			(_ik && ikWeight > 0 && _ik._transformDirty !== 0)
+		) // Dirty.
+		{
+			cacheFrameIndex = -1;
+			_transformDirty = 2;
+			_cachedFrameIndex = -1;
+		}
+		
+		if (_transformDirty !== 0) 
+		{
+			if (_transformDirty === 2) 
+			{
+				_transformDirty = 1;
+				
+				if (_cachedFrameIndex < 0) 
+				{
+					_updateGlobalTransformMatrix();
+					
+					if (cacheFrameIndex >= 0) 
+					{
+						_cachedFrameIndex = _cachedFrameIndices[cacheFrameIndex] = _armature._armatureData.setCacheFrame(globalTransformMatrix, global);
+					}
+				}
+				else 
+				{
+					_armature._armatureData.getCacheFrame(globalTransformMatrix, global, _cachedFrameIndex);
+				}
+				
+				_updateState = 0;
+			}
+			else {
+				_transformDirty = 0;
+			}
+		}
+	}
+	/**
+	 * @language zh_CN
+	 * 下一帧更新变换。 (当骨骼没有动画状态或动画状态播放完成时，骨骼将不在更新)
+	 * @version DragonBones 3.0
 	 */
 	public function invalidUpdate():Void
 	{
-		_needUpdate = 2;
+		_transformDirty = 2;
 	}
-
 	/**
-	 * If contains some bone or slot
-	 * @param Slot or Bone instance
-	 * @return Boolean
-	 * @see dragonBones.core.DBObject
+	 * @language zh_CN
+     * 是否包含骨骼或插槽。
+	 * @return
+	 * @see dragonBones.core.TransformObject
+	 * @version DragonBones 3.0
 	 */
-	public function contains(child:DBObject):Bool
+	public function contains(child:TransformObject):Bool
 	{
-		if(child == null)
+		if (child)
 		{
-			throw "ArgumentError";
+			if (child === this)
+			{
+				return false;
+			}
+			
+			var ancestor:TransformObject = child;
+			while(ancestor != this && ancestor)
+			{
+				ancestor = ancestor.parent;
+			}
+			
+			return ancestor === this;
 		}
-		if(child == this)
-		{
-			return false;
-		}
-		var ancestor:DBObject = child;
-		while(!(ancestor == this || ancestor == null))
-		{
-			ancestor = ancestor.parent;
-		}
-		return ancestor == this;
+		
+		return false;
 	}
-
 	/**
-	 * Get all Bone instance associated with this bone.
-	 * @return A Vector.&lt;Slot&gt; instance.
+	 * @language zh_CN
+	 * 所有的子骨骼。
+	 * @version DragonBones 3.0
+	 */
+	public function getBones():Vector.<Bone>
+	{
+		_bones.length = 0;
+		
+		inline var bones:Vector.<Bone> = _armature.getBones();
+		for (var i:UInt = 0, l:UInt = bones.length; i < l; ++i) 
+		{
+			inline var bone:Bone = bones[i];
+			if (bone.parent === this)
+			{
+				_bones.push(bone);	
+			}
+		}
+		
+		return _bones;
+	}
+	/**
+	 * @language zh_CN
+	 * 所有的插槽。
 	 * @see dragonBones.Slot
+	 * @version DragonBones 3.0
 	 */
-	public function getBones(returnCopy:Bool = true):Array<Bone>
+	public function getSlots():Vector.<Slot>
 	{
-		return returnCopy?_boneList.copy():_boneList;
+		_slots.length = 0;
+		
+		inline var slots:Vector.<Slot> = _armature.getSlots();
+		for (var i:UInt = 0, l:UInt = slots.length; i < l; ++i) 
+		{
+			inline var slot:Slot = slots[i];
+			if (slot.parent === this)
+			{
+				_slots.push(slot);	
+			}
+		}
+		
+		return _slots;
 	}
-
 	/**
-	 * Get all Slot instance associated with this bone.
-	 * @return A Vector.&lt;Slot&gt; instance.
+	 * @private
+	 */
+	public function get boneData():BoneData
+	{
+		return _boneData;
+	}
+	/**
+	 * @language zh_CN
+	 * 控制此骨骼所有插槽的可见。
+	 * @default true
 	 * @see dragonBones.Slot
+	 * @version DragonBones 3.0
 	 */
-	public function getSlots(returnCopy:Bool = true):Array<Slot>
+	public function get visible():Bool
 	{
-		return returnCopy?_slotList.copy():_slotList;
+		return _visible;
 	}
-
-	/**
-	 * Add a bone or slot as child
-	 * @param a Slot or Bone instance
-	 * @see dragonBones.core.DBObject
-	 */
-	public function addChild(child:DBObject):Void
+	public function set visible(value:Bool):Void
 	{
-		if(child == null)
-		{
-			throw "ArgumentError";
-		}
-		if(child.parent != null)
-		{
-			child.parent.removeChild(child);
-		}
-
-		if (Std.is(child, Bone)) {
-			var bone:Bone = cast(child, Bone);
-			if(bone == this || (bone != null && bone.contains(this)))
-			{
-				throw "An Bone cannot be added as a child to itself or one of its children (or children's children, etc.)";
-			}
-
-			if(bone != null)
-			{
-				_boneList.push(bone);
-				bone.setParent(this);
-				bone.setArmature(this._armature);
-			}
-		}
-		else if(Std.is(child, Slot))
-		{
-			var slot:Slot = cast(child, Slot);
-			_slotList.push(slot);
-			slot.setParent(this);
-			slot.setArmature(this._armature);
-		}
-	}
-
-	/**
-	 * remove a child bone or slot
-	 * @param a Slot or Bone instance
-	 * @see dragonBones.core.DBObject
-	 */
-	public function removeChild(child:DBObject):Void
-	{
-		if(child == null)
-		{
-			throw "ArgumentError";
-		}
-
-		var index:Int;
-		if(Std.is(child, Bone))
-		{
-			var bone:Bone = cast(child, Bone);
-			index = _boneList.indexOf(bone);
-			if(index >= 0)
-			{
-				_boneList.splice(index, 1);
-				bone.setParent(null);
-				bone.setArmature(null);
-			}
-			else
-			{
-				throw "ArgumentError";
-			}
-		}
-		else if(Std.is(child, Slot))
-		{
-			var slot:Slot = cast(child, Slot);
-			index = _slotList.indexOf(slot);
-			if(index >= 0)
-			{
-				_slotList.splice(index, 1);
-				slot.setParent(null);
-				slot.setArmature(null);
-			}
-			else
-			{
-				throw "ArgumentError";
-			}
-		}
-	}
-
-	override public function calculateRelativeParentTransform():Void
-	{
-		_global.scaleX = this._origin.scaleX * _tween.scaleX * this._offset.scaleX;
-		_global.scaleY = this._origin.scaleY * _tween.scaleY * this._offset.scaleY;
-		_global.skewX = this._origin.skewX + _tween.skewX + this._offset.skewX;
-		_global.skewY = this._origin.skewY + _tween.skewY + this._offset.skewY;
-		_global.x = this._origin.x + _tween.x + this._offset.x;
-		_global.y = this._origin.y + _tween.y + this._offset.y;
-	}
-
-	/** @private */
-	public function update(needUpdate:Bool = false):Void
-	{
-		_needUpdate --;
-		if(needUpdate || _needUpdate > 0 || (this._parent != null && this._parent._needUpdate > 0))
-		{
-			_needUpdate = 1;
-		}
-		else
+		if (_visible == value)
 		{
 			return;
 		}
-
-		if(_frameCachedPosition >= 0 && _frameCachedDuration <= 0)
+		
+		_visible = value;
+		
+		inline var slots:Vector.<Slot> = _armature.getSlots();
+		for (var i:UInt = 0, l:UInt = slots.length; i < l; ++i) 
 		{
-			var frameCached:FrameCached = _timelineCached.timeline[_frameCachedPosition];
-			var transform:DBTransform = frameCached.transform;
-			this._global.x = transform.x;
-			this._global.y = transform.x;
-			this._global.skewX = transform.skewX;
-			this._global.skewY = transform.skewY;
-			this._global.scaleX = transform.scaleX;
-			this._global.scaleY = transform.scaleY;
-			//this._global.copy(_frameCached.transform);
-
-			var matrix:Matrix = frameCached.matrix;
-			this._globalTransformMatrix.a = matrix.a;
-			this._globalTransformMatrix.b = matrix.b;
-			this._globalTransformMatrix.c = matrix.c;
-			this._globalTransformMatrix.d = matrix.d;
-			this._globalTransformMatrix.tx = matrix.tx;
-			this._globalTransformMatrix.ty = matrix.ty;
-			//this._globalTransformMatrix.copyFrom(_frameCached.matrix);
-			return;
-		}
-
-		blendingTimeline();
-
-	//计算global
-		var result:TransformSet = updateGlobal();
-		var parentGlobalTransform:DBTransform = result != null ? result.parentGlobalTransform : null;
-		var parentGlobalTransformMatrix:Matrix = result != null ? result.parentGlobalTransformMatrix : null;
-
-	//计算globalForChild
-		var ifExistOffsetTranslation:Bool = _offset.x != 0 || _offset.y != 0;
-		var ifExistOffsetScale:Bool = _offset.scaleX != 1 || _offset.scaleY != 1;
-		var ifExistOffsetRotation:Bool = _offset.skewX != 0 || _offset.skewY != 0;
-
-		if(	(!ifExistOffsetTranslation || applyOffsetTranslationToChild) &&
-			(!ifExistOffsetScale || applyOffsetScaleToChild) &&
-			(!ifExistOffsetRotation || applyOffsetRotationToChild))
-		{
-			_globalTransformForChild = _global;
-			_globalTransformMatrixForChild = _globalTransformMatrix;
-		}
-		else
-		{
-			if(_tempGlobalTransformForChild == null)
+			inline var slot:Slot = slots[i];
+			if (slot._parent == this)
 			{
-				_tempGlobalTransformForChild = new DBTransform();
+				slot._updateVisible();
 			}
-			_globalTransformForChild = _tempGlobalTransformForChild;
-
-			if(_tempGlobalTransformMatrixForChild == null)
-			{
-				_tempGlobalTransformMatrixForChild = new Matrix();
-			}
-			_globalTransformMatrixForChild = _tempGlobalTransformMatrixForChild;
-
-			_globalTransformForChild.x = this._origin.x + _tween.x;
-			_globalTransformForChild.y = this._origin.y + _tween.y;
-			_globalTransformForChild.scaleX = this._origin.scaleX * _tween.scaleX;
-			_globalTransformForChild.scaleY = this._origin.scaleY * _tween.scaleY;
-			_globalTransformForChild.skewX = this._origin.skewX + _tween.skewX;
-			_globalTransformForChild.skewY = this._origin.skewY + _tween.skewY;
-
-			if(applyOffsetTranslationToChild)
-			{
-				_globalTransformForChild.x += this._offset.x;
-				_globalTransformForChild.y += this._offset.y;
-			}
-			if(applyOffsetScaleToChild)
-			{
-				_globalTransformForChild.scaleX *= this._offset.scaleX;
-				_globalTransformForChild.scaleY *= this._offset.scaleY;
-			}
-			if(applyOffsetRotationToChild)
-			{
-				_globalTransformForChild.skewX += this._offset.skewX;
-				_globalTransformForChild.skewY += this._offset.skewY;
-			}
-
-			TransformUtil.transformToMatrix(_globalTransformForChild, _globalTransformMatrixForChild, true);
-			if(parentGlobalTransformMatrix != null)
-			{
-				_globalTransformMatrixForChild.concat(parentGlobalTransformMatrix);
-				TransformUtil.matrixToTransform(_globalTransformMatrixForChild, _globalTransformForChild, _globalTransformForChild.scaleX * parentGlobalTransform.scaleX >= 0, _globalTransformForChild.scaleY * parentGlobalTransform.scaleY >= 0 );
-			}
-		}
-
-		if(_frameCachedDuration > 0)    // && _frameCachedPosition >= 0
-		{
-			_timelineCached.addFrame(this._global, this._globalTransformMatrix, _frameCachedPosition, _frameCachedDuration);
 		}
 	}
-
-	/** @private */
-	public function updateColor(
-		aOffset:Float,
-		rOffset:Float,
-		gOffset:Float,
-		bOffset:Float,
-		aMultiplier:Float,
-		rMultiplier:Float,
-		gMultiplier:Float,
-		bMultiplier:Float,
-		colorChanged:Bool
-	):Void
+	
+	/**
+	 * @deprecated
+	 */
+	public function get ikChain():UInt
 	{
-		for (slot in _slotList)
-		{
-			slot.updateDisplayColor(
-				aOffset, rOffset, gOffset, bOffset,
-				aMultiplier, rMultiplier, gMultiplier, bMultiplier
-			);
-		}
-
-		_isColorChanged = colorChanged;
+		return _ikChain;
 	}
-
-	/** @private */
-	public function hideSlots():Void
+	/**
+	 * @deprecated
+	 */
+	public function get ikChainIndex():Int
 	{
-		for (slot in _slotList)
-		{
-			slot.changeDisplay(-1);
-		}
+		return _ikChainIndex;
 	}
-
-	/** @private When bone timeline enter a key frame, call this func*/
-	public function arriveAtFrame(frame:Frame, timelineState:TimelineState, animationState:AnimationState, isCross:Bool):Void
+	/**
+	 * @deprecated
+	 */
+	public function get ik():Bone
 	{
-		var displayControl:Bool =
-			animationState.displayControl &&
-			(displayController == null || displayController == animationState.name) &&
-			animationState.getMixingTransform(name) == false;
-
-		if(displayControl)
-		{
-			var slot:Slot;
-			var tansformFrame:TransformFrame = cast(frame, TransformFrame);
-			var displayIndex:Int = tansformFrame.displayIndex;
-			for (slot in _slotList)
-			{
-				slot.changeDisplay(displayIndex);
-				slot.updateDisplayVisible(tansformFrame.visible);
-				if(displayIndex >= 0)
-				{
-					if(!Math.isNaN(tansformFrame.zOrder) && tansformFrame.zOrder != slot._tweenZOrder)
-					{
-						slot._tweenZOrder = tansformFrame.zOrder;
-						this._armature._slotsZOrderChanged = true;
-					}
-				}
-			}
-
-			if(frame.event != null && this._armature.hasEventListener(FrameEvent.BONE_FRAME_EVENT))
-			{
-				var frameEvent:FrameEvent = new FrameEvent(FrameEvent.BONE_FRAME_EVENT);
-				frameEvent.bone = this;
-				frameEvent.animationState = animationState;
-				frameEvent.frameLabel = frame.event;
-				this._armature._eventList.push(frameEvent);
-			}
-
-			if(frame.sound != null && _soundManager.hasEventListener(SoundEvent.SOUND))
-			{
-				var soundEvent:SoundEvent = new SoundEvent(SoundEvent.SOUND);
-				soundEvent.armature = this._armature;
-				soundEvent.animationState = animationState;
-				soundEvent.sound = frame.sound;
-				_soundManager.dispatchEvent(soundEvent);
-			}
-
-			//[TODO]currently there is only gotoAndPlay belongs to frame action. In future, there will be more.
-			//后续会扩展更多的action，目前只有gotoAndPlay的含义
-			if(frame.action != null)
-			{
-				for (slot in _slotList)
-				{
-					var childArmature:Armature = slot.childArmature;
-					if(childArmature != null)
-					{
-						childArmature.animation.gotoAndPlay(frame.action);
-					}
-				}
-			}
-		}
+		return _ik;
 	}
-
-	/** @private */
-	public function addState(timelineState:TimelineState):Void
-	{
-		if(_timelineStateList.indexOf(timelineState) < 0)
-		{
-			_timelineStateList.push(timelineState);
-			_timelineStateList.sort(sortState);
-		}
-	}
-
-	/** @private */
-	public function removeState(timelineState:TimelineState):Void
-	{
-		var index:Int = _timelineStateList.indexOf(timelineState);
-		if(index >= 0)
-		{
-			_timelineStateList.splice(index, 1);
-		}
-	}
-
-	private function blendingTimeline():Void
-	{
-		var timelineState:TimelineState;
-		var transform:DBTransform;
-		var pivot:Point;
-		var weight:Float;
-
-		var i:Int = _timelineStateList.length;
-		if(i == 1)
-		{
-			timelineState = _timelineStateList[0];
-			weight = timelineState._animationState.weight * timelineState._animationState.fadeWeight;
-			timelineState._weight = weight;
-			transform = timelineState._transform;
-			pivot = timelineState._pivot;
-
-			_tween.x = transform.x * weight;
-			_tween.y = transform.y * weight;
-			_tween.skewX = transform.skewX * weight;
-			_tween.skewY = transform.skewY * weight;
-			_tween.scaleX = 1 + (transform.scaleX - 1) * weight;
-			_tween.scaleY = 1 + (transform.scaleY - 1) * weight;
-
-			_tweenPivot.x = pivot.x * weight;
-			_tweenPivot.y = pivot.y * weight;
-		}
-		else if(i > 1)
-		{
-			var x:Float = 0;
-			var y:Float = 0;
-			var skewX:Float = 0;
-			var skewY:Float = 0;
-			var scaleX:Float = 1;
-			var scaleY:Float = 1;
-			var pivotX:Float = 0;
-			var pivotY:Float = 0;
-
-			var weigthLeft:Float = 1;
-			var layerTotalWeight:Float = 0;
-			var prevLayer:Int = _timelineStateList[i - 1]._animationState.layer;
-			var currentLayer:Int;
-
-			//Traversal the layer from up to down
-			//layer由高到低依次遍历
-
-			while(i -- > 0)
-			{
-				timelineState = _timelineStateList[i];
-
-				currentLayer = timelineState._animationState.layer;
-				if(prevLayer != currentLayer)
-				{
-					if(layerTotalWeight >= weigthLeft)
-					{
-						timelineState._weight = 0;
-						break;
-					}
-					else
-					{
-						weigthLeft -= layerTotalWeight;
-					}
-				}
-				prevLayer = currentLayer;
-
-				weight = timelineState._animationState.weight * timelineState._animationState.fadeWeight * weigthLeft;
-				timelineState._weight = weight;
-				if(weight != 0 && timelineState._blendEnabled)
-				{
-					transform = timelineState._transform;
-					pivot = timelineState._pivot;
-
-					x += transform.x * weight;
-					y += transform.y * weight;
-					skewX += transform.skewX * weight;
-					skewY += transform.skewY * weight;
-					scaleX += (transform.scaleX - 1) * weight;
-					scaleY += (transform.scaleY - 1) * weight;
-					pivotX += pivot.x * weight;
-					pivotY += pivot.y * weight;
-
-					layerTotalWeight += weight;
-				}
-			}
-
-			_tween.x = x;
-			_tween.y = y;
-			_tween.skewX = skewX;
-			_tween.skewY = skewY;
-			_tween.scaleX = scaleX;
-			_tween.scaleY = scaleY;
-			_tweenPivot.x = pivotX;
-			_tweenPivot.y = pivotY;
-		}
-	}
-
-	private function sortState(state1:TimelineState, state2:TimelineState):Int
-	{
-		return state1._animationState.layer < state2._animationState.layer?-1:1;
-	}
+}
 }

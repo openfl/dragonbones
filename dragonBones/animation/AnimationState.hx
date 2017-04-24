@@ -1,931 +1,954 @@
-﻿package dragonBones.animation;
-
+﻿package dragonBones.animation
+{
 import dragonBones.Armature;
 import dragonBones.Bone;
-import dragonBones.events.AnimationEvent;
+import dragonBones.Slot;
+import dragonBones.core.BaseObject;
+import dragonBones.core.dragonBones_internal;
+import dragonBones.events.EventObject;
+import dragonBones.objects.AnimationConfig;
 import dragonBones.objects.AnimationData;
-import dragonBones.objects.Frame;
-import dragonBones.objects.TransformTimeline;
+import dragonBones.objects.BoneTimelineData;
+import dragonBones.objects.DisplayData;
+import dragonBones.objects.FFDTimelineData;
+import dragonBones.objects.SlotTimelineData;
+
 
 /**
- * The AnimationState gives full control over animation blending.
- * In most cases the Animation interface is sufficient and easier to use. Use the AnimationState if you need full control over the animation blending any playback process.
+ * @language zh_CN
+ * 动画状态，播放动画时产生，可以对每个播放的动画进行更细致的控制和调节。
+ * @see dragonBones.animation.Animation
+ * @see dragonBones.objects.AnimationData
+ * @version DragonBones 3.0
  */
-class AnimationState
+public final class AnimationState extends BaseObject
 {
-	private static var _pool:Array<AnimationState> = new Array<AnimationState>();
-
-	/** @private */
-	public static function borrowObject():AnimationState
-	{
-		if(_pool.length == 0)
-		{
-			return new AnimationState();
-		}
-		return _pool.pop();
-	}
-
-	/** @private */
-	public static function returnObject(animationState:AnimationState):Void
-	{
-		if(_pool.indexOf(animationState) < 0)
-		{
-			_pool.push(animationState);
-		}
-
-		animationState.clear();
-	}
-
-	/** @private */
-	public static function clearPool():Void
-	{
-		var i:Int = _pool.length;
-		while(i -- > 0)
-		{
-			_pool[i].clear();
-		}
-		_pool = new Array<AnimationState>();
-
-		TimelineState.clearPool();
-	}
-
 	/**
-	 * Sometimes, we want slots controlled by a spedific animation state when animation is doing mix or addition.
-	 * It determine if animation's color change, displayIndex change, visible change can apply to its display
+	 * @language zh_CN
+     * 是否对插槽的显示对象有控制权。
+	 * @see dragonBones.Slot#displayController
+	 * @version DragonBones 3.0
 	 */
 	public var displayControl:Bool;
-
 	/**
-	 * If animation mixing use additive blending.
+	 * @language zh_CN
+     * 是否以增加的方式混合。
+	 * @version DragonBones 3.0
 	 */
 	public var additiveBlending:Bool;
-	public function setAdditiveBlending(value:Bool):AnimationState
-	{
-		additiveBlending = value;
-		return this;
-	}
-
 	/**
-	 * If animation auto fade out after play complete.
+	 * @language zh_CN
+	 * 是否能触发行为。
+	 * @version DragonBones 5.0
 	 */
-	public var autoFadeOut:Bool;
+	public var actionEnabled:Bool;
 	/**
-	 * Duration of fade out. By default, it equals to fade in time.
+	 * @language zh_CN
+     * 播放次数。 [0: 无限循环播放, [1~N]: 循环播放 N 次]
+	 * @version DragonBones 3.0
 	 */
-	public var fadeOutTime:Float;
-	public function setAutoFadeOut(value:Bool, fadeOutTime:Float = -1):AnimationState
-	{
-		autoFadeOut = value;
-		if(fadeOutTime >= 0)
-		{
-			this.fadeOutTime = fadeOutTime * _timeScale;
-		}
-		return this;
-	}
-
+	public var playTimes:UInt;
 	/**
-	 * The weight of animation.
+	 * @language zh_CN
+     * 播放速度。 [(-N~0): 倒转播放, 0: 停止播放, (0~1): 慢速播放, 1: 正常播放, (1~N): 快速播放]
+	 * @version DragonBones 3.0
+	 */
+	public var timeScale:Float;
+	/**
+	 * @language zh_CN
+     * 混合权重。
+	 * @version DragonBones 3.0
 	 */
 	public var weight:Float;
-	public function setWeight(value:Float):AnimationState
-	{
-		if(Math.isNaN(value) || value < 0)
-		{
-			value = 1;
-		}
-		weight = value;
-		return this;
-	}
-
 	/**
-	 * If auto genterate tween between keyframes.
+	 * @language zh_CN
+     * 自动淡出时间。 [-1: 不自动淡出, [0~N]: 淡出时间] (以秒为单位)
+     * 当设置一个大于等于 0 的值，动画状态将会在播放完成后自动淡出。
+	 * @version DragonBones 3.0
 	 */
-	public var autoTween:Bool;
+	public var autoFadeOutTime:Float;
 	/**
-	 * If generate tween between the lastFrame to the first frame for loop animation.
+	 * @private
 	 */
-	public var lastFrameAutoTween:Bool;
-	public function setFrameTween(autoTween:Bool, lastFrameAutoTween:Bool):AnimationState
-	{
-		this.autoTween = autoTween;
-		this.lastFrameAutoTween = lastFrameAutoTween;
-		return this;
-	}
-
-	private var _armature:Armature;
-	private var _timelineStateList:Array<TimelineState>;
-	private var _mixingTransforms:Array<String>;
-
-	private var _isPlaying:Bool;
+	public var fadeTotalTime:Float;
+	/**
+	 * @private
+	 */
+	internal var _playheadState:Int;
+	/**
+	 * @private
+	 */
+	internal var _fadeState:Int;
+	/**
+	 * @private
+	 */
+	internal var _subFadeState:Int;
+	/**
+	 * @private
+	 */
+	internal var _layer:Int;
+	/**
+	 * @private
+	 */
+	internal var _position:Float;
+	/**
+	 * @private
+	 */
+	internal var _duration:Float;
+	/**
+	 * @private
+	 */
+	private var _fadeTime:Float;
+	/**
+	 * @private
+	 */
 	private var _time:Float;
-	private var _currentFrameIndex:Int;
-	private var _currentFramePosition:Int;
-	private var _currentFrameDuration:Int;
-
-	private var _pausePlayheadInFade:Bool;
-	private var _isFadeOut:Bool;
-	private var _fadeTotalWeight:Float;
-	private var _fadeCurrentTime:Float;
-	private var _fadeBeginTime:Float;
-
+	/**
+	 * @private
+	 */
+	internal var _fadeProgress:Float;
+	/**
+	 * @private
+	 */
+	internal var _weightResult:Float;
+	/**
+	 * @private
+	 */
 	private var _name:String;
 	/**
-	 * The name of the animation state.
+	 * @private
 	 */
-    public var name(get, null):String;
-	public function get_name():String
-	{
-		return _name;
-	}
-
-	/** @private */
-	public var _layer:Int;
+	internal var _group:String;
 	/**
-	 * The layer of the animation. When calculating the final blend weights, animations in higher layers will get their weights.
+	 * @private
 	 */
-    public var layer(get, null):Int;
-	public function get_layer():Int
-	{
-		return _layer;
-	}
-
-	/** @private */
-	public var _group:String;
+	private inline var _boneMask:Vector.<String> = new Vector.<String>();
 	/**
-	 * The group of the animation.
+	 * @private
 	 */
-    public var group(get, null):String;
-	public function get_group():String
-	{
-		return _group;
-	}
-
-	private var _clip:AnimationData;
+	private inline var _boneTimelines:Vector.<BoneTimelineState> = new Vector.<BoneTimelineState>();
 	/**
-	 * The clip that is being played by this animation state.
-	 * @see dragonBones.objects.AnimationData.
+	 * @private
 	 */
-    public var clip(get, null):AnimationData;
-	public function get_clip():AnimationData
-	{
-		return _clip;
-	}
-
-	private var _isComplete:Bool;
+	private inline var _slotTimelines:Vector.<SlotTimelineState> = new Vector.<SlotTimelineState>();
 	/**
-	 * Is animation complete.
+	 * @private
 	 */
-    public var isComplete(get, null):Bool;
-	public function get_isComplete():Bool
+	private inline var _ffdTimelines:Vector.<FFDTimelineState> = new Vector.<FFDTimelineState>();
+	/**
+	 * @private
+	 */
+	private var _animationData:AnimationData;
+	/**
+	 * @private
+	 */
+	private var _armature:Armature;
+	/**
+	 * @private
+	 */
+	internal var _timeline:AnimationTimelineState;
+	/**
+	 * @private
+	 */
+	private var _zOrderTimeline: ZOrderTimelineState;
+	/**
+	 * @private
+	 */
+	public function AnimationState()
 	{
-		return _isComplete;
+		super(this);
 	}
 	/**
-	 * Is animation playing.
+	 * @private
 	 */
-    public var isPlaying(get, null):Bool;
-	public function get_isPlaying():Bool
+	override private function _onClear():Void
 	{
-		return (_isPlaying && !_isComplete);
-	}
-
-	private var _currentPlayTimes:Int;
-	/**
-	 * Current animation played times
-	 */
-	public var currentPlayTimes(get, null):Int;
-	public function get_currentPlayTimes():Int
-	{
-		return _currentPlayTimes < 0 ? 0 : _currentPlayTimes;
-	}
-
-	private var _totalTime:Int;
-	/**
-	 * The length of the animation clip in seconds.
-	 */
-	public var totalTime(get, null):Float;
-	public function get_totalTime():Float
-	{
-		return _totalTime * 0.001;
-	}
-
-	private var _currentTime:Int;
-	/**
-	 * The current time of the animation.
-	 */
-	public var currentTime(get, null):Float;
-	public function get_currentTime():Float
-	{
-		return _currentTime < 0 ? 0 : _currentTime * 0.001;
-	}
-	public function setCurrentTime(value:Float):AnimationState
-	{
-		if(value < 0 || Math.isNaN(value))
+		for (var i:UInt = 0, l:UInt = _boneTimelines.length; i < l; ++i)
 		{
-			value = 0;
+			_boneTimelines[i].returnToPool();
 		}
-		_time = value;
-		_currentTime = Std.int(_time * 1000);
-		return this;
+		
+		for (i = 0, l = _slotTimelines.length; i < l; ++i)
+		{
+			_slotTimelines[i].returnToPool();
+		}
+		
+		for (i = 0, l = _ffdTimelines.length; i < l; ++i)
+		{
+			_ffdTimelines[i].returnToPool();
+		}
+		
+		if (_timeline)
+		{
+			_timeline.returnToPool();
+		}
+		
+		if (_zOrderTimeline)
+		{
+			_zOrderTimeline.returnToPool();
+		}
+		
+		displayControl = true;
+		additiveBlending = false;
+		actionEnabled = false;
+		playTimes = 1;
+		timeScale = 1.0;
+		weight = 1.0;
+		autoFadeOutTime = -1.0;
+		fadeTotalTime = 0.0;
+		
+		_playheadState = 0;
+		_fadeState = -1;
+		_subFadeState = -1;
+		_layer = 0;
+		_position = 0.0;
+		_duration = 0.0;
+		_fadeTime = 0.0;
+		_time = 0.0;
+		_fadeProgress = 0.0;
+		_weightResult = 0.0;
+		_name = null;
+		_group = null;
+		_boneMask.fixed = false;
+		_boneMask.length = 0;
+		_boneTimelines.fixed = false;
+		_boneTimelines.length = 0;
+		_slotTimelines.fixed = false;
+		_slotTimelines.length = 0;
+		_ffdTimelines.fixed = false;
+		_ffdTimelines.length = 0;
+		_animationData = null;
+		_armature = null;
+		_timeline = null;
+		_zOrderTimeline = null;
 	}
-
-	private var _fadeWeight:Float;
-	public var fadeWeight(get, null):Float;
-	public function get_fadeWeight():Float
+	
+	private function _advanceFadeTime(passedTime:Float):Void
 	{
-		return _fadeWeight;
+		inline var isFadeOut:Bool = _fadeState > 0;
+		
+		if (_subFadeState < 0) // Fade start event.
+		{
+			_subFadeState = 0;
+			
+			var eventType:String = isFadeOut ? EventObject.FADE_OUT : EventObject.FADE_IN;
+			if (_armature.eventDispatcher.hasEvent(eventType)) 
+			{
+				var eventObject:EventObject = BaseObject.borrowObject(EventObject) as EventObject;
+				eventObject.animationState = this;
+				_armature._bufferEvent(eventObject, eventType);
+			}
+		}
+		
+		if (passedTime < 0.0) 
+		{
+			passedTime = -passedTime;
+		}
+		
+		_fadeTime += passedTime;
+		
+		if (_fadeTime >= fadeTotalTime) // Fade complete.
+		{
+			_subFadeState = 1;
+			_fadeProgress = isFadeOut ? 0.0 : 1.0;
+		}
+		else if (_fadeTime > 0.0) // Fading.
+		{
+			_fadeProgress = isFadeOut ? (1.0 - _fadeTime / fadeTotalTime) : (_fadeTime / fadeTotalTime);
+		}
+		else // Before fade.
+		{
+			_fadeProgress = isFadeOut ? 1.0 : 0.0;
+		}
+		
+		if (_subFadeState > 0) // Fade complete event.
+		{
+			if (!isFadeOut) 
+			{
+				_playheadState |= 1; // x1
+				_fadeState = 0;
+			}
+			
+			eventType = isFadeOut ? EventObject.FADE_OUT_COMPLETE : EventObject.FADE_IN_COMPLETE;
+			if (_armature.eventDispatcher.hasEvent(eventType)) 
+			{
+				eventObject = BaseObject.borrowObject(EventObject) as EventObject;
+				eventObject.animationState = this;
+				_armature._bufferEvent(eventObject, eventType);
+			}
+		}
 	}
-
-	private var _fadeState:Int;
-	public var fadeState(get, null):Int;
-	public function get_fadeState():Int
-	{
-		return _fadeState;
-	}
-
-	private var _fadeTotalTime:Float;
-	public var fadeTotalTime(get, null):Float;
-	public function get_fadeTotalTime():Float
-	{
-		return _fadeTotalTime;
-	}
-
-	private var _timeScale:Float;
 	/**
-	 * The amount by which passed time should be scaled. Used to slow down or speed up the animation. Defaults to 1.
+	 * @private
 	 */
-    public var timeScale(get, null):Float;
-	public function get_timeScale():Float
-	{
-		return _timeScale;
-	}
-	public function setTimeScale(value:Float):AnimationState
-	{
-		if(Math.isNaN(value) || value == Math.POSITIVE_INFINITY)
-		{
-			value = 1;
-		}
-		_timeScale = value;
-		return this;
-	}
-
-	private var _playTimes:Int;
-	/**
-	 * playTimes Play times(0:loop forever, 1~+∞:play times, -1~-∞:will fade animation after play complete).
-	 */
-    public var playTimes(get, null):Int;
-	public function get_playTimes():Int
-	{
-		return _playTimes;
-	}
-	public function setPlayTimes(value:Int):AnimationState
-	{
-		if(Math.round(_totalTime * 0.001 * _clip.frameRate) < 2)
-		{
-			_playTimes = value < 0?-1:1;
-		}
-		else
-		{
-			_playTimes = value < 0?-value:value;
-		}
-		autoFadeOut = value < 0?true:false;
-		return this;
-	}
-
-	public function new()
-	{
-		_timelineStateList = new Array<TimelineState>();
-		_mixingTransforms = new Array<String>();
-	}
-
-	/** @private */
-	public function fadeIn(armature:Armature, clip:AnimationData, fadeTotalTime:Float, timeScale:Float, playTimes:Float, pausePlayhead:Bool):AnimationState
+	public function _init(armature: Armature, animationData: AnimationData, animationConfig: AnimationConfig):Void 
 	{
 		_armature = armature;
-		_clip = clip;
-		_pausePlayheadInFade = pausePlayhead;
-
-		_name = _clip.name;
-		_totalTime = _clip.duration;
-
-		autoTween = _clip.autoTween;
-
-		setTimeScale(timeScale);
-		setPlayTimes(Std.int(playTimes));
-
-		//reset
-		_isComplete = false;
-		_currentFrameIndex = -1;
-		_currentPlayTimes = -1;
-		if(Math.round(_totalTime * _clip.frameRate * 0.001) < 2 || timeScale == Math.POSITIVE_INFINITY)
+		_animationData = animationData;
+		_name = animationConfig.name ? animationConfig.name : animationConfig.animationName;
+		
+		actionEnabled = animationConfig.actionEnabled;
+		additiveBlending = animationConfig.additiveBlending;
+		displayControl = animationConfig.displayControl;
+		playTimes = animationConfig.playTimes;
+		timeScale = animationConfig.timeScale;
+		fadeTotalTime = animationConfig.fadeInTime;
+		autoFadeOutTime = animationConfig.autoFadeOutTime;
+		weight = animationConfig.weight;
+		
+		if (animationConfig.pauseFadeIn) 
 		{
-			_currentTime = _totalTime;
+			_playheadState = 2; // 10
 		}
-		else
+		else 
 		{
-			_currentTime = -1;
+			_playheadState = 3; // 11
 		}
-		_time = 0;
-		_mixingTransforms = new Array<String>();
-
-		//fade start
-		_isFadeOut = false;
-		_fadeWeight = 0;
-		_fadeTotalWeight = 1;
+		
 		_fadeState = -1;
-		_fadeCurrentTime = 0;
-		_fadeBeginTime = _fadeCurrentTime;
-		_fadeTotalTime = fadeTotalTime * _timeScale;
-
-		//default
-		_isPlaying = true;
-		displayControl = true;
-		lastFrameAutoTween = true;
-		additiveBlending = false;
-		weight = 1;
-		fadeOutTime = fadeTotalTime;
-
-		updateTimelineStates();
-		return this;
-	}
-
-	/**
-	 * Fade out the animation state
-	 * @param fadeOutTime
-	 * @param pauseBeforeFadeOutComplete pause the animation before fade out complete
-	 */
-	public function fadeOut(fadeTotalTime:Float, pausePlayhead:Bool):AnimationState
-	{
-		if(_armature == null)
+		_subFadeState = -1;
+		_layer = animationConfig.layer;
+		_time = animationConfig.position;
+		_group = animationConfig.group;
+		
+		if (animationConfig.duration < 0.0) 
 		{
-			return null;
+			_position = 0.0;
+			_duration = _animationData.duration;
 		}
-
-		if(Math.isNaN(fadeTotalTime) || fadeTotalTime < 0)
+		else 
 		{
-			fadeTotalTime = 0;
+			_position = animationConfig.position;
+			_duration = animationConfig.duration;
 		}
-		_pausePlayheadInFade = pausePlayhead;
-
-		if(_isFadeOut)
+		
+		if (fadeTotalTime <= 0.0) 
 		{
-			if(fadeTotalTime > _fadeTotalTime / _timeScale - (_fadeCurrentTime - _fadeBeginTime))
+			_fadeProgress = 0.999999;
+		}
+		
+		if (animationConfig.boneMask.length > 0) 
+		{
+			_boneMask.length = animationConfig.boneMask.length;
+			for (var i:UInt = 0, l:UInt = _boneMask.length; i < l; ++i) 
 			{
-				//如果已经在淡出中，新的淡出需要更长的淡出时间，则忽略
-				//If the animation is already in fade out, the new fade out will be ignored.
-				return this;
+				_boneMask[i] = animationConfig.boneMask[i];
 			}
+			
+			_boneMask.fixed = true;
 		}
-		else
+		
+		_timeline = BaseObject.borrowObject(AnimationTimelineState) as AnimationTimelineState;
+		_timeline._init(_armature, this, _animationData);
+		
+		if (_animationData.zOrderTimeline) 
 		{
-			//第一次淡出
-			//The first time to fade out.
-			for (timelineState in _timelineStateList)
-			{
-				timelineState.fadeOut();
-			}
+			_zOrderTimeline = BaseObject.borrowObject(ZOrderTimelineState) as ZOrderTimelineState;
+			_zOrderTimeline._init(_armature, this, _animationData.zOrderTimeline);
 		}
-
-		//fade start
-		_isFadeOut = true;
-		_fadeTotalWeight = _fadeWeight;
-		_fadeState = -1;
-		_fadeBeginTime = _fadeCurrentTime;
-		_fadeTotalTime = _fadeTotalWeight >= 0?fadeTotalTime * _timeScale:0;
-
-		//default
-		displayControl = false;
-
-		return this;
+		
+		_updateTimelineStates();
 	}
-
 	/**
-	 * Play the current animation. 如果动画已经播放完毕, 将不会继续播放.
+	 * @private
 	 */
-	public function play():AnimationState
+	internal function _updateTimelineStates():Void
 	{
-		_isPlaying = true;
-		return this;
-	}
-
-	/**
-	 * Stop playing current animation.
-	 */
-	public function stop():AnimationState
-	{
-		_isPlaying = false;
-		return this;
-	}
-
-	public function getMixingTransform(timelineName:String):Bool
-	{
-		return _mixingTransforms.indexOf(timelineName) >= 0;
-	}
-
-	/**
-	 * Adds a transform which should be animated. This allows you to reduce the number of animations you have to create.
-	 * @param timelineName Bone's timeline name.
-	 * @param recursive if involved child armature's timeline.
-	 */
-	public function addMixingTransform(timelineName:String, recursive:Bool = true):AnimationState
-	{
-		if(recursive)
+		_boneTimelines.fixed = false;
+		_slotTimelines.fixed = false;
+		_ffdTimelines.fixed = false;
+		
+		inline var boneTimelineStates: Object = {};
+		inline var slotTimelineStates: Object = {};
+		inline var ffdTimelineStates: Object = {};
+		
+		for (var i:UInt = 0, l:UInt = _boneTimelines.length; i < l; ++i) // Creat bone timelines map.
 		{
-			var boneList:Array<Bone> = _armature.getBones(false);
-			var i:Int = boneList.length;
-			var currentBone:Bone = null;
-			while(i -- > 0)
+			var boneTimelineState:BoneTimelineState = _boneTimelines[i];
+			boneTimelineStates[boneTimelineState.bone.name] = boneTimelineState;
+		}
+		
+		inline var bones:Vector.<Bone> = _armature.getBones();
+		for (i = 0, l = bones.length; i < l; ++i) 
+		{
+			inline var bone:Bone = bones[i];
+			inline var boneTimelineName:String = bone.name;
+			if (containsBoneMask(boneTimelineName))
 			{
-				var bone:Bone = boneList[i];
-				var boneName:String = bone.name;
-				if(boneName == timelineName)
+				inline var boneTimelineData:BoneTimelineData = _animationData.getBoneTimeline(boneTimelineName);
+				if (boneTimelineData) 
 				{
-					currentBone = bone;
-				}
-				if(currentBone != null && (currentBone == bone || currentBone.contains(bone)))
-				{
-					if(_clip.getTimeline(boneName) != null)
+					if (boneTimelineStates[boneTimelineName]) // Remove bone timeline from map.
 					{
-						if(_mixingTransforms.indexOf(boneName) < 0)
+						delete boneTimelineStates[boneTimelineName];
+					}
+					else // Create new bone timeline.
+					{
+						boneTimelineState = BaseObject.borrowObject(BoneTimelineState) as BoneTimelineState;
+						boneTimelineState.bone = bone;
+						boneTimelineState._init(_armature, this, boneTimelineData);
+						_boneTimelines.push(boneTimelineState);
+					}
+				}
+			}
+		}
+		
+		for each(boneTimelineState in boneTimelineStates) // Remove bone timelines.
+		{
+			boneTimelineState.bone.invalidUpdate(); //
+			_boneTimelines.splice(_boneTimelines.indexOf(boneTimelineState), 1);
+			boneTimelineState.returnToPool();
+		}
+		
+		for (i = 0, l = _slotTimelines.length; i < l; ++i) // Create slot timelines map.
+		{ 
+			var slotTimelineState:SlotTimelineState = _slotTimelines[i];
+			slotTimelineStates[slotTimelineState.slot.name] = slotTimelineState;
+		}
+		
+		for (i = 0, l = _ffdTimelines.length; i < l; ++i) // Create ffd timelines map.
+		{ 
+			var ffdTimelineState:FFDTimelineState = _ffdTimelines[i];
+			inline var display:DisplayData = (ffdTimelineState._timelineData as FFDTimelineData).display;
+			var meshName:String = display.inheritAnimation ? display.mesh.name : display.name;
+			ffdTimelineStates[meshName] = ffdTimelineState;
+		}
+		
+		inline var slots:Vector.<Slot> = _armature.getSlots();
+		for (i = 0, l = slots.length; i < l; ++i)
+		{
+			inline var slot:Slot = slots[i];
+			inline var slotTimelineName:String = slot.name;
+			inline var parentTimelineName:String = slot.parent.name;
+			var resetFFDVertices:Bool = false;
+			
+			if (containsBoneMask(parentTimelineName)) 
+			{
+				inline var slotTimelineData:SlotTimelineData = _animationData.getSlotTimeline(slotTimelineName);
+				if (slotTimelineData) 
+				{
+					if (slotTimelineStates[slotTimelineName]) // Remove slot timeline from map.
+					{
+						delete slotTimelineStates[slotTimelineName];
+					}
+					else  // Create new slot timeline.
+					{
+						slotTimelineState = BaseObject.borrowObject(SlotTimelineState) as SlotTimelineState;
+						slotTimelineState.slot = slot;
+						slotTimelineState._init(_armature, this, slotTimelineData);
+						_slotTimelines.push(slotTimelineState);
+					}
+				}
+				
+				inline var ffdTimelineDatas:Object = _animationData.getFFDTimeline(_armature._skinData.name, slotTimelineName);
+				if (ffdTimelineDatas) 
+				{
+					for (var k:String in ffdTimelineDatas) 
+					{
+						if (ffdTimelineStates[k]) // Remove ffd timeline from map.
 						{
-							_mixingTransforms.push(boneName);
+							delete ffdTimelineStates[k];
+						}
+						else // Create new ffd timeline.
+						{
+							ffdTimelineState = BaseObject.borrowObject(FFDTimelineState) as FFDTimelineState;
+							ffdTimelineState.slot = slot;
+							ffdTimelineState._init(_armature, this, ffdTimelineDatas[k]);
+							_ffdTimelines.push(ffdTimelineState);
 						}
 					}
 				}
-			}
-		}
-		else if(_clip.getTimeline(timelineName) != null)
-		{
-			if(_mixingTransforms.indexOf(timelineName) < 0)
-			{
-				_mixingTransforms.push(timelineName);
-			}
-		}
-
-		updateTimelineStates();
-		return this;
-	}
-
-	/**
-	 * Removes a transform which was supposed be animated.
-	 * @param timelineName Bone's timeline name.
-	 * @param recursive If involved child armature's timeline.
-	 */
-	public function removeMixingTransform(timelineName:String, recursive:Bool = true):AnimationState
-	{
-		if(recursive)
-		{
-			var boneList:Array<Bone> = _armature.getBones(false);
-			var currentBone:Bone = null;
-			var i:Int = boneList.length;
-			while(i -- > 0)
-			{
-				var bone:Bone = boneList[i];
-				if(bone.name == timelineName)
+				else 
 				{
-					currentBone = bone;
-				}
-				if(currentBone != null && (currentBone == bone || currentBone.contains(bone)))
-				{
-					var index1:Int = _mixingTransforms.indexOf(bone.name);
-					if(index1 >= 0)
-					{
-						_mixingTransforms.splice(index1, 1);
-					}
+					resetFFDVertices = true;
 				}
 			}
-		}
-		else
-		{
-			var index2:Int = _mixingTransforms.indexOf(timelineName);
-			if(index2 >= 0)
+			else 
 			{
-				_mixingTransforms.splice(index2, 1);
+				resetFFDVertices = true;
+			}
+			
+			if (resetFFDVertices) 
+			{
+				for (var iA:UInt = 0, lA:UInt = slot._ffdVertices.length; iA < lA; ++iA) 
+				{
+					slot._ffdVertices[iA] = 0.0;
+				}
+				
+				slot._meshDirty = true;
 			}
 		}
-		updateTimelineStates();
-
-		return this;
-	}
-
-	public function removeAllMixingTransform():AnimationState
-	{
-		_mixingTransforms = new Array<String>();
-		updateTimelineStates();
-		return this;
-	}
-
-	/** @private */
-	public function advanceTime(passedTime:Float):Bool
-	{
-		passedTime *= _timeScale;
-
-		advanceFadeTime(passedTime);
-
-		if(_fadeWeight != 0)
+		
+		for each (slotTimelineState in slotTimelineStates) // Remove slot timelines.
 		{
-			advanceTimelinesTime(passedTime);
+			_slotTimelines.splice(_slotTimelines.indexOf(slotTimelineState), 1);
+			slotTimelineState.returnToPool();
 		}
-
-		return _isFadeOut && _fadeState == 1;
+		
+		for each (ffdTimelineState in ffdTimelineStates) // Remove ffd timelines.
+		{
+			_ffdTimelines.splice(_ffdTimelines.indexOf(ffdTimelineState), 1);
+			ffdTimelineState.returnToPool();
+		}
+		
+		_boneTimelines.fixed = true;
+		_slotTimelines.fixed = true;
+		_ffdTimelines.fixed = true;
 	}
-
 	/**
 	 * @private
-	 * Update timeline state based on mixing transforms and clip.
 	 */
-	public function updateTimelineStates():Void
+	internal function _advanceTime(passedTime:Float, cacheFrameRate:Float):Void
 	{
-		var timelineState:TimelineState;
-		var i:Int = _timelineStateList.length;
-		while(i -- > 0)
+		// Update fade time.
+		if (_fadeState !== 0 || _subFadeState !== 0) 
 		{
-			timelineState = _timelineStateList[i];
-			if(_armature.getBone(timelineState.name) == null)
-			{
-				removeTimelineState(timelineState);
-			}
+			_advanceFadeTime(passedTime);
 		}
-
-		if(_mixingTransforms.length > 0)
+		
+		// Update time.
+		if (timeScale !== 1.0) 
 		{
-			i = _timelineStateList.length;
-			while(i -- > 0)
-			{
-				timelineState = _timelineStateList[i];
-				if(_mixingTransforms.indexOf(timelineState.name) < 0)
-				{
-					removeTimelineState(timelineState);
-				}
-			}
-
-			for (timelineName in _mixingTransforms)
-			{
-				addTimelineState(timelineName);
-			}
+			passedTime *= timeScale;
 		}
-		else
-		{
-			for (timeline in _clip.timelineList)
-			{
-				addTimelineState(timeline.name);
-			}
-		}
-	}
-
-	private function addTimelineState(timelineName:String):Void
-	{
-		var bone:Bone = _armature.getBone(timelineName);
-		if(bone != null)
-		{
-			for (eachState in _timelineStateList)
-			{
-				if(eachState.name == timelineName)
-				{
-					return;
-				}
-			}
-			var timelineState:TimelineState = TimelineState.borrowObject();
-			timelineState.fadeIn(bone, this, _clip.getTimeline(timelineName));
-			_timelineStateList.push(timelineState);
-		}
-	}
-
-	private function removeTimelineState(timelineState:TimelineState):Void
-	{
-		var index:Int = _timelineStateList.indexOf(timelineState);
-		_timelineStateList.splice(index, 1);
-		TimelineState.returnObject(timelineState);
-	}
-
-	private function advanceFadeTime(passedTime:Float):Void
-	{
-		var fadeStartFlg:Bool = false;
-		var fadeCompleteFlg:Bool = false;
-
-		if(_fadeBeginTime >= 0)
-		{
-			var fadeState:Int = _fadeState;
-			_fadeCurrentTime += passedTime < 0?-passedTime:passedTime;
-			if(_fadeCurrentTime >= _fadeBeginTime + _fadeTotalTime)
-			{
-				//fade complete
-				if(
-					_fadeWeight == 1 ||
-					_fadeWeight == 0
-				)
-				{
-					fadeState = 1;
-					if (_pausePlayheadInFade)
-					{
-						_pausePlayheadInFade = false;
-						_currentTime = -1;
-					}
-				}
-				_fadeWeight = _isFadeOut?0:1;
-			}
-			else if(_fadeCurrentTime >= _fadeBeginTime)
-			{
-				//fading
-				fadeState = 0;
-				//暂时只支持线性淡入淡出
-				//Currently only support Linear fadein and fadeout
-				_fadeWeight = (_fadeCurrentTime - _fadeBeginTime) / _fadeTotalTime * _fadeTotalWeight;
-				if(_isFadeOut)
-				{
-					_fadeWeight = _fadeTotalWeight - _fadeWeight;
-				}
-			}
-			else
-			{
-				//before fade
-				fadeState = -1;
-				_fadeWeight = _isFadeOut?1:0;
-			}
-
-			if(_fadeState != fadeState)
-			{
-				//_fadeState == -1 && (fadeState == 0 || fadeState == 1)
-				if(_fadeState == -1)
-				{
-					fadeStartFlg = true;
-				}
-
-				//(_fadeState == -1 || _fadeState == 0) && fadeState == 1
-				if(fadeState == 1)
-				{
-					fadeCompleteFlg = true;
-				}
-				_fadeState = fadeState;
-			}
-		}
-
-		var event:AnimationEvent;
-
-		if(fadeStartFlg)
-		{
-			if(_isFadeOut)
-			{
-				if(_armature.hasEventListener(AnimationEvent.FADE_OUT))
-				{
-					event = new AnimationEvent(AnimationEvent.FADE_OUT);
-					event.animationState = this;
-					_armature._eventList.push(event);
-				}
-			}
-			else
-			{
-				hideBones();
-
-				if(_armature.hasEventListener(AnimationEvent.FADE_IN))
-				{
-					event = new AnimationEvent(AnimationEvent.FADE_IN);
-					event.animationState = this;
-					_armature._eventList.push(event);
-				}
-			}
-		}
-
-		if(fadeCompleteFlg)
-		{
-			if(_isFadeOut)
-			{
-				if(_armature.hasEventListener(AnimationEvent.FADE_OUT_COMPLETE))
-				{
-					event = new AnimationEvent(AnimationEvent.FADE_OUT_COMPLETE);
-					event.animationState = this;
-					_armature._eventList.push(event);
-				}
-			}
-			else
-			{
-				if(_armature.hasEventListener(AnimationEvent.FADE_IN_COMPLETE))
-				{
-					event = new AnimationEvent(AnimationEvent.FADE_IN_COMPLETE);
-					event.animationState = this;
-					_armature._eventList.push(event);
-				}
-			}
-		}
-	}
-
-	private function advanceTimelinesTime(passedTime:Float):Void
-	{
-		if(_isPlaying && !_pausePlayheadInFade)
+		
+		if (passedTime !== 0.0 && _playheadState === 3) // 11
 		{
 			_time += passedTime;
 		}
-
-		var startFlg:Bool = false;
-		var completeFlg:Bool = false;
-		var loopCompleteFlg:Bool = false;
-		var isThisComplete:Bool = false;
-		var currentPlayTimes:Int = 0;
-		var currentTime:Int = Std.int(_time * 1000);
-		if(_playTimes == 0)
+		
+		// Weight.
+		_weightResult = weight * _fadeProgress;
+		if (_weightResult !== 0.0) 
 		{
-			isThisComplete = false;
-			currentPlayTimes = Std.int(Math.ceil(Math.abs(currentTime) / _totalTime));
-			if (currentPlayTimes == 0) {
-			    currentPlayTimes = 1;
-			}
-			//currentTime -= Math.floor(currentTime / _totalTime) * _totalTime;
-			currentTime -= Std.int(currentTime / _totalTime) * _totalTime;
-
-			if(currentTime < 0)
+			inline var isCacheEnabled:Bool = _fadeState === 0 && cacheFrameRate > 0.0;
+			var isUpdatesTimeline:Bool = true;
+			var isUpdatesBoneTimeline:Bool = true;
+			var time:Float = _time;
+			
+			// Update main timeline.
+			_timeline.update(time);
+			
+			// Cache time internval.
+			if (isCacheEnabled) 
 			{
-				currentTime += _totalTime;
+				_timeline._currentTime = Math.floor(_timeline._currentTime * cacheFrameRate) / cacheFrameRate;
 			}
-		}
-		else
-		{
-			var totalTimes:Int = _playTimes * _totalTime;
-			if(currentTime >= totalTimes)
+			
+			// Update zOrder timeline.
+			if (_zOrderTimeline) 
 			{
-				currentTime = totalTimes;
-				isThisComplete = true;
+				_zOrderTimeline.update(time);
 			}
-			else if(currentTime <= -totalTimes)
+			
+			// Update cache.
+			if (isCacheEnabled) 
 			{
-				currentTime = -totalTimes;
-				isThisComplete = true;
-			}
-			else
-			{
-				isThisComplete = false;
-			}
-
-			if(currentTime < 0)
-			{
-				currentTime += totalTimes;
-			}
-
-			currentPlayTimes = Std.int(Math.ceil(currentTime / _totalTime));
-			if (currentPlayTimes == 0) {
-			    currentPlayTimes = 1;
-			}
-			//currentTime -= Math.floor(currentTime / _totalTime) * _totalTime;
-			currentTime -= Std.int(currentTime / _totalTime) * _totalTime;
-
-			if(isThisComplete)
-			{
-				currentTime = _totalTime;
-			}
-		}
-
-		//update timeline
-		_isComplete = isThisComplete;
-		var progress:Float = _time * 1000 / _totalTime;
-		for (timeline in _timelineStateList)
-		{
-			timeline.update(progress);
-			_isComplete = timeline._isComplete && _isComplete;
-		}
-
-		//update main timeline
-		if(_currentTime != currentTime)
-		{
-			if(_currentPlayTimes != currentPlayTimes)    //check loop complete
-			{
-				if(_currentPlayTimes > 0 && currentPlayTimes > 1)
+				inline var cacheFrameIndex:Int = Math.floor(_timeline._currentTime * cacheFrameRate); // uint
+				if (_armature.animation._cacheFrameIndex === cacheFrameIndex) // Same cache.
 				{
-					loopCompleteFlg = true;
+					isUpdatesTimeline = false;
+					isUpdatesBoneTimeline = false;
 				}
-				_currentPlayTimes = currentPlayTimes;
+				else 
+				{
+					_armature.animation._cacheFrameIndex = cacheFrameIndex;
+					
+					if (_animationData.cachedFrames[cacheFrameIndex]) // Cached.
+					{
+						isUpdatesBoneTimeline = false;
+					}
+					else // Cache.
+					{
+						_animationData.cachedFrames[cacheFrameIndex] = true;
+					}
+				}
 			}
-
-			if(_currentTime < 0)    //check start
+			
+			// Update timelines.
+			if (isUpdatesTimeline) 
 			{
-				startFlg = true;
-			}
-
-			if(_isComplete)    //check complete
-			{
-				completeFlg = true;
-			}
-
-			_currentTime = currentTime;
-			/*
-			if(isThisComplete)
-			{
-				currentTime = _totalTime * 0.999999;
-			}
-			//[0, _totalTime)
-			*/
-			updateMainTimeline(isThisComplete);
-		}
-
-		var event:AnimationEvent;
-		if(startFlg)
-		{
-			if(_armature.hasEventListener(AnimationEvent.START))
-			{
-				event = new AnimationEvent(AnimationEvent.START);
-				event.animationState = this;
-				_armature._eventList.push(event);
-			}
-		}
-
-		if(completeFlg)
-		{
-			if(_armature.hasEventListener(AnimationEvent.COMPLETE))
-			{
-				event = new AnimationEvent(AnimationEvent.COMPLETE);
-				event.animationState = this;
-				_armature._eventList.push(event);
-			}
-			if(autoFadeOut)
-			{
-				fadeOut(fadeOutTime, true);
+				if (isUpdatesBoneTimeline) 
+				{
+					for (var i:UInt = 0, l:UInt = _boneTimelines.length; i < l; ++i) 
+					{
+						_boneTimelines[i].update(time);
+					}
+				}
+				
+				for (i = 0, l = _slotTimelines.length; i < l; ++i) 
+				{
+					_slotTimelines[i].update(time);
+				}
+				
+				for (i = 0, l = _ffdTimelines.length; i < l; ++i) 
+				{
+					_ffdTimelines[i].update(time);
+				}
 			}
 		}
-		else if(loopCompleteFlg)
+		
+		if (_fadeState === 0) 
 		{
-			if(_armature.hasEventListener(AnimationEvent.LOOP_COMPLETE))
+			if (_subFadeState > 0) 
 			{
-				event = new AnimationEvent(AnimationEvent.LOOP_COMPLETE);
-				event.animationState = this;
-				_armature._eventList.push(event);
+				_subFadeState = 0;
+			}
+			
+			// Auto fade out.
+			if (autoFadeOutTime >= 0.0) 
+			{
+				if (_timeline._playState > 0) 
+				{
+					fadeOut(autoFadeOutTime);
+				}
 			}
 		}
 	}
-
-	private function updateMainTimeline(isThisComplete:Bool):Void
+	/**
+	 * @private
+	 */
+	internal function _isDisabled(slot:Slot):Bool
 	{
-		var frameList:Array<Frame> = _clip.frameList;
-		if(frameList != null && frameList.length > 0)
+		if (
+			displayControl &&
+			(
+				!slot.displayController ||
+				slot.displayController === _name ||
+				slot.displayController === _group
+			)
+		) 
 		{
-			var prevFrame:Frame = null;
-			var currentFrame:Frame = null;
-			for (i in 0..._clip.frameList.length)
+			return false;
+		}
+		
+		return true;
+	}
+	/**
+	 * @private
+	 */
+	internal function _getBoneTimelineState(name:String):BoneTimelineState
+	{
+		for each (var boneTimelineState:BoneTimelineState in _boneTimelines)
+		{
+			if (boneTimelineState.bone.name == name)
 			{
-				if(_currentFrameIndex < 0)
+				return boneTimelineState;
+			}
+		}
+		
+		return null;
+	}
+	/**
+	 * @language zh_CN
+	 * 继续播放。
+	 * @version DragonBones 3.0
+	 */
+	public function play():Void
+	{
+		_playheadState = 3; // 11
+	}
+	/**
+	 * @language zh_CN
+	 * 暂停播放。
+	 * @version DragonBones 3.0
+	 */
+	public function stop():Void
+	{
+		_playheadState &= 1; // 0x
+	}
+	/**
+	 * @language zh_CN
+	 * 淡出动画。
+	 * @param fadeOutTime 淡出时间。 (以秒为单位)
+	 * @param pausePlayhead 淡出时是否暂停动画。
+	 * @version DragonBones 3.0
+	 */
+	public function fadeOut(fadeOutTime:Float, pausePlayhead:Bool = true):Void
+	{
+		if (fadeOutTime < 0.0 || fadeOutTime !== fadeOutTime) 
+		{
+			fadeOutTime = 0.0;
+		}
+		
+		if (pausePlayhead) 
+		{
+			_playheadState &= 2; // x0
+		}
+		
+		if (_fadeState > 0) {
+			if (fadeOutTime > fadeOutTime - _fadeTime) 
+			{
+				// If the animation is already in fade out, the new fade out will be ignored.
+				return;
+			}
+		}
+		else 
+		{
+			_fadeState = 1;
+			_subFadeState = -1;
+			
+			if (fadeOutTime <= 0.0 || _fadeProgress <= 0.0) 
+			{
+				_fadeProgress = 0.000001; // Modify _fadeProgress to different value.
+			}
+			
+			for (var i:UInt = 0, l:UInt = _boneTimelines.length; i < l; ++i)
+			{
+				_boneTimelines[i].fadeOut();
+			}
+			
+			for (i = 0, l = _slotTimelines.length; i < l; ++i)
+			{
+				_slotTimelines[i].fadeOut();
+			}
+			
+			for (i = 0, l = _ffdTimelines.length; i < l; ++i)
+			{
+				_ffdTimelines[i].fadeOut();
+			}
+		}
+		
+		displayControl = false; //
+		fadeTotalTime = _fadeProgress > 0.000001 ? fadeOutTime / _fadeProgress : 0.0;
+		_fadeTime = fadeTotalTime * (1.0 - _fadeProgress);
+	}
+	/**
+	 * @language zh_CN
+     * 是否包含骨骼遮罩。
+	 * @param name 指定的骨骼名称。
+	 * @version DragonBones 3.0
+	 */
+	public function containsBoneMask(name:String):Bool
+	{
+		return _boneMask.length === 0 || _boneMask.indexOf(name) >= 0;
+	}
+	/**
+	 * @language zh_CN
+     * 添加骨骼遮罩。
+	 * @param boneName 指定的骨骼名称。
+	 * @param recursive 是否为该骨骼的子骨骼添加遮罩。
+	 * @version DragonBones 3.0
+	 */
+	public function addBoneMask(name:String, recursive:Bool = true):Void
+	{
+		inline var currentBone: Bone = _armature.getBone(name);
+		if (!currentBone) 
+		{
+			return;
+		}
+		
+		_boneMask.fixed = false;
+		
+		if (_boneMask.indexOf(name) < 0) // Add mixing
+		{
+			_boneMask.push(name);
+		}
+		
+		if (recursive) // Add recursive mixing.
+		{
+			inline var bones:Vector.<Bone> = _armature.getBones();
+			for (var i:UInt = 0, l:UInt = bones.length; i < l; ++i) 
+			{
+				inline var bone:Bone = bones[i];
+				if (_boneMask.indexOf(bone.name) < 0 && currentBone.contains(bone))
 				{
-					_currentFrameIndex = 0;
+					_boneMask.push(bone.name);
 				}
-				else if(_currentTime < _currentFramePosition || _currentTime >= _currentFramePosition + _currentFrameDuration)
+			}
+		}
+		
+		_boneMask.fixed = true;
+		
+		_updateTimelineStates();
+	}
+	/**
+	 * @language zh_CN
+     * 删除骨骼遮罩。
+	 * @param boneName 指定的骨骼名称。
+	 * @param recursive 是否删除该骨骼的子骨骼遮罩。
+	 * @version DragonBones 3.0
+	 */
+	public function removeBoneMask(name:String, recursive:Bool = true):Void
+	{
+		_boneMask.fixed = false;
+		
+		var index:Int = _boneMask.indexOf(name);
+		if (index >= 0) // Remove mixing.
+		{
+			_boneMask.splice(index, 1);
+		}
+		
+		if (recursive) 
+		{
+			inline var currentBone:Bone = _armature.getBone(name);
+			if (currentBone) 
+			{
+				inline var bones:Vector.<Bone> = _armature.getBones();
+				if (_boneMask.length > 0) // Remove recursive mixing.
 				{
-					_currentFrameIndex ++;
-					if(_currentFrameIndex >= frameList.length)
+					for (var i:UInt = 0, l:UInt = bones.length; i < l; ++i) 
 					{
-						if(isThisComplete)
+						var bone:Bone = bones[i];
+						index = _boneMask.indexOf(bone.name);
+						if (index >= 0 && currentBone.contains(bone))
 						{
-							_currentFrameIndex --;
-							break;
-						}
-						else
-						{
-							_currentFrameIndex = 0;
+							_boneMask.splice(index, 1);
 						}
 					}
 				}
-				else
+				else // Add unrecursive mixing.
 				{
-					break;
+					for (i = 0, l = bones.length; i < l; ++i)
+					{
+						bone = bones[i];
+						if (!currentBone.contains(bone))
+						{
+							_boneMask.push(bone.name);
+						}
+					}
 				}
-				currentFrame = frameList[_currentFrameIndex];
-
-				if(prevFrame != null)
-				{
-					_armature.arriveAtFrame(prevFrame, null, this, true);
-				}
-
-				_currentFrameDuration = currentFrame.duration;
-				_currentFramePosition = currentFrame.position;
-				prevFrame = currentFrame;
-			}
-
-			if(currentFrame != null)
-			{
-				_armature.arriveAtFrame(currentFrame, null, this, false);
 			}
 		}
+		
+		_boneMask.fixed = true;
+		
+		_updateTimelineStates();
 	}
-
-	private function hideBones():Void
+	/**
+	 * @language zh_CN
+	 * 删除所有骨骼遮罩。
+	 * @version DragonBones 3.0
+	 */
+	public function removeAllBoneMask():Void
 	{
-		for (timelineName in _clip.hideTimelineNameMap)
-		{
-			var bone:Bone = _armature.getBone(timelineName);
-			if(bone != null)
-			{
-				bone.hideSlots();
-			}
-		}
+		_boneMask.fixed = false;
+		_boneMask.length = 0;
+		_boneMask.fixed = true;
+		
+		_updateTimelineStates();
 	}
-
-	private function clear():Void
+	/**
+	 * @language zh_CN
+     * 混合图层。
+	 * @version DragonBones 3.0
+	 */
+	public function get layer():Int
 	{
-		var i:Int = _timelineStateList.length;
-		while(i -- > 0)
+		return _layer;
+	}
+	/**
+	 * @language zh_CN
+     * 混合组。
+	 * @version DragonBones 3.0
+	 */
+	public function get group():String
+	{
+		return _group;
+	}
+	/**
+	 * @language zh_CN
+	 * 动画名称。
+	 * @see dragonBones.objects.AnimationData#name
+	 * @version DragonBones 3.0
+	 */
+	public function get name():String
+	{
+		return _name;
+	}
+	/**
+	 * @language zh_CN
+	 * 动画数据。
+	 * @see dragonBones.objects.AnimationData
+	 * @version DragonBones 3.0
+	 */
+	public function get animationData():AnimationData
+	{
+		return _animationData;
+	}
+	/**
+	 * @language zh_CN
+	 * 是否播放完毕。
+	 * @version DragonBones 3.0
+	 */
+	public function get isCompleted():Bool
+	{
+		return _timeline._playState > 0;
+	}
+	/**
+	 * @language zh_CN
+	 * 是否正在播放。
+	 * @version DragonBones 3.0
+	 */
+	public function get isPlaying():Bool
+	{
+		return (_playheadState & 2) && _timeline._playState <= 0;
+	}
+	/**
+	 * @language zh_CN
+     * 当前播放次数。
+	 * @version DragonBones 3.0
+	 */
+	public function get currentPlayTimes():UInt
+	{
+		return _timeline._currentPlayTimes;
+	}
+	
+	/**
+	 * @language zh_CN
+     * 动画的总时间。 (以秒为单位)
+	 * @version DragonBones 3.0
+	 */
+	public function get totalTime():Float
+	{
+		return _duration;
+	}
+	
+	/**
+	 * @language zh_CN
+     * 动画当前播放的时间。 (以秒为单位)
+	 * @version DragonBones 3.0
+	 */
+	public function get currentTime():Float
+	{
+		return _timeline._currentTime;
+	}
+	public function set currentTime(value:Float):Void
+	{
+		if (value < 0 || value != value)
 		{
-			TimelineState.returnObject(_timelineStateList[i]);
+			value = 0;
 		}
-		_timelineStateList = new Array<TimelineState>();
-		_mixingTransforms = new Array<String>();
-
-		_armature = null;
-		_clip = null;
+		
+		inline var currentPlayTimes:UInt = _timeline._currentPlayTimes - (_timeline._playState > 0? 1: 0);
+		value = (value % _duration) + currentPlayTimes * _duration;
+		if (_time === value) 
+		{
+			return;
+		}
+		
+		_time = value;
+		_timeline.setCurrentTime(_time);
+		
+		if (_zOrderTimeline) 
+		{
+			_zOrderTimeline._playState = -1;
+		}
+		
+		for (var i:UInt = 0, l:UInt = _boneTimelines.length; i < l; ++i) 
+		{
+			_boneTimelines[i]._playState = -1;
+		}
+		
+		for (i = 0, l = _slotTimelines.length; i < l; ++i) 
+		{
+			_slotTimelines[i]._playState = -1;
+		}
+		
+		for (i = 0, l = _ffdTimelines.length; i < l; ++i) 
+		{
+			_ffdTimelines[i]._playState = -1;
+		}
 	}
 }
-
+}

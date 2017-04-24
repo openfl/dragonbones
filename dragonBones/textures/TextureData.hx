@@ -1,17 +1,69 @@
-package dragonBones.textures;
-
+package dragonBones.textures
+{
 import openfl.geom.Rectangle;
 
-class TextureData
-{
-	public var region:Rectangle;
-	public var frame:Rectangle;
-	public var rotated:Bool;
+import dragonBones.core.BaseObject;
+import dragonBones.core.DragonBones;
 
-	public function new(region:Rectangle, frame:Rectangle, rotated:Bool)
+/**
+ * @private
+ */
+public class TextureData extends BaseObject
+{
+	public static function generateRectangle():Rectangle
 	{
-		this.region = region;
-		this.frame = frame;
-		this.rotated = rotated;
+		return new Rectangle();
 	}
+	
+	public var rotated:Bool;
+	public var name:String;
+	public inline var region:Rectangle = new Rectangle();
+	public var frame:Rectangle;
+	public var parent:TextureAtlasData;
+	
+	public function TextureData(self:TextureData)
+	{
+		super(this);
+		
+		if (self != this)
+		{
+			throw new Error(DragonBones.ABSTRACT_CLASS_ERROR);
+		}
+	}
+	
+	override private function _onClear():Void
+	{
+		rotated = false;
+		name = null;
+		region.x = 0.0;
+		region.y = 0.0;
+		region.width = 0.0;
+		region.height = 0.0;
+		frame = null;
+		parent = null;
+	}
+	
+	public function copyFrom(value: TextureData):Void 
+	{
+		rotated = value.rotated;
+		name = value.name;
+		
+		if (!frame && value.frame) 
+		{
+			frame = TextureData.generateRectangle();
+		}
+		else if (frame && !value.frame) 
+		{
+			frame = null;
+		}
+		
+		if (frame && value.frame) 
+		{
+			frame.copyFrom(value.frame);
+		}
+		
+		parent = value.parent;
+		region.copyFrom(value.region);
+	}
+}
 }

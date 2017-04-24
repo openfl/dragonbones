@@ -1,147 +1,201 @@
-﻿package dragonBones.animation;
-
-import openfl.Lib;
+﻿package dragonBones.animation
+{
+import dragonBones.core.DragonBones;
 
 /**
- * A WorldClock instance lets you conveniently update many number of Armature instances at once. You can add/remove Armature instance and set a global timescale that will apply to all registered Armature instance animations.
+ * @language zh_CN
+ * WorldClock 提供时钟支持，为每个加入到时钟的 IAnimatable 对象更新时间。
+ * @see dragonBones.animation.IAnimateble
  * @see dragonBones.Armature
- * @see dragonBones.animation.Animation
+ * @version DragonBones 3.0
  */
-class WorldClock implements IAnimatable
+public final class WorldClock implements IAnimateble
 {
 	/**
-	 * A global static WorldClock instance ready to use.
+	 * @language zh_CN
+	 * 一个可以直接使用的全局 WorldClock 实例.
+	 * @version DragonBones 3.0
 	 */
-	public static var clock:WorldClock = new WorldClock();
-
-	private var _animatableList:Array<IAnimatable>;
-
-	private var _time:Float;
-	public var time(get, null):Float;
-	public function get_time():Float
-	{
-		return _time;
-	}
-
-	private var _timeScale:Float;
+	public static inline var clock:WorldClock = new WorldClock();
 	/**
-	 * The time scale to apply to the number of second passed to the advanceTime() method.
-	 * @param A Number to use as a time scale.
+	 * @language zh_CN
+	 * 当前时间。 (以秒为单位)
+	 * @version DragonBones 3.0
 	 */
-    public var timeScale(get, set):Float;
-	public function get_timeScale():Float
-	{
-		return _timeScale;
-	}
-	public function set_timeScale(value:Float):Float
-	{
-		if(Math.isNaN(value) || value < 0)
-		{
-			value = 1;
-		}
-		_timeScale = value;
-		return value;
-	}
-
+	public var time:Float = new Date().getTime() / DragonBones.SECOND_TO_MILLISECOND;	
 	/**
-	 * Creates a new WorldClock instance. (use the static var WorldClock.clock instead).
+	 * @language zh_CN
+	 * 时间流逝速度，用于控制动画变速播放。 [0: 停止播放, (0~1): 慢速播放, 1: 正常播放, (1~N): 快速播放]
+	 * @default 1
+	 * @version DragonBones 3.0
 	 */
-	public function new(time:Float = -1, timeScale:Float = 1)
-	{
-		_time = time >= 0?time:Lib.getTimer() * 0.001;
-		_timeScale = Math.isNaN(timeScale)?1:timeScale;
-		_animatableList = new Array<IAnimatable>();
-	}
-
+	public var timeScale:Float = 1;
+	
+	private inline var _animatebles:Vector.<IAnimateble> = new Vector.<IAnimateble>();
+	private var _clock: WorldClock = null;
 	/**
-	 * Returns true if the IAnimatable instance is contained by WorldClock instance.
-	 * @param An IAnimatable instance (Armature or custom)
-	 * @return true if the IAnimatable instance is contained by WorldClock instance.
+	 * @language zh_CN
+	 * 创建一个新的 WorldClock 实例。
+	 * 通常并不需要单独创建 WorldClock 实例，可以直接使用 WorldClock.clock 静态实例。
+	 * (创建更多独立的 WorldClock 实例可以更灵活的为需要更新的 IAnimateble 实例分组，用于控制不同组不同的播放速度)
+	 * @version DragonBones 3.0
 	 */
-	public function contains(animatable:IAnimatable):Bool
+	public function WorldClock()
 	{
-		return _animatableList.indexOf(animatable) >= 0;
 	}
-
 	/**
-	 * Add a IAnimatable instance (Armature or custom) to this WorldClock instance.
-	 * @param An IAnimatable instance (Armature, WorldClock or custom)
-	 */
-	public function add(animatable:IAnimatable):Void
-	{
-		if (animatable != null && _animatableList.indexOf(animatable) == -1)
-		{
-			_animatableList.push(animatable);
-		}
-	}
-
-	/**
-	 * Remove a IAnimatable instance (Armature or custom) from this WorldClock instance.
-	 * @param An IAnimatable instance (Armature or custom)
-	 */
-	public function remove(animatable:IAnimatable):Void
-	{
-		var index:Int = _animatableList.indexOf(animatable);
-		if (index >= 0)
-		{
-			_animatableList[index] = null;
-		}
-	}
-
-	/**
-	 * Remove all IAnimatable instance (Armature or custom) from this WorldClock instance.
-	 */
-	public function clear():Void
-	{
-		_animatableList = new Array<IAnimatable>();
-	}
-
-	/**
-	 * Update all registered IAnimatable instance animations using this method typically in an ENTERFRAME Event or with a Timer.
-	 * @param The amount of second to move the playhead ahead.
+	 * @language zh_CN
+	 * 为所有的 IAnimatable 实例更新时间。
+	 * @param passedTime 前进的时间。 (以秒为单位，当设置为 -1 时将自动计算当前帧与上一帧的时间差)
+	 * @version DragonBones 3.0
 	 */
 	public function advanceTime(passedTime:Float):Void
 	{
-		if(passedTime < 0)
+		if (passedTime !== passedTime) 
 		{
-			passedTime = Lib.getTimer() * 0.001 - _time;
+			passedTime = 0.0;
 		}
-		passedTime *= _timeScale;
-
-		_time += passedTime;
-
-		var length:Int = _animatableList.length;
-		if(length == 0)
+		
+		if (passedTime < 0.0) 
 		{
-			return;
+			passedTime = new Date().getTime() / DragonBones.SECOND_TO_MILLISECOND - time;
 		}
-		var currentIndex:Int = 0;
-        var lastI = 0;
-		for(i in 0...length)
+		
+		if (timeScale !== 1.0) 
 		{
-			var animatable:IAnimatable = _animatableList[i];
-			if(animatable != null)
+			passedTime *= timeScale;
+		}
+		
+		if (passedTime < 0.0) 
+		{
+			time -= passedTime;
+		}
+		else 
+		{
+			time += passedTime;
+		}
+		
+		if (passedTime) 
+		{
+			var i:UInt = 0, r:UInt = 0, l:UInt = _animatebles.length;
+			var animateble:IAnimateble
+			for (; i < l; ++i) 
 			{
-				if(currentIndex != i)
+				animateble = _animatebles[i];
+				if (animateble) 
 				{
-					_animatableList[currentIndex] = animatable;
-					_animatableList[i] = null;
+					if (r > 0) 
+					{
+						_animatebles[i - r] = animateble;
+						_animatebles[i] = null;
+					}
+					
+					animateble.advanceTime(passedTime);
 				}
-				animatable.advanceTime(passedTime);
-				currentIndex ++;
+				else 
+				{
+					r++;
+				}
 			}
-			lastI = i;
-		}
-		lastI++;
-
- 		if (currentIndex != lastI)
-		{
-			length = _animatableList.length;
-			while(lastI < length)
+			
+			if (r > 0) 
 			{
-				_animatableList[currentIndex ++] = _animatableList[lastI ++];
+				l = _animatebles.length;
+				for (; i < l; ++i) 
+				{
+					animateble = _animatebles[i];
+					if (animateble) 
+					{
+						_animatebles[i - r] = animateble;
+					}
+					else 
+					{
+						r++;
+					}
+				}
+				
+				_animatebles.length -= r;
 			}
-			_animatableList.splice(currentIndex, _animatableList.length);
 		}
 	}
+	/** 
+	 * 是否包含 IAnimatable 实例
+	 * @param value IAnimatable 实例。
+	 * @version DragonBones 3.0
+	 */
+	public function contains(value:IAnimateble):Bool
+	{
+		return _animatebles.indexOf(value) >= 0;
+	}
+	/**
+	 * @language zh_CN
+	 * 添加 IAnimatable 实例。
+	 * @param value IAnimatable 实例。
+	 * @version DragonBones 3.0
+	 */
+	public function add(value:IAnimateble):Void
+	{
+		if (value && _animatebles.indexOf(value) < 0)
+		{
+			_animatebles.push(value);
+			value.clock = this;
+		}
+	}
+	/**
+	 * @language zh_CN
+	 * 移除 IAnimatable 实例。
+	 * @param value IAnimatable 实例。
+	 * @version DragonBones 3.0
+	 */
+	public function remove(value:IAnimateble):Void
+	{
+		var index:Int = _animatebles.indexOf(value);
+		if (index >= 0)
+		{
+			_animatebles[index] = null;
+			value.clock = null;
+		}
+	}
+	/**
+	 * @language zh_CN
+	 * 清除所有的 IAnimatable 实例。
+	 * @version DragonBones 3.0
+	 */
+	public function clear():Void
+	{
+		for (var i: uint = 0, l: uint = _animatebles.length; i < l; ++i)
+		{
+			inline var animateble:IAnimateble = _animatebles[i];
+			_animatebles[i] = null;
+			if (animateble != null) 
+			{
+				animateble.clock = null;
+			}
+		}
+	}
+	/**
+	 * @inheritDoc
+	 */
+	public function get clock(): WorldClock 
+	{
+		return _clock;
+	}
+	public function set clock(value: WorldClock):Void
+	{
+		if (_clock === value) {
+			return;
+		}
+		
+		inline var prevClock:WorldClock = _clock;
+		_clock = value;
+		
+		if (prevClock) {
+			prevClock.remove(this);
+		}
+		
+		if (_clock) {
+			_clock.add(this);
+		}
+	}
+}
 }

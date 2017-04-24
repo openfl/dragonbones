@@ -1,507 +1,806 @@
 ﻿package dragonBones.animation;
 
 import dragonBones.Armature;
+import dragonBones.Bone;
 import dragonBones.Slot;
+import dragonBones.core.BaseObject;
+import dragonBones.core.dragonBones_internal;
+import dragonBones.objects.AnimationConfig;
 import dragonBones.objects.AnimationData;
+import openfl.Vector;
 
 /**
- * An Animation instance is used to control the animation state of an Armature.
- * @see dragonBones.Armature
- * @see dragonBones.animation.Animation
+ * @language zh_CN
+ * 动画控制器，用来播放动画数据，管理动画状态。
+ * @see dragonBones.objects.AnimationData
  * @see dragonBones.animation.AnimationState
+ * @version DragonBones 3.0
  */
-class Animation
+class Animation extends BaseObject
 {
-	public static var NONE:String = "none";
-	public static var SAME_LAYER:String = "sameLayer";
-	public static var SAME_GROUP:String = "sameGroup";
-	public static var SAME_LAYER_AND_GROUP:String = "sameLayerAndGroup";
-	public static var ALL:String = "all";
-
-	/**
-	* Unrecommended API. Recommend use animationList.
-	*/
-    public var movementList(get, null):Array<String>;
-	public function get_movementList():Array<String>
+	private static function _sortAnimationState(a:AnimationState, b:AnimationState):Int
 	{
-		return _animationList;
+		return a.layer > b.layer? -1: 1;
 	}
-
 	/**
-	* Unrecommended API. Recommend use lastAnimationName.
-	*/
-    public var movementID(get, null):String;
-	public function get_movementID():String
-	{
-		return lastAnimationName;
-	}
-
-
-	/**
-	 * Whether animation tweening is enabled or not.
+	 * @language zh_CN
+	 * 动画播放速度。 [(-N~0): 倒转播放, 0: 停止播放, (0~1): 慢速播放, 1: 正常播放, (1~N): 快速播放]
+	 * @default 1
+	 * @version DragonBones 3.0
 	 */
-	public var tweenEnabled:Bool;
-
-	private var _armature:Armature;
-
-	private var _animationStateList:Array<AnimationState>;
-
-	/** @private */
-	public var _lastAnimationState:AnimationState;
-
-	/** @private */
-	public var _isFading:Bool;
-
-	/** @private */
-	public var _animationStateCount:Int;
-
-	/**
-	 * The last AnimationState this Animation played.
-	 * @see dragonBones.objects.AnimationData.
-	 */
-    public var lastAnimationState(get, null):AnimationState;
-	public function get_lastAnimationState():AnimationState
-	{
-		return _lastAnimationState;
-	}
-	/**
-	 * The name of the last AnimationData played.
-	 * @see dragonBones.objects.AnimationData.
-	 */
-    public var lastAnimationName(get, null):String;
-	public function get_lastAnimationName():String
-	{
-		return _lastAnimationState != null ?_lastAnimationState.name:null;
-	}
-
-	private var _animationList:Array<String>;
-	/**
-	 * An vector containing all AnimationData names the Animation can play.
-	 * @see dragonBones.objects.AnimationData.
-	 */
-    public var animationList(get, null):Array<String>;
-	public function get_animationList():Array<String>
-	{
-		return _animationList;
-	}
-
+	public var timeScale:Float;
+	
 	private var _isPlaying:Bool;
+	private var _animationStateDirty:Bool;
 	/**
-	 * Is the animation playing.
-	 * @see dragonBones.animation.AnimationState.
+	 * @private
 	 */
-    public var isPlaying(get, null):Bool;
-	public function get_isPlaying():Bool
+	@:allow("dragonBones") private var _timelineStateDirty:Bool;
+	/**
+	 * @private
+	 */
+	@:allow("dragonBones") private var _cacheFrameIndex:Float;
+	private inline var _animationNames:Vector<String> = new Vector<String>();
+	private inline var _animations:Map<String, AnimationData> = new Map<String, AnimationData>();
+	private inline var _animationStates:Vector.<AnimationState> = new Vector.<AnimationState>();
+	private var _armature:Armature;
+	private var _lastAnimationState:AnimationState;
+	private var _animationConfig:AnimationConfig;
+	/**
+	 * @private
+	 */
+	public function new()
 	{
-		return _isPlaying && !isComplete;
+		super(this);
 	}
-
 	/**
-	 * Is animation complete.
-	 * @see dragonBones.animation.AnimationState.
+	 * @private
 	 */
-    public var isComplete(get, null):Bool;
-	public function get_isComplete():Bool
+	override private function _onClear():Void
 	{
-		if(_lastAnimationState != null)
+		for (var i:UInt = 0, l:UInt = _animationStates.length; i < l; ++i) 
 		{
-			if(!_lastAnimationState.isComplete)
-			{
-				return false;
-			}
-			var i:Int = _animationStateList.length;
-			while(i -- > 0)
-			{
-				if(!_animationStateList[i].isComplete)
-				{
-					return false;
-				}
-			}
-			return true;
+			_animationStates[i].returnToPool();
 		}
-		return true;
-	}
-
-	private var _timeScale:Float;
-	/**
-	 * The amount by which passed time should be scaled. Used to slow down or speed up animations. Defaults to 1.
-	 */
-    public var timeScale(get, set):Float;
-	public function get_timeScale():Float
-	{
-		return _timeScale;
-	}
-	public function set_timeScale(value:Float):Float
-	{
-		if(Math.isNaN(value) || value < 0)
+		
+		if (_animationConfig) 
 		{
-			value = 1;
+			_animationConfig.returnToPool();
 		}
-		_timeScale = value;
-		return value;
-	}
-
-	private var _animationDataList:Array<AnimationData>;
-	/**
-	 * The AnimationData list associated with this Animation instance.
-	 * @see dragonBones.objects.AnimationData.
-	 */
-    public var animationDataList(get, set):Array<AnimationData>;
-	public function get_animationDataList():Array<AnimationData>
-	{
-		return _animationDataList;
-	}
-	public function set_animationDataList(value:Array<AnimationData>):Array<AnimationData>
-	{
-		_animationDataList = value;
-		_animationList = new Array<String>();
-		for (animationData in _animationDataList)
-		{
-			_animationList.push(animationData.name);
-		}
-		return _animationDataList;
-	}
-
-	/**
-	 * Creates a new Animation instance and attaches it to the passed Armature.
-	 * @param An Armature to attach this Animation instance to.
-	 */
-	public function new(armature:Armature)
-	{
-		_armature = armature;
-		_animationList = new Array<String>();
-		_animationStateList = new Array<AnimationState>();
-
-		_timeScale = 1;
+		
+		_animations = new Map();
+		
+		timeScale = 1.0;
+		
 		_isPlaying = false;
-
-		tweenEnabled = true;
+		_animationStateDirty = false;
+		_timelineStateDirty = false;
+		_cacheFrameIndex = -1;
+		_animationNames.length = 0;
+		//_animations.clear();
+		_animationStates.length = 0;
+		_armature = null;
+		_lastAnimationState = null;
+		_animationConfig = null;
 	}
-
-	/**
-	 * Qualifies all resources used by this Animation instance for garbage collection.
-	 */
-	public function dispose():Void
+	
+	private function _fadeOut(animationConfig:AnimationConfig):Void
 	{
-		if(_armature == null)
+		var i:UInt = 0, l:UInt = _animationStates.length;
+		var animationState:AnimationState = null
+		
+		switch (animationConfig.fadeOutMode)
+		{
+			case AnimationFadeOutMode.SameLayer:
+				for ( ; i < l; ++i)
+				{
+					animationState = _animationStates[i];
+					if (animationState.layer === animationConfig.layer)
+					{
+						animationState.fadeOut(animationConfig.fadeOutTime, animationConfig.pauseFadeOut);
+					}
+				}
+				break;
+			
+			case AnimationFadeOutMode.SameGroup:
+				for ( ; i < l; ++i)
+				{
+					animationState = _animationStates[i];
+					if (animationState.group === animationConfig.group)
+					{
+						animationState.fadeOut(animationConfig.fadeOutTime, animationConfig.pauseFadeOut);
+					}
+				}
+				break;
+			
+			case AnimationFadeOutMode.SameLayerAndGroup:
+				for ( ; i < l; ++i)
+				{
+					animationState = _animationStates[i];
+					if (
+						animationState.layer === animationConfig.layer &&
+						animationState.group === animationConfig.group
+					)
+					{
+						animationState.fadeOut(animationConfig.fadeOutTime, animationConfig.pauseFadeOut);
+					}
+				}
+				break;
+			
+			case AnimationFadeOutMode.All:
+				for ( ; i < l; ++i)
+				{
+					animationState = _animationStates[i];
+					animationState.fadeOut(animationConfig.fadeOutTime, animationConfig.pauseFadeOut);
+				}
+				break;
+			
+			case AnimationFadeOutMode.None:
+			default:
+				break;
+		}
+	}
+	/**
+	 * @private
+	 */
+	public function _init(armature:Armature):Void 
+	{
+		if (_armature) 
 		{
 			return;
 		}
-		var i:Int = _animationStateList.length;
-		while(i -- > 0)
-		{
-			AnimationState.returnObject(_animationStateList[i]);
-		}
-
-		_armature = null;
-		_animationDataList = null;
-		_animationList = null;
-		_animationStateList = null;
+		
+		_armature = armature;
+		_animationConfig = BaseObject.borrowObject(AnimationConfig) as AnimationConfig;
 	}
-
 	/**
-	 * Fades the animation with name animation in over a period of time seconds and fades other animations out.
-	 * @param animationName The name of the AnimationData to play.
-	 * @param fadeInTime A fade time to apply (>= 0), -1 means use xml data's fadeInTime.
-	 * @param duration The duration of that Animation. -1 means use xml data's duration.
-	 * @param playTimes Play times(0:loop forever, >=1:play times, -1~-∞:will fade animation after play complete), 默认使用AnimationData.loop.
-	 * @param layer The layer of the animation.
-	 * @param group The group of the animation.
-	 * @param fadeOutMode Fade out mode (none, sameLayer, sameGroup, sameLayerAndGroup, all).
-	 * @param pauseFadeOut Pause other animation playing.
-	 * @param pauseFadeIn Pause this animation playing before fade in complete.
-	 * @return AnimationState.
-	 * @see dragonBones.objects.AnimationData.
-	 * @see dragonBones.animation.AnimationState.
+	 * @private
 	 */
-	public function gotoAndPlay(
-		animationName:String,
-		fadeInTime:Float = -1,
-		duration:Float = -1,
-		playTimes:Float = 0,
-		layer:Int = 0,
-		group:String = null,
-		fadeOutMode:String = "sameLayerAndGroup",
-		pauseFadeOut:Bool = true,
-		pauseFadeIn:Bool = true
-	):AnimationState
+	@:allow("dragonBones") private function _advanceTime(passedTime:Float):Void
 	{
-		if (_animationDataList == null)
+		if (!_isPlaying)
 		{
-			return null;
+			return;
 		}
-		var i:Int = _animationDataList.length;
-		var animationData:AnimationData = null;
-		while(i -- > 0)
+		
+		if (passedTime < 0.0)
 		{
-			if(_animationDataList[i].name == animationName)
+			passedTime = -passedTime;
+		}
+		
+		if (_armature.inheritAnimation && _armature._parent) // Inherit parent animation timeScale.
+		{
+			passedTime *= _armature._parent._armature.animation.timeScale;
+		}
+		
+		if (timeScale !== 1.0) 
+		{
+			passedTime *= timeScale;
+		}
+		
+		var animationState:AnimationState = null;
+		
+		inline var animationStateCount:UInt = _animationStates.length;
+		if (animationStateCount === 1)
+		{
+			animationState = _animationStates[0];
+			if (animationState._fadeState > 0 && animationState._subFadeState > 0)
 			{
-				animationData = _animationDataList[i];
-				break;
+				animationState.returnToPool();
+				_animationStates.length = 0;
+				_animationStateDirty = true;
+				_lastAnimationState = null;
+			}
+			else
+			{
+				inline var animationData:AnimationData = animationState.animationData;
+				inline var cacheFrameRate:Float = animationData.cacheFrameRate;
+				
+				if (_animationStateDirty && cacheFrameRate > 0.0) // Update cachedFrameIndices.
+				{
+					_animationStateDirty = false;
+					
+					inline var bones:Vector.<Bone> = _armature.getBones();
+					for (var i:UInt = 0, l:UInt = bones.length; i < l; ++i) 
+					{
+						inline var bone:Bone = bones[i];
+						bone._cachedFrameIndices = animationData.getBoneCachedFrameIndices(bone.name);
+					}
+					
+					inline var slots:Vector.<Slot> = _armature.getSlots();
+					for (i = 0, l = slots.length; i < l; ++i) 
+					{
+						inline var slot:Slot = slots[i];
+						slot._cachedFrameIndices = animationData.getSlotCachedFrameIndices(slot.name);
+					}
+				}
+				
+				if (_timelineStateDirty) 
+				{
+					animationState._updateTimelineStates();
+				}
+				
+				animationState._advanceTime(passedTime, cacheFrameRate);
 			}
 		}
-		if (animationData == null)
+		else if (animationStateCount > 1)
 		{
-			return null;
-		}
-		_isPlaying = true;
-		_isFading = true;
-
-		//
-		fadeInTime = fadeInTime < 0?(animationData.fadeTime < 0?0.3:animationData.fadeTime):fadeInTime;
-		var durationScale:Float;
-		if(duration < 0)
-		{
-			durationScale = animationData.scale < 0?1:animationData.scale;
+			var r:UInt = 0;
+			for (i = 0; i < animationStateCount; ++i)
+			{
+				animationState = _animationStates[i];
+				if (animationState._fadeState > 0 && animationState._fadeProgress <= 0)
+				{
+					r++;
+					animationState.returnToPool();
+					_animationStateDirty = true;
+					
+					if (_lastAnimationState === animationState)
+					{
+						_lastAnimationState = null;
+					}
+				}
+				else
+				{
+					if (r > 0)
+					{
+						_animationStates[i - r] = animationState;
+					}
+					
+					if (_timelineStateDirty) 
+					{
+						animationState._updateTimelineStates();
+					}
+					
+					animationState._advanceTime(passedTime, 0.0);
+				}
+				
+				if (i === animationStateCount - 1 && r > 0)
+				{
+					_animationStates.length -= r;
+					
+					if (!_lastAnimationState && _animationStates.length > 0) 
+					{
+						_lastAnimationState = _animationStates[_animationStates.length - 1];
+					}
+				}
+			}
+			
+			_cacheFrameIndex = -1;
 		}
 		else
 		{
-			durationScale = duration * 1000 / animationData.duration;
+			_cacheFrameIndex = -1;
 		}
-
-		playTimes = (playTimes == 0)?animationData.playTimes:playTimes;
-
-		var animationState:AnimationState;
-		if (fadeOutMode == NONE) {
-		}
-		else if (fadeOutMode == SAME_LAYER) {
-			i = _animationStateList.length;
-			while (i -- > 0) {
-				animationState = _animationStateList[i];
-				if (animationState.layer == layer) {
-					animationState.fadeOut(fadeInTime, pauseFadeOut);
-				}
-			}
-		}
-		else if (fadeOutMode == SAME_GROUP) {
-			i = _animationStateList.length;
-			while (i -- > 0) {
-				animationState = _animationStateList[i];
-				if (animationState.group == group) {
-					animationState.fadeOut(fadeInTime, pauseFadeOut);
-				}
-			}
-		}
-		else if (fadeOutMode == ALL) {
-			i = _animationStateList.length;
-			while (i -- > 0) {
-				animationState = _animationStateList[i];
-				animationState.fadeOut(fadeInTime, pauseFadeOut);
-			}
-		}
-		else {
-			i = _animationStateList.length;
-			while (i -- > 0) {
-				animationState = _animationStateList[i];
-				if (animationState.layer == layer && animationState.group == group) {
-					animationState.fadeOut(fadeInTime, pauseFadeOut);
-				}
-			}
-		}
-
-		_lastAnimationState = AnimationState.borrowObject();
-		_lastAnimationState._layer = layer;
-		_lastAnimationState._group = group;
-		_lastAnimationState.autoTween = tweenEnabled;
-		_lastAnimationState.fadeIn(_armature, animationData, fadeInTime, 1 / durationScale, playTimes, pauseFadeIn);
-
-		addState(_lastAnimationState);
-
-		var slotList:Array<Slot> = _armature.getSlots(false);
-		i = slotList.length;
-		while(i -- > 0)
+		
+		_timelineStateDirty = false;
+	}
+	/**
+	 * @language zh_CN
+	 * 清除所有动画状态。
+	 * @see dragonBones.animation.AnimationState
+	 * @version DragonBones 4.5
+	 */
+	public function reset():Void
+	{
+		for (var i:UInt = 0, l:UInt = _animationStates.length; i < l; ++i)
 		{
-			var slot:Slot = slotList[i];
-			if(slot.childArmature != null)
+			_animationStates[i].returnToPool();
+		}
+		
+		_isPlaying = false;
+		_animationStateDirty = false;
+		_timelineStateDirty = false;
+		_cacheFrameIndex = -1;
+		_animationConfig.clear();
+		_animationStates.length = 0;
+		_lastAnimationState = null;
+	}
+	/**
+	 * @language zh_CN
+	 * 暂停播放动画。
+	 * @param animationName 动画状态的名称，如果未设置，则暂停所有动画状态。
+	 * @see dragonBones.animation.AnimationState
+	 * @version DragonBones 3.0
+	 */
+	public function stop(animationName:String = null):Void
+	{
+		if (animationName)
+		{
+			inline var animationState:AnimationState = getState(animationName);
+			if (animationState)
 			{
-				slot.childArmature.animation.gotoAndPlay(animationName, fadeInTime);
+				animationState.stop();
 			}
 		}
-
+		else
+		{
+			_isPlaying = false;
+		}
+	}
+	/**
+	 * @language zh_CN
+	 * @beta
+	 * 通过动画配置来播放动画。
+	 * @param animationConfig 动画配置。
+	 * @returns 对应的动画状态。
+	 * @see dragonBones.objects.AnimationConfig
+	 * @see dragonBones.animation.AnimationState
+	 * @version DragonBones 5.0
+	 */
+	public function playConfig(animationConfig:AnimationConfig):AnimationState 
+	{
+		if (animationConfig == null) 
+		{
+			throw new ArgumentError();
+			return null;
+		}
+		
+		inline var animationName:String = animationConfig.animationName ? animationConfig.animationName : animationConfig.name;
+		inline var animationData:AnimationData = _animations[animationName];
+		if (animationData == null) 
+		{
+			trace(
+				"Non-existent animation.\n",
+				"DragonBones name: " + _armature.armatureData.parent.name,
+				"Armature name: " + _armature.name,
+				"Animation name: " + animationName
+			);
+			
+			return null;
+		}
+		
+		_isPlaying = true;
+		
+		if (animationConfig.playTimes < 0) 
+		{
+			animationConfig.playTimes = animationData.playTimes;
+		}
+		
+		if (animationConfig.fadeInTime < 0.0 || animationConfig.fadeInTime !== animationConfig.fadeInTime) 
+		{
+			if (_lastAnimationState) 
+			{
+				animationConfig.fadeInTime = animationData.fadeInTime;
+			}
+			else 
+			{
+				animationConfig.fadeInTime = 0.0;
+			}
+		}
+		
+		if (animationConfig.fadeOutTime < 0.0 || animationConfig.fadeOutTime !== animationConfig.fadeOutTime) 
+		{
+			animationConfig.fadeOutTime = animationConfig.fadeInTime;
+		}
+		
+		if (animationConfig.timeScale <= -100.0 || animationConfig.timeScale !== animationConfig.timeScale) //
+		{
+			animationConfig.timeScale = 1.0 / animationData.scale;
+		}
+		
+		if (animationData.duration > 0.0) 
+		{
+			if (animationConfig.position !== animationConfig.position) 
+			{
+				animationConfig.position = 0.0;
+			}
+			else if (animationConfig.position < 0.0) 
+			{
+				animationConfig.position %= animationData.duration;
+				animationConfig.position = animationData.duration - animationConfig.position;
+			}
+			else if (animationConfig.position === animationData.duration) 
+			{
+				animationConfig.position -= 0.001;
+			}
+			else if (animationConfig.position > animationData.duration) 
+			{
+				animationConfig.position %= animationData.duration;
+			}
+			
+			if (animationConfig.position + animationConfig.duration > animationData.duration) 
+			{
+				animationConfig.duration = animationData.duration - animationConfig.position;
+			}
+		}
+		else 
+		{
+			animationConfig.position = 0.0;
+			animationConfig.duration = -1.0;
+		}
+		
+		inline var isStop:Bool = animationConfig.duration === 0.0;
+		if (isStop) 
+		{
+			animationConfig.playTimes = 1;
+			animationConfig.duration = -1.0;
+			animationConfig.fadeInTime = 0.0;
+		}
+		
+		_fadeOut(animationConfig);
+		
+		_lastAnimationState = BaseObject.borrowObject(AnimationState) as AnimationState;
+		_lastAnimationState._init(_armature, animationData, animationConfig);
+		_animationStates.push(_lastAnimationState);
+		_animationStateDirty = true;
+		_cacheFrameIndex = -1;
+		
+		if (_animationStates.length > 1)
+		{
+			_animationStates.sort(Animation._sortAnimationState);
+		}
+		
+		// Child armature play same name animation.
+		inline var slots:Vector.<Slot> = _armature.getSlots();
+		for (var i:UInt = 0, l:UInt = slots.length; i < l; ++i) 
+		{
+			inline var childArmature:Armature = slots[i].childArmature;
+			if (
+				childArmature && childArmature.inheritAnimation &&
+				childArmature.animation.hasAnimation(animationName) &&
+				!childArmature.animation.getState(animationName)
+			) 
+			{
+				childArmature.animation.fadeIn(animationName); //
+			}
+		}
+		
+		if (animationConfig.fadeInTime <= 0.0) // Blend animation state, update armature.
+		{
+			_armature.advanceTime(0.0);
+		}
+		
+		if (isStop) 
+		{
+			_lastAnimationState.stop();
+		}
+		
 		return _lastAnimationState;
 	}
-
 	/**
-	 * Control the animation to stop with a specified time. If related animationState haven't been created, then create a new animationState.
-	 * @param animationName The name of the animationState.
-	 * @param time
-	 * @param normalizedTime
-	 * @param fadeInTime A fade time to apply (>= 0), -1 means use xml data's fadeInTime.
-	 * @param duration The duration of that Animation. -1 means use xml data's duration.
-	 * @param layer The layer of the animation.
-	 * @param group The group of the animation.
-	 * @param fadeOutMode Fade out mode (none, sameLayer, sameGroup, sameLayerAndGroup, all).
-	 * @return AnimationState.
-	 * @see dragonBones.objects.AnimationData.
-	 * @see dragonBones.animation.AnimationState.
+	 * @language zh_CN
+	 * 淡入播放动画。
+	 * @param animationName 动画数据名称。
+	 * @param playTimes 播放次数。 [-1: 使用动画数据默认值, 0: 无限循环播放, [1~N]: 循环播放 N 次]
+	 * @param fadeInTime 淡入时间。 [-1: 使用动画数据默认值, [0~N]: 淡入时间] (以秒为单位)
+	 * @param layer 混合图层，图层高会优先获取混合权重。
+	 * @param group 混合组，用于动画状态编组，方便控制淡出。
+	 * @param fadeOutMode 淡出模式。
+	 * @returns 对应的动画状态。
+	 * @see dragonBones.animation.AnimationFadeOutMode
+	 * @see dragonBones.animation.AnimationState
+	 * @version DragonBones 4.5
 	 */
-	public function gotoAndStop(
-		animationName:String,
-		time:Float,
-		normalizedTime:Float = -1,
-		fadeInTime:Float = 0,
-		duration:Float = -1,
-		layer:Int = 0,
-		group:String = null,
-		fadeOutMode:String = "all"
+	public function fadeIn(
+		animationName:String, fadeInTime:Float = -1.0, playTimes:Int = -1,
+		layer:Int = 0, group:String = null, fadeOutMode:Int = AnimationFadeOutMode.SameLayerAndGroup
 	):AnimationState
 	{
-		var animationState:AnimationState = getState(animationName, layer);
-		if(animationState == null)
-		{
-			animationState = gotoAndPlay(animationName, fadeInTime, duration, Math.NaN, layer, group, fadeOutMode);
-		}
-
-		if(normalizedTime >= 0)
-		{
-			animationState.setCurrentTime(animationState.totalTime * normalizedTime);
-		}
-		else
-		{
-			animationState.setCurrentTime(time);
-		}
-
-		animationState.stop();
-
-		return animationState;
+		_animationConfig.clear();
+		_animationConfig.fadeOutMode = fadeOutMode;
+		_animationConfig.playTimes = playTimes;
+		_animationConfig.layer = layer;
+		_animationConfig.fadeInTime = fadeInTime;
+		_animationConfig.animationName = animationName;
+		_animationConfig.group = group;
+		
+		return playConfig(_animationConfig);
 	}
-
 	/**
-	 * Play the animation from the current position.
+	 * @language zh_CN
+	 * 播放动画。
+	 * @param animationName 动画数据名称，如果未设置，则播放默认动画，或将暂停状态切换为播放状态，或重新播放上一个正在播放的动画。 
+	 * @param playTimes 播放次数。 [-1: 使用动画数据默认值, 0: 无限循环播放, [1~N]: 循环播放 N 次]
+	 * @returns 对应的动画状态。
+	 * @see dragonBones.animation.AnimationState
+	 * @version DragonBones 3.0
 	 */
-	public function play():Void
+	public function play(animationName:String = null, playTimes:Int = -1):AnimationState
 	{
-		if (_animationDataList == null || _animationDataList.length == 0)
+		_animationConfig.clear();
+		_animationConfig.playTimes = playTimes;
+		_animationConfig.fadeInTime = 0.0;
+		_animationConfig.animationName = animationName;
+		
+		if (animationName) 
 		{
-			return;
+			playConfig(_animationConfig);
 		}
-		if(_lastAnimationState == null)
+		else if (!_lastAnimationState) 
 		{
-			gotoAndPlay(_animationDataList[0].name);
+			inline var defaultAnimation:AnimationData = _armature.armatureData.defaultAnimation;
+			if (defaultAnimation) 
+			{
+				_animationConfig.animationName = defaultAnimation.name;
+				playConfig(_animationConfig);
+			}
 		}
-		else if (!_isPlaying)
+		else if (!_isPlaying || (!_lastAnimationState.isPlaying && !_lastAnimationState.isCompleted)) 
 		{
 			_isPlaying = true;
+			_lastAnimationState.play();
 		}
-		else
+		else 
 		{
-			gotoAndPlay(_lastAnimationState.name);
+			_animationConfig.animationName = _lastAnimationState.name;
+			playConfig(_animationConfig);
 		}
+		
+		return _lastAnimationState;
 	}
-
-	public function stop():Void
-	{
-		_isPlaying = false;
-	}
-
 	/**
-	 * Returns the AnimationState named name.
-	 * @return A AnimationState instance.
-	 * @see dragonBones.animation.AnimationState.
+	 * @language zh_CN
+	 * 从指定时间开始播放动画。
+	 * @param animationName 动画数据的名称。
+	 * @param time 开始时间。 (以秒为单位)
+	 * @param playTimes 播放次数。 [-1: 使用动画数据默认值, 0: 无限循环播放, [1~N]: 循环播放 N 次]
+	 * @returns 对应的动画状态。
+	 * @see dragonBones.animation.AnimationState
+	 * @version DragonBones 4.5
 	 */
-	public function getState(name:String, layer:Int = 0):AnimationState
+	public function gotoAndPlayByTime(animationName:String, time:Float = 0.0, playTimes:Int = -1):AnimationState
 	{
-		var i:Int = _animationStateList.length;
-		while(i -- > 0)
+		_animationConfig.clear();
+		_animationConfig.playTimes = playTimes;
+		_animationConfig.position = time;
+		_animationConfig.fadeInTime = 0.0;
+		_animationConfig.animationName = animationName;
+		
+		return playConfig(_animationConfig);
+	}
+	/**
+	 * @language zh_CN
+	 * 从指定帧开始播放动画。
+	 * @param animationName 动画数据的名称。
+	 * @param frame 帧。
+	 * @param playTimes 播放次数。 [-1: 使用动画数据默认值, 0: 无限循环播放, [1~N]: 循环播放 N 次]
+	 * @returns 对应的动画状态。
+	 * @see dragonBones.animation.AnimationState
+	 * @version DragonBones 4.5
+	 */
+	public function gotoAndPlayByFrame(animationName:String, frame:UInt = 0, playTimes:Int = -1):AnimationState
+	{
+		_animationConfig.clear();
+		_animationConfig.playTimes = playTimes;
+		_animationConfig.fadeInTime = 0.0;
+		_animationConfig.animationName = animationName;
+		
+		inline var animationData:AnimationData = _animations[animationName];
+		if (animationData != null) 
 		{
-			var animationState:AnimationState = _animationStateList[i];
-			if(animationState.name == name && animationState.layer == layer)
+			_animationConfig.position = animationData.duration * frame / animationData.frameCount;
+		}
+		
+		return playConfig(_animationConfig);
+	}
+	/**
+	 * @language zh_CN
+	 * 从指定进度开始播放动画。
+	 * @param animationName 动画数据的名称。
+	 * @param progress 进度。 [0~1]
+	 * @param playTimes 播放次数。 [-1: 使用动画数据默认值, 0: 无限循环播放, [1~N]: 循环播放 N 次]
+	 * @returns 对应的动画状态。
+	 * @see dragonBones.animation.AnimationState
+	 * @version DragonBones 4.5
+	 */
+	public function gotoAndPlayByProgress(animationName:String, progress:Float = 0.0, playTimes:Int = -1):AnimationState
+	{
+		_animationConfig.clear();
+		_animationConfig.playTimes = playTimes;
+		_animationConfig.fadeInTime = 0.0;
+		_animationConfig.animationName = animationName;
+		
+		inline var animationData:AnimationData = _animations[animationName];
+		if (animationData != null) 
+		{
+			_animationConfig.position = animationData.duration * (progress > 0.0 ? progress : 0.0);
+		}
+		
+		return playConfig(_animationConfig);
+	}
+	/**
+	 * @language zh_CN
+	 * 将动画停止到指定的时间。
+	 * @param animationName 动画数据的名称。
+	 * @param time 时间。 (以秒为单位)
+	 * @returns 对应的动画状态。
+	 * @see dragonBones.animation.AnimationState
+	 * @version DragonBones 4.5
+	 */
+	public function gotoAndStopByTime(animationName:String, time:Float = 0.0):AnimationState
+	{
+		inline var animationState:AnimationState = gotoAndPlayByTime(animationName, time, 1);
+		if (animationState != null) 
+		{
+			animationState.stop();
+		}
+		
+		return animationState;
+	}
+	/**
+	 * @language zh_CN
+	 * 将动画停止到指定的帧。
+	 * @param animationName 动画数据的名称。
+	 * @param frame 帧。
+	 * @returns 对应的动画状态。
+	 * @see dragonBones.animation.AnimationState
+	 * @version DragonBones 4.5
+	 */
+	public function gotoAndStopByFrame(animationName:String, frame:UInt = 0):AnimationState
+	{
+		inline var animationState:AnimationState = gotoAndPlayByFrame(animationName, frame, 1);
+		if (animationState)
+		{
+			animationState.stop();
+		}
+		
+		return animationState;
+	}
+	/**
+	 * @language zh_CN
+	 * 将动画停止到指定的进度。
+	 * @param animationName 动画数据的名称。
+	 * @param progress 进度。 [0 ~ 1]
+	 * @returns 对应的动画状态。
+	 * @see dragonBones.animation.AnimationState
+	 * @version DragonBones 4.5
+	 */
+	public function gotoAndStopByProgress(animationName:String, progress:Float = 0):AnimationState
+	{
+		inline var animationState:AnimationState = gotoAndPlayByProgress(animationName, progress, 1);
+		if (animationState)
+		{
+			animationState.stop();
+		}
+		
+		return animationState;
+	}
+	/**
+	 * @language zh_CN
+	 * 获取动画状态。
+	 * @param animationName 动画状态的名称。
+	 * @see dragonBones.animation.AnimationState
+	 * @version DragonBones 3.0
+	 */
+	public function getState(animationName:String):AnimationState
+	{
+		for (var i:UInt = 0, l:UInt = _animationStates.length; i < l; ++i) 
+		{
+			inline var animationState:AnimationState = _animationStates[i];
+			if (animationState.name === animationName)
 			{
 				return animationState;
 			}
 		}
+		
 		return null;
 	}
-
 	/**
-	 * check if contains a AnimationData by name.
-	 * @return Boolean.
-	 * @see dragonBones.animation.AnimationData.
+	 * @language zh_CN
+	 * 是否包含动画数据。
+	 * @param animationName 动画数据的名称。
+	 * @see dragonBones.objects.AnimationData
+	 * @version DragonBones 3.0
 	 */
 	public function hasAnimation(animationName:String):Bool
 	{
-		var i:Int = _animationDataList.length;
-		while(i -- > 0)
+		return _animations.exists(animationName);
+	}
+	/**
+	 * @language zh_CN
+	 * 动画是否处于播放状态。
+	 * @version DragonBones 3.0
+	 */
+	public function get isPlaying():Bool
+	{
+		if (_animationStates.length > 1) 
 		{
-			if(_animationDataList[i].name == animationName)
-			{
-				return true;
-			}
+			return _isPlaying && !isCompleted;
 		}
-
+		else if (_lastAnimationState) 
+		{
+			return _isPlaying && _lastAnimationState.isPlaying;
+		}
+		
+		return _isPlaying;
+	}
+	/**
+	 * @language zh_CN
+	 * 所有动画状态是否均已播放完毕。
+	 * @see dragonBones.animation.AnimationState
+	 * @version DragonBones 3.0
+	 */
+	public function get isCompleted():Bool
+	{
+		if (_lastAnimationState)
+		{
+			if (!_lastAnimationState.isCompleted)
+			{
+				return false;
+			}
+			
+			for (var i:UInt = 0, l:UInt = _animationStates.length; i < l; ++i) 
+			{
+				if (!_animationStates[i].isCompleted)
+				{
+					return false;
+				}
+			}
+			
+			return true;
+		}
+		
 		return false;
 	}
-
-	/** @private */
-	public function advanceTime(passedTime:Float):Void
+	/**
+	 * @language zh_CN
+	 * 上一个正在播放的动画状态的名称。
+	 * @see #lastAnimationState
+	 * @version DragonBones 3.0
+	 */
+	public function get lastAnimationName():String
 	{
-		if(!_isPlaying)
+		return _lastAnimationState? _lastAnimationState.name: null; 
+	}
+	/**
+	 * @language zh_CN
+	 * 上一个正在播放的动画状态。
+	 * @see dragonBones.animation.AnimationState
+	 * @version DragonBones 3.0
+	 */
+	public function get lastAnimationState():AnimationState
+	{
+		return _lastAnimationState;
+	}
+	/**
+	 * @language zh_CN
+	 * 一个可以快速使用的动画配置实例。
+	 * @see dragonBones.objects.AnimationConfig
+	 * @version DragonBones 5.0
+	 */
+	public function get animationConfig(): AnimationConfig 
+	{
+		_animationConfig.clear();
+		return _animationConfig;
+	}
+	/**
+	 * @language zh_CN
+	 * 所有动画数据名称。
+	 * @see #animations
+	 * @version DragonBones 4.5
+	 */
+	public function get animationNames():Vector.<String>
+	{
+		return _animationNames;
+	}
+	/**
+	 * @language zh_CN
+	 * 所有的动画数据。
+	 * @see dragonBones.objects.AnimationData
+	 * @version DragonBones 4.5
+	 */
+	public function get animations():Object
+	{
+		return _animations;
+	}
+	public function set animations(value:Object):Void
+	{
+		if (_animations == value)
 		{
 			return;
 		}
-
-		var isFading:Bool = false;
-
-		passedTime *= _timeScale;
-		var i:Int = _animationStateList.length;
-		while(i -- > 0)
+		
+		_animationNames.length = 0;
+		_animations = new Map();
+		
+		if (value)
 		{
-			var animationState:AnimationState = _animationStateList[i];
-			if(animationState.advanceTime(passedTime))
+			for (k in value)
 			{
-				removeState(animationState);
+				_animations[k] = value[k];
+				_animationNames.push(k);
 			}
-			else if(animationState.fadeState != 1)
-			{
-				isFading = true;
-			}
-		}
-
-		_isFading = isFading;
-	}
-
-	/** @private */
-	public function updateAnimationStates():Void
-	{
-		var i:Int = _animationStateList.length;
-		while(i -- > 0)
-		{
-			_animationStateList[i].updateTimelineStates();
-		}
-	}
-
-	private function addState(animationState:AnimationState):Void
-	{
-		if(_animationStateList.indexOf(animationState) < 0)
-		{
-			_animationStateList.unshift(animationState);
-
-			_animationStateCount = _animationStateList.length;
-		}
-	}
-
-	private function removeState(animationState:AnimationState):Void
-	{
-		var index:Int = _animationStateList.indexOf(animationState);
-		if(index >= 0)
-		{
-			_animationStateList.splice(index, 1);
-			AnimationState.returnObject(animationState);
-
-			if(_lastAnimationState == animationState)
-			{
-				if(_animationStateList.length > 0)
-				{
-					_lastAnimationState = _animationStateList[0];
-				}
-				else
-				{
-					_lastAnimationState = null;
-				}
-			}
-
-			_animationStateCount = _animationStateList.length;
 		}
 	}
 }
-

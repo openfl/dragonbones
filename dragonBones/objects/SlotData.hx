@@ -1,63 +1,96 @@
-package dragonBones.objects;
-
-/** @private */
-class SlotData
+package dragonBones.objects
 {
+import openfl.geom.ColorTransform;
+
+import dragonBones.core.BaseObject;
+import dragonBones.enum.BlendMode;
+
+/**
+ * @language zh_CN
+ * 插槽数据。
+ * @see dragonBones.Slot
+ * @version DragonBones 3.0
+ */
+public class SlotData extends BaseObject
+{
+	/**
+	 * @private
+	 */
+	public static inline var DEFAULT_COLOR:ColorTransform = new ColorTransform();
+	/**
+	 * @private
+	 */
+	public static function generateColor():ColorTransform
+	{
+		return new ColorTransform();
+	}
+	/**
+	 * @private
+	 */
+	public var displayIndex:Int;
+	/**
+	 * @private
+	 */
+	public var zOrder:Int;
+	/**
+	 * @private
+	 */
+	public var blendMode:Int;
+	/**
+	 * @language zh_CN
+	 * 数据名称。
+	 * @version DragonBones 3.0
+	 */
 	public var name:String;
-	public var parent:String;
-	public var zOrder:Float;
-    public var blendMode:String;
-
-	private var _displayDataList:Array<DisplayData>;
-	public var displayDataList(get, null):Array<DisplayData>;
-	public function get_displayDataList():Array<DisplayData>
+	/**
+	 * @private
+	 */
+	public inline var actions: Vector.<ActionData> = new Vector.<ActionData>();
+	/**
+	 * @language zh_CN
+	 * 所属的父骨骼数据。
+	 * @see dragonBones.objects.BoneData
+	 * @version DragonBones 3.0
+	 */
+	public var parent:BoneData;
+	/**
+	 * @private
+	 */
+	public var color:ColorTransform;
+	/**
+	 * @private
+	 */
+	public var userData: CustomData;
+	/**
+	 * @private
+	 */
+	public function SlotData()
 	{
-		return _displayDataList;
+		super(this);
 	}
-
-	public function new()
+	/**
+	 * @private
+	 */
+	override private function _onClear():Void
 	{
-		_displayDataList = new Array<DisplayData>();
+		for (var i:UInt = 0, l:UInt = actions.length; i < l; ++i)
+		{
+			actions[i].returnToPool();
+		}
+		
+		if (userData) 
+		{
+			userData.returnToPool();
+		}
+		
+		displayIndex = -1;
 		zOrder = 0;
+		blendMode = BlendMode.None;
+		name = null;
+		actions.length = 0;
+		parent = null;
+		color = null;
+		userData = null;
 	}
-
-	public function dispose():Void
-	{
-		var i:Int = _displayDataList.length;
-		while(i -- > 0)
-		{
-			_displayDataList[i].dispose();
-		}
-		_displayDataList = null;
-	}
-
-	public function addDisplayData(displayData:DisplayData):Void
-	{
-		if(displayData == null)
-		{
-			throw "ArgumentError";
-		}
-		if (_displayDataList.indexOf(displayData) < 0)
-		{
-			_displayDataList.insert(0, displayData);
-		}
-		else
-		{
-			throw "ArgumentError";
-		}
-	}
-
-	public function getDisplayData(displayName:String):DisplayData
-	{
-		var i:Int = _displayDataList.length;
-		while(i -- > 0)
-		{
-			if(_displayDataList[i].name == displayName)
-			{
-				return _displayDataList[i];
-			}
-		}
-
-		return null;
-	}
+}
 }
