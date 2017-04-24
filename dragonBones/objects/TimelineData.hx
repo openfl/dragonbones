@@ -16,7 +16,7 @@ public class TimelineData extends BaseObject
 	/**
 	 * @private
 	 */
-	public inline var frames:Vector.<FrameData> = new Vector.<FrameData>();
+	public inline var frames:Vector<FrameData> = new Vector<FrameData>();
 	/**
 	 * @private
 	 */
@@ -38,10 +38,11 @@ public class TimelineData extends BaseObject
 		offset = 0.0;
 		
 		var prevFrame:FrameData = null;
-		for (var i:UInt = 0, l:UInt = frames.length; i < l; ++i) // Find key frame data.
+		var l:UInt = frames.length;
+		for (i in 0...l) // Find key frame data.
 		{
 			inline var frame:FrameData = frames[i];
-			if (prevFrame && frame !== prevFrame)
+			if (prevFrame != null && frame !== prevFrame)
 			{
 				prevFrame.returnToPool();
 			}

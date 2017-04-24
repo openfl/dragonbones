@@ -73,9 +73,9 @@ public final class StarlingFactory extends BaseFactory
 	/**
 	 * @private
 	 */
-	override private function _generateTextureAtlasData(textureAtlasData:TextureAtlasData, textureAtlas:Object):TextureAtlasData
+	override private function _generateTextureAtlasData(textureAtlasData:TextureAtlasData, textureAtlas:Dynamic):TextureAtlasData
 	{
-		if (textureAtlasData)
+		if (textureAtlasData != null)
 		{
 			inline var starlingTextureAtlasData:StarlingTextureAtlasData = textureAtlasData as StarlingTextureAtlasData;
 			
@@ -109,7 +109,7 @@ public final class StarlingFactory extends BaseFactory
 	 */
 	override private function _generateArmature(dataPackage:BuildArmaturePackage):Armature
 	{
-		if (Starling.current && !Starling.current.stage.hasEventListener(EnterFrameEvent.ENTER_FRAME))
+		if (Starling.current != null && !Starling.current.stage.hasEventListener(EnterFrameEvent.ENTER_FRAME))
 		{
 			Starling.current.stage.addEventListener(EnterFrameEvent.ENTER_FRAME, _clockHandler);
 		}
@@ -132,7 +132,7 @@ public final class StarlingFactory extends BaseFactory
 	{
 		inline var slot:StarlingSlot = BaseObject.borrowObject(StarlingSlot) as StarlingSlot;
 		inline var slotData:SlotData = skinSlotData.slot;
-		inline var displayList:Vector.<Object> = new Vector.<Object>(skinSlotData.displays.length, true);
+		inline var displayList:Vector<Dynamic> = new Vector<Dynamic>(skinSlotData.displays.length, true);
 		
 		#if (starling >= "2.0")
 		slot._indexData = new IndexData();
@@ -143,13 +143,14 @@ public final class StarlingFactory extends BaseFactory
 		slot._init(skinSlotData, new Image(StarlingSlot.getEmptyTexture()), null);
 		#end
 		
-		for (var i:UInt = 0, l:UInt = skinSlotData.displays.length; i < l; ++i) 
+		var l:UInt = skinSlotData.displays.length;
+		for (i in 0...l)
 		{
 			inline var displayData:DisplayData = skinSlotData.displays[i];
 			switch (displayData.type)
 			{
 				case DisplayType.Image:
-					if (!displayData.texture || dataPackage.textureAtlasName)
+					if (displayData.texture == null || dataPackage.textureAtlasName != null)
 					{
 						displayData.texture = _getTextureData(dataPackage.textureAtlasName || dataPackage.dataName, displayData.name);
 					}
@@ -158,7 +159,7 @@ public final class StarlingFactory extends BaseFactory
 					break;
 				
 				case DisplayType.Mesh:
-					if (!displayData.texture #if (starling < "2.0") || dataPackage.textureAtlasName #end)
+					if (displayData.texture == null #if (starling < "2.0") || dataPackage.textureAtlasName != null #end)
 					{
 						displayData.texture = _getTextureData(dataPackage.textureAtlasName || dataPackage.dataName, displayData.name);
 					}
@@ -168,11 +169,11 @@ public final class StarlingFactory extends BaseFactory
 				
 				case DisplayType.Armature:
 					inline var childArmature:Armature = buildArmature(displayData.name, dataPackage.dataName, null, dataPackage.textureAtlasName);
-					if (childArmature) 
+					if (childArmature != null) 
 					{
 						if (!childArmature.inheritAnimation)
 						{
-							inline var actions:Vector.<ActionData> = slotData.actions.length > 0? slotData.actions: childArmature.armatureData.actions;
+							inline var actions:Vector<ActionData> = slotData.actions.length > 0? slotData.actions: childArmature.armatureData.actions;
 							if (actions.length > 0) 
 							{
 								for each (var action:ActionData in actions) 
@@ -217,7 +218,7 @@ public final class StarlingFactory extends BaseFactory
 	public function buildArmatureDisplay(armatureName:String, dragonBonesName:String = null, skinName:String = null, textureAtlasName:String = null):StarlingArmatureDisplay
 	{
 		inline var armature:Armature = buildArmature(armatureName, dragonBonesName, skinName, textureAtlasName);
-		if (armature)
+		if (armature != null)
 		{
 			_clock.add(armature);
 			return armature.display as StarlingArmatureDisplay;
@@ -235,9 +236,9 @@ public final class StarlingFactory extends BaseFactory
 	public function getTextureDisplay(textureName:String, textureAtlasName:String = null):Image 
 	{
 		inline var textureData:StarlingTextureData = _getTextureData(textureAtlasName, textureName) as StarlingTextureData;
-		if (textureData)
+		if (textureData != null)
 		{
-			if (!textureData.texture)
+			if (textureData.texture == null)
 			{
 				inline var textureAtlasTexture:Texture = (textureData.parent as StarlingTextureAtlasData).texture;
 				textureData.texture = new SubTexture(textureAtlasTexture, textureData.region, false, null, textureData.rotated);

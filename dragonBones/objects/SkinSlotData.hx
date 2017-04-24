@@ -7,8 +7,8 @@ import dragonBones.core.BaseObject;
  */
 public final class SkinSlotData extends BaseObject
 {
-	public inline var displays:Vector.<DisplayData> = new Vector.<DisplayData>();
-	public inline var meshs:Object = {};
+	public inline var displays:Vector<DisplayData> = new Vector<DisplayData>();
+	public inline var meshs:Dynamic = {};
 	public var slot:SlotData;
 	
 	public function SkinSlotData()
@@ -18,7 +18,8 @@ public final class SkinSlotData extends BaseObject
 	
 	override private function _onClear():Void
 	{
-		for (var i:UInt = 0, l:UInt = displays.length; i < l; ++i)
+		var l:UInt = displays.length;
+		for (i in 0...l)
 		{
 			displays[i].returnToPool();
 		}
@@ -37,10 +38,11 @@ public final class SkinSlotData extends BaseObject
 	
 	public function getDisplay(name: String): DisplayData 
 	{
-		for (var i:UInt = 0, l:UInt = displays.length; i < l; ++i) 
+		var l:UInt = displays.length;
+		for (i in 0...l)
 		{
 			inline var display:DisplayData = displays[i];
-			if (display.name === name) 
+			if (display.name == name) 
 			{
 				return display;
 			}
@@ -51,7 +53,7 @@ public final class SkinSlotData extends BaseObject
 	
 	public function addMesh(value: MeshData):Void 
 	{
-		if (value && value.name && !meshs[value.name]) 
+		if (value != null && value.name != null && meshs[value.name] == null) 
 		{
 			meshs[value.name] = value;
 		}

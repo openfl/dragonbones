@@ -45,7 +45,7 @@ public class SlotData extends BaseObject
 	/**
 	 * @private
 	 */
-	public inline var actions: Vector.<ActionData> = new Vector.<ActionData>();
+	public inline var actions: Vector<ActionData> = new Vector<ActionData>();
 	/**
 	 * @language zh_CN
 	 * 所属的父骨骼数据。
@@ -73,12 +73,13 @@ public class SlotData extends BaseObject
 	 */
 	override private function _onClear():Void
 	{
-		for (var i:UInt = 0, l:UInt = actions.length; i < l; ++i)
+		var l:UInt = actions.length;
+		for (i in 0...l)
 		{
 			actions[i].returnToPool();
 		}
 		
-		if (userData) 
+		if (userData != null) 
 		{
 			userData.returnToPool();
 		}

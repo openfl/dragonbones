@@ -58,7 +58,7 @@ public class TweenTimelineState extends TimelineState
 		return (value - progress) * easing + progress;
 	}
 	
-	@:allow("dragonBones") static function _getCurveEasingValue(progress:Float, samples:Vector.<Number>):Float
+	@:allow("dragonBones") static function _getCurveEasingValue(progress:Float, samples:Vector<Float>):Float
 	{
 		if (progress <= 0.0) 
 		{
@@ -79,7 +79,7 @@ public class TweenTimelineState extends TimelineState
 	
 	private var _tweenProgress:Float;
 	private var _tweenEasing:Float;
-	private var _curve:Vector.<Number>;
+	private var _curve:Vector<Float>;
 	
 	public function TweenTimelineState(self:TimelineState)
 	{
@@ -133,7 +133,7 @@ public class TweenTimelineState extends TimelineState
 				_tweenProgress = _getEasingValue(_tweenProgress, _tweenEasing);
 			}
 		}
-		else if (_curve)
+		else if (_curve != null)
 		{
 			_tweenProgress = (_currentTime - _currentFrame.position + _position) / _currentFrame.duration;
 			_tweenProgress = _getCurveEasingValue(_tweenProgress, _curve);

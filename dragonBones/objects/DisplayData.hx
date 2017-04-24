@@ -32,7 +32,7 @@ public class DisplayData extends BaseObject
 	
 	override private function _onClear():Void
 	{
-		if (boundingBox) 
+		if (boundingBox != null) 
 		{
 			boundingBox.returnToPool();
 		}

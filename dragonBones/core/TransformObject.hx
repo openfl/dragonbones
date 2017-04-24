@@ -56,7 +56,7 @@ class TransformObject extends BaseObject
 	 * 可以用于存储临时数据。
 	 * @version DragonBones 3.0
 	 */
-	public var userData:Object;
+	public var userData:Dynamic;
 	/**
 	 * @private
 	 */

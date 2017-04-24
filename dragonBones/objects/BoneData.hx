@@ -70,16 +70,13 @@ public class BoneData extends BaseObject
 	/**
 	 * @private
 	 */
-	public function BoneData()
-	{
-		super(this);
-	}
+	private function new() {}
 	/**
 	 * @private
 	 */
 	override private function _onClear():Void
 	{
-		if (userData) 
+		if (userData != null) 
 		{
 			userData.returnToPool();
 		}

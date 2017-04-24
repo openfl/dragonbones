@@ -122,19 +122,19 @@ public final class AnimationState extends BaseObject
 	/**
 	 * @private
 	 */
-	private inline var _boneMask:Vector.<String> = new Vector.<String>();
+	private inline var _boneMask:Vector<String> = new Vector<String>();
 	/**
 	 * @private
 	 */
-	private inline var _boneTimelines:Vector.<BoneTimelineState> = new Vector.<BoneTimelineState>();
+	private inline var _boneTimelines:Vector<BoneTimelineState> = new Vector<BoneTimelineState>();
 	/**
 	 * @private
 	 */
-	private inline var _slotTimelines:Vector.<SlotTimelineState> = new Vector.<SlotTimelineState>();
+	private inline var _slotTimelines:Vector<SlotTimelineState> = new Vector<SlotTimelineState>();
 	/**
 	 * @private
 	 */
-	private inline var _ffdTimelines:Vector.<FFDTimelineState> = new Vector.<FFDTimelineState>();
+	private inline var _ffdTimelines:Vector<FFDTimelineState> = new Vector<FFDTimelineState>();
 	/**
 	 * @private
 	 */
@@ -163,27 +163,30 @@ public final class AnimationState extends BaseObject
 	 */
 	override private function _onClear():Void
 	{
-		for (var i:UInt = 0, l:UInt = _boneTimelines.length; i < l; ++i)
+		var l:UInt = _boneTimelines.length;
+		for (i in 0...l)
 		{
 			_boneTimelines[i].returnToPool();
 		}
 		
-		for (i = 0, l = _slotTimelines.length; i < l; ++i)
+		l = _slotTimelines.length;
+		for (i in 0...l)
 		{
 			_slotTimelines[i].returnToPool();
 		}
 		
-		for (i = 0, l = _ffdTimelines.length; i < l; ++i)
+		l = _ffdTimelines.length;
+		for (i in 0...l)
 		{
 			_ffdTimelines[i].returnToPool();
 		}
 		
-		if (_timeline)
+		if (_timeline != null)
 		{
 			_timeline.returnToPool();
 		}
 		
-		if (_zOrderTimeline)
+		if (_zOrderTimeline != null)
 		{
 			_zOrderTimeline.returnToPool();
 		}
@@ -330,7 +333,8 @@ public final class AnimationState extends BaseObject
 		if (animationConfig.boneMask.length > 0) 
 		{
 			_boneMask.length = animationConfig.boneMask.length;
-			for (var i:UInt = 0, l:UInt = _boneMask.length; i < l; ++i) 
+			var l:UInt = _boneMask.length;
+			for (i in 0...l)
 			{
 				_boneMask[i] = animationConfig.boneMask[i];
 			}
@@ -358,27 +362,29 @@ public final class AnimationState extends BaseObject
 		_slotTimelines.fixed = false;
 		_ffdTimelines.fixed = false;
 		
-		inline var boneTimelineStates: Object = {};
-		inline var slotTimelineStates: Object = {};
-		inline var ffdTimelineStates: Object = {};
+		inline var boneTimelineStates:Dynamic = {};
+		inline var slotTimelineStates:Dynamic = {};
+		inline var ffdTimelineStates:Dynamic = {};
 		
-		for (var i:UInt = 0, l:UInt = _boneTimelines.length; i < l; ++i) // Creat bone timelines map.
+		var l:UInt = _boneTimelines.length;
+		for (i in 0...l) // Creat bone timelines map.
 		{
 			var boneTimelineState:BoneTimelineState = _boneTimelines[i];
 			boneTimelineStates[boneTimelineState.bone.name] = boneTimelineState;
 		}
 		
-		inline var bones:Vector.<Bone> = _armature.getBones();
-		for (i = 0, l = bones.length; i < l; ++i) 
+		inline var bones:Vector<Bone> = _armature.getBones();
+		l = bones.length;
+		for (i in 0...l)
 		{
 			inline var bone:Bone = bones[i];
 			inline var boneTimelineName:String = bone.name;
 			if (containsBoneMask(boneTimelineName))
 			{
 				inline var boneTimelineData:BoneTimelineData = _animationData.getBoneTimeline(boneTimelineName);
-				if (boneTimelineData) 
+				if (boneTimelineData != null) 
 				{
-					if (boneTimelineStates[boneTimelineName]) // Remove bone timeline from map.
+					if (boneTimelineStates[boneTimelineName] != null) // Remove bone timeline from map.
 					{
 						delete boneTimelineStates[boneTimelineName];
 					}
@@ -400,13 +406,15 @@ public final class AnimationState extends BaseObject
 			boneTimelineState.returnToPool();
 		}
 		
-		for (i = 0, l = _slotTimelines.length; i < l; ++i) // Create slot timelines map.
+		l = _slotTimelines.length;
+		for (i in 0...l) // Create slot timelines map.
 		{ 
 			var slotTimelineState:SlotTimelineState = _slotTimelines[i];
 			slotTimelineStates[slotTimelineState.slot.name] = slotTimelineState;
 		}
 		
-		for (i = 0, l = _ffdTimelines.length; i < l; ++i) // Create ffd timelines map.
+		l = _ffdTimelines.length;
+		for (i in 0...l) // Create ffd timelines map.
 		{ 
 			var ffdTimelineState:FFDTimelineState = _ffdTimelines[i];
 			inline var display:DisplayData = (ffdTimelineState._timelineData as FFDTimelineData).display;
@@ -414,8 +422,9 @@ public final class AnimationState extends BaseObject
 			ffdTimelineStates[meshName] = ffdTimelineState;
 		}
 		
-		inline var slots:Vector.<Slot> = _armature.getSlots();
-		for (i = 0, l = slots.length; i < l; ++i)
+		inline var slots:Vector<Slot> = _armature.getSlots();
+		l = slots.length;
+		for (i in 0...l)
 		{
 			inline var slot:Slot = slots[i];
 			inline var slotTimelineName:String = slot.name;
@@ -425,9 +434,9 @@ public final class AnimationState extends BaseObject
 			if (containsBoneMask(parentTimelineName)) 
 			{
 				inline var slotTimelineData:SlotTimelineData = _animationData.getSlotTimeline(slotTimelineName);
-				if (slotTimelineData) 
+				if (slotTimelineData != null) 
 				{
-					if (slotTimelineStates[slotTimelineName]) // Remove slot timeline from map.
+					if (slotTimelineStates[slotTimelineName] != null) // Remove slot timeline from map.
 					{
 						delete slotTimelineStates[slotTimelineName];
 					}
@@ -440,12 +449,12 @@ public final class AnimationState extends BaseObject
 					}
 				}
 				
-				inline var ffdTimelineDatas:Object = _animationData.getFFDTimeline(_armature._skinData.name, slotTimelineName);
-				if (ffdTimelineDatas) 
+				inline var ffdTimelineDatas:Dynamic = _animationData.getFFDTimeline(_armature._skinData.name, slotTimelineName);
+				if (ffdTimelineDatas != null) 
 				{
 					for (var k:String in ffdTimelineDatas) 
 					{
-						if (ffdTimelineStates[k]) // Remove ffd timeline from map.
+						if (ffdTimelineStates[k] != null) // Remove ffd timeline from map.
 						{
 							delete ffdTimelineStates[k];
 						}
@@ -512,7 +521,7 @@ public final class AnimationState extends BaseObject
 			passedTime *= timeScale;
 		}
 		
-		if (passedTime !== 0.0 && _playheadState === 3) // 11
+		if (passedTime != 0.0 && _playheadState == 3) // 11
 		{
 			_time += passedTime;
 		}
@@ -521,7 +530,7 @@ public final class AnimationState extends BaseObject
 		_weightResult = weight * _fadeProgress;
 		if (_weightResult !== 0.0) 
 		{
-			inline var isCacheEnabled:Bool = _fadeState === 0 && cacheFrameRate > 0.0;
+			inline var isCacheEnabled:Bool = _fadeState == 0 && cacheFrameRate > 0.0;
 			var isUpdatesTimeline:Bool = true;
 			var isUpdatesBoneTimeline:Bool = true;
 			var time:Float = _time;
@@ -536,7 +545,7 @@ public final class AnimationState extends BaseObject
 			}
 			
 			// Update zOrder timeline.
-			if (_zOrderTimeline) 
+			if (_zOrderTimeline != null) 
 			{
 				_zOrderTimeline.update(time);
 			}
@@ -568,20 +577,24 @@ public final class AnimationState extends BaseObject
 			// Update timelines.
 			if (isUpdatesTimeline) 
 			{
+				var l:UInt;
 				if (isUpdatesBoneTimeline) 
 				{
-					for (var i:UInt = 0, l:UInt = _boneTimelines.length; i < l; ++i) 
+					l = _boneTimelines.length;
+					for (i in 0...l)
 					{
 						_boneTimelines[i].update(time);
 					}
 				}
 				
-				for (i = 0, l = _slotTimelines.length; i < l; ++i) 
+				l = _slotTimelines.length;
+				for (i in 0...l)
 				{
 					_slotTimelines[i].update(time);
 				}
 				
-				for (i = 0, l = _ffdTimelines.length; i < l; ++i) 
+				l = _ffdTimelines.length;
+				for (i in 0...l)
 				{
 					_ffdTimelines[i].update(time);
 				}
@@ -611,11 +624,11 @@ public final class AnimationState extends BaseObject
 	internal function _isDisabled(slot:Slot):Bool
 	{
 		if (
-			displayControl &&
+			displayControl != null &&
 			(
-				!slot.displayController ||
-				slot.displayController === _name ||
-				slot.displayController === _group
+				slot.displayController == null ||
+				slot.displayController == _name ||
+				slot.displayController == _group
 			)
 		) 
 		{
@@ -693,17 +706,20 @@ public final class AnimationState extends BaseObject
 				_fadeProgress = 0.000001; // Modify _fadeProgress to different value.
 			}
 			
-			for (var i:UInt = 0, l:UInt = _boneTimelines.length; i < l; ++i)
+			var l:UInt = _boneTimelines.length;
+			for (i in 0...l)
 			{
 				_boneTimelines[i].fadeOut();
 			}
 			
-			for (i = 0, l = _slotTimelines.length; i < l; ++i)
+			l = _slotTimelines.length;
+			for (i in 0...l)
 			{
 				_slotTimelines[i].fadeOut();
 			}
 			
-			for (i = 0, l = _ffdTimelines.length; i < l; ++i)
+			l = _ffdTimelines.length;
+			for (i in 0...l)
 			{
 				_ffdTimelines[i].fadeOut();
 			}
@@ -733,7 +749,7 @@ public final class AnimationState extends BaseObject
 	public function addBoneMask(name:String, recursive:Bool = true):Void
 	{
 		inline var currentBone: Bone = _armature.getBone(name);
-		if (!currentBone) 
+		if (currentBone == null) 
 		{
 			return;
 		}
@@ -747,8 +763,9 @@ public final class AnimationState extends BaseObject
 		
 		if (recursive) // Add recursive mixing.
 		{
-			inline var bones:Vector.<Bone> = _armature.getBones();
-			for (var i:UInt = 0, l:UInt = bones.length; i < l; ++i) 
+			inline var bones:Vector<Bone> = _armature.getBones();
+			var l:UInt = bones.length;
+			for (i in 0...l)
 			{
 				inline var bone:Bone = bones[i];
 				if (_boneMask.indexOf(bone.name) < 0 && currentBone.contains(bone))
@@ -782,12 +799,13 @@ public final class AnimationState extends BaseObject
 		if (recursive) 
 		{
 			inline var currentBone:Bone = _armature.getBone(name);
-			if (currentBone) 
+			if (currentBone != null) 
 			{
-				inline var bones:Vector.<Bone> = _armature.getBones();
+				inline var bones:Vector<Bone> = _armature.getBones();
 				if (_boneMask.length > 0) // Remove recursive mixing.
 				{
-					for (var i:UInt = 0, l:UInt = bones.length; i < l; ++i) 
+					var l:UInt = bones.length;
+					for (i in 0...l)
 					{
 						var bone:Bone = bones[i];
 						index = _boneMask.indexOf(bone.name);
@@ -930,22 +948,25 @@ public final class AnimationState extends BaseObject
 		_time = value;
 		_timeline.setCurrentTime(_time);
 		
-		if (_zOrderTimeline) 
+		if (_zOrderTimeline != null) 
 		{
 			_zOrderTimeline._playState = -1;
 		}
 		
-		for (var i:UInt = 0, l:UInt = _boneTimelines.length; i < l; ++i) 
+		var l:UInt = _boneTimelines.length;
+		for (i in 0...l)
 		{
 			_boneTimelines[i]._playState = -1;
 		}
 		
-		for (i = 0, l = _slotTimelines.length; i < l; ++i) 
+		l = _slotTimelines.length;
+		for (i in 0...l)
 		{
 			_slotTimelines[i]._playState = -1;
 		}
 		
-		for (i = 0, l = _ffdTimelines.length; i < l; ++i) 
+		l = _ffdTimelines.length;
+		for (i in 0...l)
 		{
 			_ffdTimelines[i]._playState = -1;
 		}

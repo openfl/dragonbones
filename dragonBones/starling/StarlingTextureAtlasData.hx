@@ -49,7 +49,7 @@ public final class StarlingTextureAtlasData extends TextureAtlasData
 	{
 		super._onClear();
 		
-		if (texture)
+		if (texture != null)
 		{
 			if (disposeTexture)
 			{

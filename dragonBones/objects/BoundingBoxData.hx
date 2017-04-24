@@ -165,53 +165,53 @@ public final class BoundingBoxData extends BaseObject
 			}
 		}
 		
-		if (intersectionCount) 
+		if (intersectionCount > 0) 
 		{
 			if (inSideA) 
 			{
 				intersectionCount = 2; // 10
 				
-				if (intersectionPointA) 
+				if (intersectionPointA != null) 
 				{
 					intersectionPointA.x = xB;
 					intersectionPointA.y = yB;
 				}
 				
-				if (intersectionPointB) 
+				if (intersectionPointB != null) 
 				{
 					intersectionPointB.x = xB;
 					intersectionPointB.y = xB;
 				}
 				
-				if (normalRadians) {
+				if (normalRadians != null) {
 					normalRadians.x = normalRadians.y + Math.PI;
 				}
 			}
 			else if (inSideB) {
 				intersectionCount = 1; // 01
 				
-				if (intersectionPointA) {
+				if (intersectionPointA != null) {
 					intersectionPointA.x = xA;
 					intersectionPointA.y = yA;
 				}
 				
-				if (intersectionPointB) {
+				if (intersectionPointB != null) {
 					intersectionPointB.x = xA;
 					intersectionPointB.y = yA;
 				}
 				
-				if (normalRadians) {
+				if (normalRadians != null) {
 					normalRadians.y = normalRadians.x + Math.PI;
 				}
 			}
 			else {
 				intersectionCount = 3; // 11
-				if (intersectionPointA) {
+				if (intersectionPointA != null) {
 					intersectionPointA.x = xA;
 					intersectionPointA.y = yA;
 				}
 				
-				if (intersectionPointB) {
+				if (intersectionPointB != null) {
 					intersectionPointB.x = xB;
 					intersectionPointB.y = yB;
 				}
@@ -262,51 +262,51 @@ public final class BoundingBoxData extends BaseObject
 			{
 				return -1;
 			}
-			else if (sideAB === 0) 
+			else if (sideAB == 0) 
 			{
-				if (inSideA === -1) 
+				if (inSideA == -1) 
 				{
 					intersectionCount = 2; // 10
 					xB = xA + sB * xD;
 					yB = (yA + sB * yD) / d;
 					
-					if (intersectionPointA) 
+					if (intersectionPointA != null) 
 					{
 						intersectionPointA.x = xB;
 						intersectionPointA.y = yB;
 					}
 					
-					if (intersectionPointB) 
+					if (intersectionPointB != null) 
 					{
 						intersectionPointB.x = xB;
 						intersectionPointB.y = yB;
 					}
 					
-					if (normalRadians) 
+					if (normalRadians != null) 
 					{
 						normalRadians.x = Math.atan2(yB / rr * dd, xB / rr);
 						normalRadians.y = normalRadians.x + Math.PI;
 					}
 				}
-				else if (inSideB === 1) 
+				else if (inSideB == 1) 
 				{
 					intersectionCount = 1; // 01
 					xA = xA + sA * xD;
 					yA = (yA + sA * yD) / d;
 					
-					if (intersectionPointA) 
+					if (intersectionPointA != null) 
 					{
 						intersectionPointA.x = xA;
 						intersectionPointA.y = yA;
 					}
 					
-					if (intersectionPointB) 
+					if (intersectionPointB != null) 
 					{
 						intersectionPointB.x = xA;
 						intersectionPointB.y = yA;
 					}
 					
-					if (normalRadians) 
+					if (normalRadians != null) 
 					{
 						normalRadians.x = Math.atan2(yA / rr * dd, xA / rr);
 						normalRadians.y = normalRadians.x + Math.PI;
@@ -316,23 +316,23 @@ public final class BoundingBoxData extends BaseObject
 				{
 					intersectionCount = 3; // 11
 					
-					if (intersectionPointA) 
+					if (intersectionPointA != null) 
 					{
 						intersectionPointA.x = xA + sA * xD;
 						intersectionPointA.y = (yA + sA * yD) / d;
 						
-						if (normalRadians) 
+						if (normalRadians != null) 
 						{
 							normalRadians.x = Math.atan2(intersectionPointA.y / rr * dd, intersectionPointA.x / rr);
 						}
 					}
 					
-					if (intersectionPointB) 
+					if (intersectionPointB != null) 
 					{
 						intersectionPointB.x = xA + sB * xD;
 						intersectionPointB.y = (yA + sB * yD) / d;
 						
-						if (normalRadians) 
+						if (normalRadians != null) 
 						{
 							normalRadians.y = Math.atan2(intersectionPointB.y / rr * dd, intersectionPointB.x / rr);
 						}
@@ -348,18 +348,18 @@ public final class BoundingBoxData extends BaseObject
 	 */
 	public static function segmentIntersectsPolygon(
 		xA:Float, yA:Float, xB:Float, yB:Float,
-		vertices: Vector.<Number>,
+		vertices: Vector<Float>,
 		intersectionPointA: Point = null,
 		intersectionPointB: Point = null,
 		normalRadians: Point = null
 	):Int
 	{
-		if (xA === xB)
+		if (xA == xB)
 		{
 			xA = xB + 0.01;
 		}
 		
-		if (yA === yB)
+		if (yA == yB)
 		{
 			yA = yB + 0.01;
 		}
@@ -404,7 +404,7 @@ public final class BoundingBoxData extends BaseObject
 				inline var y:Float = (llAB * dYCD - dYAB * llCD) / ll;
 				if (((y >= yC && y <= yD) || (y >= yD && y <= yC)) && (dYAB === 0 || (y >= yA && y <= yB) || (y >= yB && y <= yA))) 
 				{
-					if (intersectionPointB) 
+					if (intersectionPointB != null) 
 					{
 						var d:Float = x - xA;
 						if (d < 0.0) 
@@ -421,7 +421,7 @@ public final class BoundingBoxData extends BaseObject
 							xMax = x;
 							yMax = y;
 							
-							if (normalRadians) 
+							if (normalRadians != null) 
 							{
 								normalRadians.x = Math.atan2(yD - yC, xD - xC) - Math.PI * 0.5;
 								normalRadians.y = normalRadians.x;
@@ -435,7 +435,7 @@ public final class BoundingBoxData extends BaseObject
 								xMin = x;
 								yMin = y;
 								
-								if (normalRadians) 
+								if (normalRadians != null) 
 								{
 									normalRadians.x = Math.atan2(yD - yC, xD - xC) - Math.PI * 0.5;
 								}
@@ -447,7 +447,7 @@ public final class BoundingBoxData extends BaseObject
 								xMax = x;
 								yMax = y;
 								
-								if (normalRadians) 
+								if (normalRadians != null) 
 								{
 									normalRadians.y = Math.atan2(yD - yC, xD - xC) - Math.PI * 0.5;
 								}
@@ -464,7 +464,7 @@ public final class BoundingBoxData extends BaseObject
 						yMax = y;
 						intersectionCount++;
 						
-						if (normalRadians) 
+						if (normalRadians != null) 
 						{
 							normalRadians.x = Math.atan2(yD - yC, xD - xC) - Math.PI * 0.5;
 							normalRadians.y = normalRadians.x;
@@ -480,19 +480,19 @@ public final class BoundingBoxData extends BaseObject
 		
 		if (intersectionCount === 1) 
 		{
-			if (intersectionPointA) 
+			if (intersectionPointA != null) 
 			{
 				intersectionPointA.x = xMin;
 				intersectionPointA.y = yMin;
 			}
 			
-			if (intersectionPointB) 
+			if (intersectionPointB != null) 
 			{
 				intersectionPointB.x = xMin;
 				intersectionPointB.y = yMin;
 			}
 			
-			if (normalRadians) 
+			if (normalRadians != null) 
 			{
 				normalRadians.y = normalRadians.x + Math.PI;
 			}
@@ -501,13 +501,13 @@ public final class BoundingBoxData extends BaseObject
 		{
 			intersectionCount++;
 			
-			if (intersectionPointA) 
+			if (intersectionPointA != null) 
 			{
 				intersectionPointA.x = xMin;
 				intersectionPointA.y = yMin;
 			}
 			
-			if (intersectionPointB) 
+			if (intersectionPointB != null) 
 			{
 				intersectionPointB.x = xMax;
 				intersectionPointB.y = yMax;
@@ -539,7 +539,7 @@ public final class BoundingBoxData extends BaseObject
 	 * 自定义多边形顶点。
 	 * @version DragonBones 5.0
 	 */
-	public var vertices: Vector.<Number> = new Vector.<Number>();
+	public var vertices: Vector<Float> = new Vector<Float>();
 	/**
 	 * @private
 	 */

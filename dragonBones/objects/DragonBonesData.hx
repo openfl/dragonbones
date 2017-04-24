@@ -36,17 +36,17 @@ public class DragonBonesData extends BaseObject
 	 * @see dragonBones.objects.ArmatureData
 	 * @version DragonBones 3.0
 	 */
-	public inline var armatures:Object = {};
+	public inline var armatures:Dynamic = {};
 	/**
 	 * @private
 	 */
-	public inline var cachedFrames: Vector.<Number> = new Vector.<Number>();
+	public inline var cachedFrames: Vector<Float> = new Vector<Float>();
 	/**
 	 * @private
 	 */
 	public var userData: CustomData;
 	
-	private inline var _armatureNames:Vector.<String> = new Vector.<String>();
+	private inline var _armatureNames:Vector<String> = new Vector<String>();
 	/**
 	 * @private
 	 */
@@ -65,7 +65,7 @@ public class DragonBonesData extends BaseObject
 			delete armatures[k];
 		}
 		
-		if (userData) 
+		if (userData != null) 
 		{
 			userData.returnToPool();
 		}
@@ -84,7 +84,7 @@ public class DragonBonesData extends BaseObject
 	 */
 	public function addArmature(value:ArmatureData):Void
 	{
-		if (value && value.name && !armatures[value.name])
+		if (value != null && value.name != null && armatures[value.name] == null)
 		{
 			armatures[value.name] = value;
 			_armatureNames.push(value.name);
@@ -113,7 +113,7 @@ public class DragonBonesData extends BaseObject
 	 * @see #armatures
 	 * @version DragonBones 3.0
 	 */
-	public function get armatureNames():Vector.<String>
+	public function get armatureNames():Vector<String>
 	{
 		return _armatureNames;
 	}

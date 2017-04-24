@@ -29,15 +29,7 @@ public class TimelineState extends BaseObject
 	private var _animationState:AnimationState;
 	private var _mainTimeline:AnimationTimelineState;
 	
-	public function TimelineState(self:TimelineState)
-	{
-		super(this);
-		
-		if (self != this)
-		{
-			throw new Error(DragonBones.ABSTRACT_CLASS_ERROR);
-		}
-	}
+	private function new() {}
 	
 	override private function _onClear():Void
 	{
@@ -69,13 +61,13 @@ public class TimelineState extends BaseObject
 		var currentPlayTimes:UInt = 0;
 		var currentTime:Float = 0.0;
 		
-		if (_mainTimeline && _keyFrameCount === 1) 
+		if (_mainTimeline != null && _keyFrameCount === 1) 
 		{
 			_playState = _animationState._timeline._playState >= 0 ? 1 : -1;
 			currentPlayTimes = 1;
 			currentTime = _mainTimeline._currentTime;
 		}
-		else if (!_mainTimeline || _timeScale !== 1.0 || _timeOffset !== 0.0)  // Scale and offset.
+		else if (_mainTimeline == null || _timeScale !== 1.0 || _timeOffset !== 0.0)  // Scale and offset.
 		{
 			inline var playTimes:UInt = _animationState.playTimes;
 			inline var totalTime:Float = playTimes * _duration;
@@ -160,7 +152,7 @@ public class TimelineState extends BaseObject
 		_timelineData = timelineData;
 		_mainTimeline = _animationState._timeline;
 		
-		if (this === _mainTimeline)
+		if (this == _mainTimeline)
 		{
 			_mainTimeline = null;
 		}
@@ -190,7 +182,7 @@ public class TimelineState extends BaseObject
 			inline var currentFrameIndex:UInt = _keyFrameCount > 1 ? uint(_currentTime * _frameRate) : 0;
 			inline var currentFrame:FrameData = _timelineData.frames[currentFrameIndex];
 			
-			if (_currentFrame !== currentFrame) 
+			if (_currentFrame != currentFrame) 
 			{
 				_currentFrame = currentFrame;
 				_onArriveAtFrame();

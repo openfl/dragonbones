@@ -52,7 +52,7 @@ public class TextureAtlasData extends BaseObject
 	/**
 	 * @private
 	 */
-	public inline var textures:Object = {};
+	public inline var textures:Dynamic = {};
 	/**
 	 * @private
 	 */
@@ -84,7 +84,7 @@ public class TextureAtlasData extends BaseObject
 		name = null;
 		imagePath = null;
 		
-		if (bitmapData)
+		if (bitmapData != null)
 		{
 			bitmapData.dispose();
 			bitmapData = null;
@@ -103,7 +103,7 @@ public class TextureAtlasData extends BaseObject
 	 */
 	public function addTexture(value:TextureData):Void
 	{
-		if (value && value.name && !textures[value.name])
+		if (value != null && value.name != null && textures[value.name] == null)
 		{
 			textures[value.name] = value;
 			value.parent = this;

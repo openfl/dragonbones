@@ -156,7 +156,7 @@ public final class AnimationConfig extends BaseObject
 	 * 骨骼遮罩。
 	 * @version DragonBones 5.0
 	 */
-	public inline var boneMask: Vector.<String> = new Vector.<String>();
+	public inline var boneMask: Vector<String> = new Vector<String>();
 	/**
 	 * @private
 	 */
@@ -223,7 +223,8 @@ public final class AnimationConfig extends BaseObject
 		group = value.group;
 		
 		boneMask.length = value.boneMask.length;
-		for (var i:UInt = 0, l:UInt = boneMask.length; i < l; ++i) 
+		var l:UInt = boneMask.length;
+		for (i in 0...l)
 		{
 			boneMask[i] = value.boneMask[i];
 		}
@@ -237,7 +238,7 @@ public final class AnimationConfig extends BaseObject
 	public function addBoneMask(armature: Armature, name: String, recursive:Bool = true):Void 
 	{
 		inline var currentBone: Bone = armature.getBone(name);
-		if (!currentBone) 
+		if (currentBone == null) 
 		{
 			return;
 		}
@@ -249,8 +250,9 @@ public final class AnimationConfig extends BaseObject
 		
 		if (recursive) // Add recursive mixing.
 		{
-			inline var bones:Vector.<Bone> = armature.getBones();
-			for (var i:UInt = 0, l:UInt = bones.length; i < l; ++i) 
+			inline var bones:Vector<Bone> = armature.getBones();
+			var l:UInt = bones.length;
+			for (i in 0...l)
 			{
 				inline var bone:Bone = bones[i];
 				if (boneMask.indexOf(bone.name) < 0 && currentBone.contains(bone))
@@ -272,12 +274,13 @@ public final class AnimationConfig extends BaseObject
 		if (recursive) 
 		{
 			inline var currentBone:Bone = armature.getBone(name);
-			if (currentBone) 
+			if (currentBone != null) 
 			{
-				inline var bones:Vector.<Bone> = armature.getBones();
+				inline var bones:Vector<Bone> = armature.getBones();
 				if (boneMask.length > 0) // Remove recursive mixing.
 				{
-					for (var i:UInt = 0, l:UInt = bones.length; i < l; ++i) 
+					var l:UInt = bones.length;
+					for (i in 0...l)
 					{
 						var bone:Bone = bones[i];
 						index = boneMask.indexOf(bone.name);
@@ -289,7 +292,8 @@ public final class AnimationConfig extends BaseObject
 				}
 				else // Add unrecursive mixing.
 				{
-					for (i = 0, l = bones.length; i < l; ++i) 
+					var l = bones.length;
+					for (i in 0...l)
 					{
 						bone = bones[i];
 						if (!currentBone.contains(bone)) 

@@ -23,13 +23,14 @@ public class TweenFrameData extends FrameData
 		result.y = kA * y1 + kB * y2 + kC * y3 + kD * y4;
 	}
 	
-	public static function samplingEasingCurve(curve:Array, samples:Vector.<Number>):Void
+	public static function samplingEasingCurve(curve:Array, samples:Vector<Float>):Void
 	{
 		inline var curveCount:UInt = curve.length;
 		inline var result:Point = new Point();
 		
 		var stepIndex:Int = -2;
-		for (var i:UInt = 0, l:UInt = samples.length; i < l; ++i) 
+		var l:UInt = samples.length;
+		for (i in 0...l)
 		{
 			var t:Float = (i + 1) / (l + 1);
 			while ((stepIndex + 6 < curveCount ? curve[stepIndex + 6] : 1) < t) // stepIndex + 3 * 2
@@ -68,7 +69,7 @@ public class TweenFrameData extends FrameData
 	}
 	
 	public var tweenEasing:Float;
-	public var curve:Vector.<Number>;
+	public var curve:Vector<Float>;
 	
 	public function TweenFrameData(self:TweenFrameData)
 	{

@@ -18,9 +18,9 @@ public final class FFDTimelineState extends TweenTimelineState
 	
 	private var _ffdDirty:Bool;
 	private var _tweenFFD:Int;
-	private inline var _ffdVertices:Vector.<Number> = new Vector.<Number>();
-	private inline var _durationFFDVertices:Vector.<Number> = new Vector.<Number>();
-	private var _slotFFDVertices:Vector.<Number>;
+	private inline var _ffdVertices:Vector<Float> = new Vector<Float>();
+	private inline var _durationFFDVertices:Vector<Float> = new Vector<Float>();
+	private var _slotFFDVertices:Vector<Float>;
 	
 	public function FFDTimelineState()
 	{
@@ -60,9 +60,10 @@ public final class FFDTimelineState extends TweenTimelineState
 		
 		if (_tweenEasing !== DragonBones.NO_TWEEN || _curve)
 		{
-			inline var currentFFDVertices:Vector.<Number> = currentFrame.tweens;
-			inline var nextFFDVertices:Vector.<Number> = (currentFrame.next as ExtensionFrameData).tweens;
-			for (var i:UInt = 0, l:UInt = currentFFDVertices.length; i < l; ++i) 
+			inline var currentFFDVertices:Vector<Float> = currentFrame.tweens;
+			inline var nextFFDVertices:Vector<Float> = (currentFrame.next as ExtensionFrameData).tweens;
+			var l:UInt = currentFFDVertices.length;
+			for (i in 0...l)
 			{
 				inline var duration:Float = nextFFDVertices[i] - currentFFDVertices[i];
 				_durationFFDVertices[i] = duration;
@@ -76,7 +77,8 @@ public final class FFDTimelineState extends TweenTimelineState
 		if (_tweenFFD === TWEEN_TYPE_NONE)
 		{
 			_tweenFFD = TWEEN_TYPE_ONCE;
-			for (i = 0, l = _durationFFDVertices.length; i < l; ++i)
+			var l = _durationFFDVertices.length;
+			for (i in 0...l)
 			{
 				_durationFFDVertices[i] = 0.0;
 			}
@@ -101,8 +103,9 @@ public final class FFDTimelineState extends TweenTimelineState
 				tweenProgress = _tweenProgress;
 			}
 			
-			inline var currentFFDVertices:Vector.<Number> = (_currentFrame as ExtensionFrameData).tweens;
-			for (var i:UInt = 0, l:UInt = currentFFDVertices.length; i < l; ++i)
+			inline var currentFFDVertices:Vector<Float> = (_currentFrame as ExtensionFrameData).tweens;
+			var l:UInt = currentFFDVertices.length;
+			for (i in 0...l)
 			{
 				_ffdVertices[i] = currentFFDVertices[i] + _durationFFDVertices[i] * tweenProgress;
 			}
@@ -122,12 +125,14 @@ public final class FFDTimelineState extends TweenTimelineState
 		_ffdVertices.fixed = true;
 		_durationFFDVertices.fixed = true;
 		
-		for (var i:UInt = 0, l:UInt = _ffdVertices.length; i < l; ++i) 
+		var l:UInt = _ffdVertices.length;
+		for (i in 0...l)
 		{
 			_ffdVertices[i] = 0.0;
 		}
 		
-		for (i = 0, l = _durationFFDVertices.length; i < l; ++i) 
+		l = _durationFFDVertices.length;
+		for (i in 0...l)
 		{
 			_durationFFDVertices[i] = 0.0;
 		}
@@ -154,7 +159,8 @@ public final class FFDTimelineState extends TweenTimelineState
 			{
 				inline var fadeProgress:Float = Math.pow(_animationState._fadeProgress, 4.0);
 				
-				for (var i:UInt = 0, l:UInt = _ffdVertices.length; i < l; ++i)
+				var l:UInt = _ffdVertices.length;
+				for (i in 0...l)
 				{
 					_slotFFDVertices[i] += (_ffdVertices[i] - _slotFFDVertices[i]) * fadeProgress;
 				}
@@ -165,7 +171,8 @@ public final class FFDTimelineState extends TweenTimelineState
 			{
 				_ffdDirty = false;
 				
-				for (i = 0, l = _ffdVertices.length; i < l; ++i)
+				var l = _ffdVertices.length;
+				for (i in 0...l)
 				{
 					_slotFFDVertices[i] = _ffdVertices[i];
 				}

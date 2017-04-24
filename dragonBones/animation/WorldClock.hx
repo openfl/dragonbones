@@ -31,7 +31,7 @@ public final class WorldClock implements IAnimateble
 	 */
 	public var timeScale:Float = 1;
 	
-	private inline var _animatebles:Vector.<IAnimateble> = new Vector.<IAnimateble>();
+	private inline var _animatebles:Vector<IAnimateble> = new Vector<IAnimateble>();
 	private var _clock: WorldClock = null;
 	/**
 	 * @language zh_CN
@@ -40,7 +40,7 @@ public final class WorldClock implements IAnimateble
 	 * (创建更多独立的 WorldClock 实例可以更灵活的为需要更新的 IAnimateble 实例分组，用于控制不同组不同的播放速度)
 	 * @version DragonBones 3.0
 	 */
-	public function WorldClock()
+	public function new()
 	{
 	}
 	/**
@@ -51,7 +51,7 @@ public final class WorldClock implements IAnimateble
 	 */
 	public function advanceTime(passedTime:Float):Void
 	{
-		if (passedTime !== passedTime) 
+		if (passedTime != passedTime) 
 		{
 			passedTime = 0.0;
 		}
@@ -61,7 +61,7 @@ public final class WorldClock implements IAnimateble
 			passedTime = new Date().getTime() / DragonBones.SECOND_TO_MILLISECOND - time;
 		}
 		
-		if (timeScale !== 1.0) 
+		if (timeScale != 1.0) 
 		{
 			passedTime *= timeScale;
 		}
@@ -135,7 +135,7 @@ public final class WorldClock implements IAnimateble
 	 */
 	public function add(value:IAnimateble):Void
 	{
-		if (value && _animatebles.indexOf(value) < 0)
+		if (value != null && _animatebles.indexOf(value) < 0)
 		{
 			_animatebles.push(value);
 			value.clock = this;
@@ -182,7 +182,7 @@ public final class WorldClock implements IAnimateble
 	}
 	public function set clock(value: WorldClock):Void
 	{
-		if (_clock === value) {
+		if (_clock == value) {
 			return;
 		}
 		

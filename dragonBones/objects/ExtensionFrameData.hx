@@ -5,7 +5,7 @@ package dragonBones.objects
  */
 public final class ExtensionFrameData extends TweenFrameData
 {
-	public inline var tweens:Vector.<Number> = new Vector.<Number>();
+	public inline var tweens:Vector<Float> = new Vector<Float>();
 	
 	public function ExtensionFrameData()
 	{

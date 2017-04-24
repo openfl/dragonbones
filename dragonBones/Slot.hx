@@ -4,6 +4,7 @@ import openfl.geom.ColorTransform;
 import openfl.geom.Matrix;
 import openfl.geom.Point;
 import openfl.geom.Rectangle;
+import openfl.Vector;
 
 import dragonBones.core.DragonBones;
 import dragonBones.core.TransformObject;
@@ -30,16 +31,16 @@ import dragonBones.textures.TextureData;
  * @see dragonBones.objects.SlotData
  * @version DragonBones 3.0
  */
-public class Slot extends TransformObject
+class Slot extends TransformObject
 {
 	/**
 	 * @private
 	 */
-	private static inline var _helpPoint:Point = new Point();
+	private static var _helpPoint:Point = new Point();
 	/**
 	 * @private
 	 */
-	private static inline var _helpMatrix:Matrix = new Matrix();
+	private static var _helpMatrix:Matrix = new Matrix();
 	/**
 	 * @language zh_CN
      * 显示对象受到控制的动画状态或混合组名称，设置为 null 则表示受所有的动画状态控制。
@@ -113,27 +114,27 @@ public class Slot extends TransformObject
 	/**
 	 * @private
 	 */
-	dragonBones_internal inline var _colorTransform:ColorTransform = new ColorTransform();
+	@:allow("dragonBones") private var _colorTransform:ColorTransform = new ColorTransform();
 	/**
 	 * @private
 	 */
-	dragonBones_internal inline var _ffdVertices:Vector.<Number> = new Vector.<Number>();
+	@:allow("dragonBones") private var _ffdVertices:Vector<Float> = new Vector<Float>();
 	/**
 	 * @private
 	 */
-	private inline var _displayList:Vector.<Object> = new Vector.<Object>();
+	private inline var _displayList:Vector<Dynamic> = new Vector<Dynamic>();
 	/**
 	 * @private
 	 */
-	dragonBones_internal inline var _textureDatas:Vector.<TextureData> = new Vector.<TextureData>();
+	@:allow("dragonBones") private var _textureDatas:Vector<TextureData> = new Vector<TextureData>();
 	/**
 	 * @private
 	 */
-	dragonBones_internal inline var _replacedDisplayDatas:Vector.<DisplayData> = new Vector.<DisplayData>();
+	@:allow("dragonBones") private var _replacedDisplayDatas:Vector<DisplayData> = new Vector<DisplayData>();
 	/**
 	 * @private
 	 */
-	private inline var _meshBones:Vector.<Bone> = new Vector.<Bone>();
+	private inline var _meshBones:Vector<Bone> = new Vector<Bone>();
 	/**
 	 * @private
 	 */
@@ -161,15 +162,15 @@ public class Slot extends TransformObject
 	/**
 	 * @private
 	 */
-	private var _rawDisplay:Object;
+	private var _rawDisplay:Dynamic;
 	/**
 	 * @private
 	 */
-	private var _meshDisplay:Object;
+	private var _meshDisplay:Dynamic;
 	/**
 	 * @private
 	 */
-	private var _display:Object;
+	private var _display:Dynamic;
 	/**
 	 * @private
 	 */
@@ -177,19 +178,11 @@ public class Slot extends TransformObject
 	/**
 	 * @private BoneTimelineState
 	 */
-	@:allow("dragonBones") private var _cachedFrameIndices:Vector.<int>;
+	@:allow("dragonBones") private var _cachedFrameIndices:Vector<Int>;
 	/**
 	 * @private
 	 */
-	public function Slot(self:Slot)
-	{
-		super(self);
-		
-		if (self != this)
-		{
-			throw new Error(DragonBones.ABSTRACT_CLASS_ERROR);
-		}
-	}
+	private function new() {}
 	/**
 	 * @private
 	 */
@@ -197,10 +190,12 @@ public class Slot extends TransformObject
 	{
 		super._onClear();
 		
-		inline var disposeDisplayList:Vector.<Object> = new Vector.<Object>();
-		for (var i:UInt = 0, l:UInt = _displayList.length; i < l; ++i) 
+		var disposeDisplayList:Vector<Dynamic> = new Vector<Dynamic>();
+		var l:UInt = _displayList.length;
+		var eachDisplay:Dynamic;
+		for (i in 0...l)
 		{
-			var eachDisplay:Object = _displayList[i];
+			eachDisplay = _displayList[i];
 			if (
 				eachDisplay != _rawDisplay && eachDisplay != _meshDisplay &&
 				disposeDisplayList.indexOf(eachDisplay) < 0
@@ -210,12 +205,13 @@ public class Slot extends TransformObject
 			}
 		}
 		
-		for (i = 0, l = disposeDisplayList.length; i < l; ++i) 
+		l = disposeDisplayList.length;
+		for (i in 0...l)
 		{
 			eachDisplay = disposeDisplayList[i];
-			if (eachDisplay is Armature)
+			if (Std.is(eachDisplay, Armature))
 			{
-				(eachDisplay as Armature).dispose();
+				cast(eachDisplay, Armature).dispose();
 			}
 			else
 			{
@@ -223,12 +219,12 @@ public class Slot extends TransformObject
 			}
 		}
 		
-		if (_meshDisplay && _meshDisplay != _rawDisplay)
+		if (_meshDisplay != null && _meshDisplay != _rawDisplay)
 		{
 			_disposeDisplay(_meshDisplay);
 		}
 		
-		if (_rawDisplay)
+		if (_rawDisplay != null)
 		{
 			_disposeDisplay(_rawDisplay);
 		}
@@ -277,14 +273,14 @@ public class Slot extends TransformObject
 	/**
 	 * @private
 	 */
-	private function _initDisplay(value:Object):Void
+	private function _initDisplay(value:Dynamic):Void
 	{
 		throw new Error(DragonBones.ABSTRACT_METHOD_ERROR);
 	}
 	/**
 	 * @private
 	 */
-	private function _disposeDisplay(value:Object):Void
+	private function _disposeDisplay(value:Dynamic):Void
 	{
 		throw new Error(DragonBones.ABSTRACT_METHOD_ERROR);
 	}
@@ -305,7 +301,7 @@ public class Slot extends TransformObject
 	/**
 	 * @private
 	 */
-	private function _replaceDisplay(value:Object):Void
+	private function _replaceDisplay(value:Dynamic):Void
 	{
 		throw new Error(DragonBones.ABSTRACT_METHOD_ERROR);
 	}
@@ -377,7 +373,8 @@ public class Slot extends TransformObject
 	 */
 	private function _isMeshBonesUpdate():Bool
 	{
-		for (var i:UInt = 0, l:UInt = _meshBones.length; i < l; ++i)
+		var l:UInt = _meshBones.length;
+		for (i in 0...l)
 		{
 			if (_meshBones[i]._transformDirty != 0)
 			{
@@ -392,11 +389,11 @@ public class Slot extends TransformObject
 	 */
 	private function _updateDisplayData():Void 
 	{
-		inline var prevDisplayData:DisplayData = _displayData;
-		inline var prevReplaceDisplayData:DisplayData = _replacedDisplayData;
-		inline var prevTextureData:TextureData = _textureData;
-		inline var prevMeshData:MeshData = _meshData;
-		inline var currentDisplay:Object = _displayIndex >= 0 && _displayIndex < _displayList.length ? _displayList[_displayIndex] : null;
+		var prevDisplayData:DisplayData = _displayData;
+		var prevReplaceDisplayData:DisplayData = _replacedDisplayData;
+		var prevTextureData:TextureData = _textureData;
+		var prevMeshData:MeshData = _meshData;
+		var currentDisplay:Dynamic = _displayIndex >= 0 && _displayIndex < _displayList.length ? _displayList[_displayIndex] : null;
 		
 		if (_displayIndex >= 0 && _displayIndex < _skinSlotData.displays.length) 
 		{
@@ -416,9 +413,9 @@ public class Slot extends TransformObject
 			_replacedDisplayData = null;
 		}
 		
-		if (_displayData !== prevDisplayData || _replacedDisplayData !== prevReplaceDisplayData || _display !== currentDisplay) 
+		if (_displayData != prevDisplayData || _replacedDisplayData != prevReplaceDisplayData || _display != currentDisplay) 
 		{
-			inline var currentDisplayData:DisplayData = _replacedDisplayData ? _replacedDisplayData : _displayData;
+			var currentDisplayData:DisplayData = _replacedDisplayData ? _replacedDisplayData : _displayData;
 			if (currentDisplayData && (currentDisplay === _rawDisplay || currentDisplay === _meshDisplay)) 
 			{
 				if (_replacedDisplayData != null)
@@ -434,9 +431,9 @@ public class Slot extends TransformObject
 					_textureData = _displayData.texture;
 				}
 				
-				if (currentDisplay === _meshDisplay) 
+				if (currentDisplay == _meshDisplay) 
 				{
-					if (_replacedDisplayData && _replacedDisplayData.mesh) 
+					if (_replacedDisplayData != null && _replacedDisplayData.mesh != null) 
 					{
 						_meshData = _replacedDisplayData.mesh;
 					}
@@ -451,20 +448,20 @@ public class Slot extends TransformObject
 				}
 				
 				// Update pivot offset.
-				if (_meshData) 
+				if (_meshData != null) 
 				{
 					_pivotX = 0.0;
 					_pivotY = 0.0;
 				}
-				else if (_textureData) 
+				else if (_textureData != null) 
 				{
-					inline var scale:Float = _armature.armatureData.scale;
+					var scale:Float = _armature.armatureData.scale;
 					_pivotX = currentDisplayData.pivot.x;
 					_pivotY = currentDisplayData.pivot.y;
 					
 					if (currentDisplayData.isRelativePivot) 
 					{
-						inline var rect:Rectangle = _textureData.frame ? _textureData.frame : _textureData.region;
+						var rect:Rectangle = _textureData.frame ? _textureData.frame : _textureData.region;
 						var width:Float = rect.width * scale;
 						var height:Float = rect.height * scale;
 						
@@ -478,7 +475,7 @@ public class Slot extends TransformObject
 						_pivotY *= height;
 					}
 					
-					if (_textureData.frame) 
+					if (_textureData.frame != null) 
 					{
 						_pivotX += _textureData.frame.x * scale;
 						_pivotY += _textureData.frame.y * scale;
@@ -491,8 +488,8 @@ public class Slot extends TransformObject
 				}
 				
 				if (
-					_displayData && currentDisplayData !== _displayData &&
-					(!_meshData || _meshData !== _displayData.mesh)
+					_displayData != null && currentDisplayData != _displayData &&
+					(_meshData == null || _meshData != _displayData.mesh)
 				) 
 				{
 					_displayData.transform.toMatrix(_helpMatrix);
@@ -508,21 +505,23 @@ public class Slot extends TransformObject
 					_pivotY += _helpPoint.y;
 				}
 				
-				if (_meshData !== prevMeshData) // Update mesh bones and ffd vertices.
+				if (_meshData != prevMeshData) // Update mesh bones and ffd vertices.
 				{
-					if (_meshData && _displayData && _meshData === _displayData.mesh) 
+					if (_meshData != null && _displayData != null && _meshData == _displayData.mesh) 
 					{
 						if (_meshData.skinned) 
 						{
 							_meshBones.length = _meshData.bones.length;
 							
-							for (var i:UInt = 0, l:UInt = _meshBones.length; i < l; ++i) 
+							var l:UInt = _meshBones.length;
+							for (i in 0...l)
 							{
 								_meshBones[i] = _armature.getBone(_meshData.bones[i].name);
 							}
 							
 							var ffdVerticesCount:UInt = 0;
-							for (i = 0, l = _meshData.boneIndices.length; i < l; ++i) 
+							l = _meshData.boneIndices.length;
+							for (i in 0...l)
 							{
 								ffdVerticesCount += _meshData.boneIndices[i].length;
 							}
@@ -535,7 +534,8 @@ public class Slot extends TransformObject
 							_ffdVertices.length = _meshData.vertices.length;
 						}
 						
-						for (i = 0, l = _ffdVertices.length; i < l; ++i) 
+						l = _ffdVertices.length;
+						for (i in 0...l)
 						{
 							_ffdVertices[i] = 0.0;
 						}
@@ -566,22 +566,22 @@ public class Slot extends TransformObject
 			_displayDirty = true;
 			_originalDirty = true;
 			
-			if (_displayData) 
+			if (_displayData != null) 
 			{
 				origin = _displayData.transform;
 			}
-			else if (_replacedDisplayData) 
+			else if (_replacedDisplayData != null) 
 			{
 				origin = _replacedDisplayData.transform;
 			}
 		}
 		
 		// Update bounding box data.
-		if (_replacedDisplayData) 
+		if (_replacedDisplayData != null) 
 		{
 			_boundingBoxData = _replacedDisplayData.boundingBox;
 		}
-		else if (_displayData) 
+		else if (_displayData != null) 
 		{
 			_boundingBoxData = _displayData.boundingBox;
 		}
@@ -595,15 +595,15 @@ public class Slot extends TransformObject
 	 */
 	private function _updateDisplay():Void
 	{	
-		inline var prevDisplay:Object = _display || _rawDisplay;
-		inline var prevChildArmature:Armature = _childArmature;
+		var prevDisplay:Dynamic = _display != null ? _display ? _rawDisplay;
+		var prevChildArmature:Armature = _childArmature;
 		
 		if (_displayIndex >= 0 && _displayIndex < _displayList.length)
 		{
 			_display = _displayList[_displayIndex];
-			if (_display is Armature)
+			if (Std.is(_display, Armature))
 			{
-				_childArmature = _display as Armature;
+				_childArmature = cast _display;
 				_display = _childArmature.display;
 			}
 			else
@@ -617,12 +617,12 @@ public class Slot extends TransformObject
 			_childArmature = null;
 		}
 		
-		inline var currentDisplay:Object = _display || _rawDisplay;
+		var currentDisplay:Dynamic = _display != null ? _display : _rawDisplay;
 		if (currentDisplay != prevDisplay)
 		{
 			_onUpdateDisplay();
 			
-			if (prevDisplay)
+			if (prevDisplay != null)
 			{
 				_replaceDisplay(prevDisplay);
 			}
@@ -644,7 +644,7 @@ public class Slot extends TransformObject
 		// Update child armature.
 		if (_childArmature != prevChildArmature)
 		{
-			if (prevChildArmature)
+			if (prevChildArmature != null)
 			{
 				prevChildArmature._parent = null; // Update child armature parent.
 				prevChildArmature.clock = null;
@@ -654,7 +654,7 @@ public class Slot extends TransformObject
 				}
 			}
 			
-			if (_childArmature)
+			if (_childArmature != null)
 			{
 				_childArmature._parent = this; // Update child armature parent.
 				_childArmature.clock = _armature.clock;
@@ -662,17 +662,18 @@ public class Slot extends TransformObject
 				{
 					if (_childArmature.cacheFrameRate == 0) // Set child armature frameRate.
 					{
-						inline var cacheFrameRate:UInt = _armature.cacheFrameRate;
+						var cacheFrameRate:UInt = _armature.cacheFrameRate;
 						if (cacheFrameRate != 0) 
 						{
 							_childArmature.cacheFrameRate = cacheFrameRate;
 						}
 					}
 					
-					inline var actions:Vector.<ActionData> = _skinSlotData.slot.actions.length > 0? _skinSlotData.slot.actions: _childArmature.armatureData.actions;
+					var actions:Vector<ActionData> = _skinSlotData.slot.actions.length > 0? _skinSlotData.slot.actions: _childArmature.armatureData.actions;
 					if (actions.length > 0) 
 					{
-						for (var i:UInt = 0, l:UInt = actions.length; i < l; ++i) {
+						var l:UInt = actions.length;
+						for (i in 0...l) {
 							_childArmature._bufferAction(actions[i]);
 						}
 					} 
@@ -689,7 +690,7 @@ public class Slot extends TransformObject
 	 */
 	private function _updateLocalTransformMatrix():Void
 	{
-		if (origin) 
+		if (origin != null) 
 		{
 			global.copyFrom(origin).add(offset).toMatrix(_localMatrix);
 		}
@@ -710,15 +711,15 @@ public class Slot extends TransformObject
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones") private function _init(skinSlotData: SkinSlotData, rawDisplay: Object, meshDisplay: Object):Void {
-		if (_skinSlotData) 
+	@:allow("dragonBones") private function _init(skinSlotData: SkinSlotData, rawDisplay:Dynamic, meshDisplay:Dynamic):Void {
+		if (_skinSlotData != null) 
 		{
 			return;
 		}
 		
 		_skinSlotData = skinSlotData;
 		
-		inline var slotData:SlotData = _skinSlotData.slot;
+		var slotData:SlotData = _skinSlotData.slot;
 		
 		name = slotData.name;
 		
@@ -742,14 +743,14 @@ public class Slot extends TransformObject
 	/**
 	 * @private
 	 */
-	override @:allow("dragonBones") private function _setArmature(value:Armature):Void
+	override private function _setArmature(value:Armature):Void
 	{
-		if (_armature === value) 
+		if (_armature == value) 
 		{
 			return;
 		}
 		
-		if (_armature) 
+		if (_armature != null) 
 		{
 			_armature._removeSlotFromSlotList(this);
 		}
@@ -758,7 +759,7 @@ public class Slot extends TransformObject
 		
 		_onUpdateDisplay();
 		
-		if (_armature) 
+		if (_armature != null) 
 		{
 			_armature._addSlotToSlotList(this);
 			_addDisplay();
@@ -787,7 +788,7 @@ public class Slot extends TransformObject
 			_updateZOrder();
 		}
 		
-		if (!_display) 
+		if (_display == null) 
 		{
 			return;
 		}
@@ -813,7 +814,7 @@ public class Slot extends TransformObject
 		
 		if (cacheFrameIndex >= 0 && _cachedFrameIndices) 
 		{
-			inline var cachedFrameIndex:Int = _cachedFrameIndices[cacheFrameIndex];
+			var cachedFrameIndex:Int = _cachedFrameIndices[cacheFrameIndex];
 			if (cachedFrameIndex >= 0 && _cachedFrameIndex === cachedFrameIndex) // Same cache.
 			{
 				_transformDirty = false;
@@ -846,7 +847,7 @@ public class Slot extends TransformObject
 			_cachedFrameIndex = -1;
 		}
 		
-		if (_meshData && _displayData && _meshData === _displayData.mesh) 
+		if (_meshData != null && _displayData != null && _meshData == _displayData.mesh) 
 		{
 			if (_meshDirty || (_meshData.skinned && _isMeshBonesUpdate())) 
 			{
@@ -905,19 +906,20 @@ public class Slot extends TransformObject
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones") private function _setDisplayList(value:Vector.<Object>):Bool
+	@:allow("dragonBones") private function _setDisplayList(value:Vector<Dynamic>):Bool
 	{
-		if (value && value.length)
+		if (value != null && value.length)
 		{
 			if (_displayList.length != value.length)
 			{
 				_displayList.length = value.length;
 			}
 			
-			for (var i:UInt = 0, l:UInt = value.length; i < l; ++i)
+			var l:UInt = value.length;
+			for (i in 0...l)
 			{
-				inline var eachDisplay:Object = value[i];
-				if (eachDisplay && eachDisplay != _rawDisplay && eachDisplay != _meshDisplay && 
+				inline var eachDisplay:Dynamic = value[i];
+				if (eachDisplay != null && eachDisplay != _rawDisplay && eachDisplay != _meshDisplay && 
 					!(eachDisplay is Armature) && _displayList.indexOf(eachDisplay) < 0)
 				{
 					_initDisplay(eachDisplay);
@@ -1003,7 +1005,7 @@ public class Slot extends TransformObject
 	 */
 	public function containsPoint(x:Float, y:Float):Bool 
 	{
-		if (!_boundingBoxData) 
+		if (_boundingBoxData == null) 
 		{
 			return false;
 		}
@@ -1035,7 +1037,7 @@ public class Slot extends TransformObject
 		intersectionPointB: Point = null,
 		normalRadians: Point = null
 	):Int {
-		if (!_boundingBoxData) 
+		if (_boundingBoxData == null) 
 		{
 			return 0;
 		}
@@ -1051,12 +1053,12 @@ public class Slot extends TransformObject
 		xB = _helpPoint.x;
 		yB = _helpPoint.y;
 		
-		inline var intersectionCount:Int = _boundingBoxData.intersectsSegment(xA, yA, xB, yB, intersectionPointA, intersectionPointB, normalRadians);
+		var intersectionCount:Int = _boundingBoxData.intersectsSegment(xA, yA, xB, yB, intersectionPointA, intersectionPointB, normalRadians);
 		if (intersectionCount > 0) 
 		{
-			if (intersectionCount === 1 || intersectionCount === 2) 
+			if (intersectionCount == 1 || intersectionCount == 2) 
 			{
-				if (intersectionPointA) 
+				if (intersectionPointA != null) 
 				{
 					Transform.transformPoint(globalTransformMatrix, intersectionPointA.x, intersectionPointA.y, intersectionPointA);
 					if (intersectionPointB) 
@@ -1065,25 +1067,25 @@ public class Slot extends TransformObject
 						intersectionPointB.y = intersectionPointA.y;
 					}
 				}
-				else if (intersectionPointB) 
+				else if (intersectionPointB != null) 
 				{
 					Transform.transformPoint(globalTransformMatrix, intersectionPointB.x, intersectionPointB.y, intersectionPointB);
 				}
 			}
 			else 
 			{
-				if (intersectionPointA) 
+				if (intersectionPointA != null) 
 				{
 					Transform.transformPoint(globalTransformMatrix, intersectionPointA.x, intersectionPointA.y, intersectionPointA);
 				}
 				
-				if (intersectionPointB) 
+				if (intersectionPointB != null) 
 				{
 					Transform.transformPoint(globalTransformMatrix, intersectionPointB.x, intersectionPointB.y, intersectionPointB);
 				}
 			}
 			
-			if (normalRadians) 
+			if (normalRadians != null) 
 			{
 				Transform.transformPoint(globalTransformMatrix, Math.cos(normalRadians.x), Math.sin(normalRadians.x), _helpPoint, true);
 				normalRadians.x = Math.atan2(_helpPoint.y, _helpPoint.x);
@@ -1108,7 +1110,8 @@ public class Slot extends TransformObject
 	/**
 	 * @private
 	 */
-	public function get skinSlotData(): SkinSlotData 
+	public var skinSlotData(get, never):SkinSlotData;
+	private function get_skinSlotData(): SkinSlotData 
 	{
 		return _skinSlotData;
 	}
@@ -1117,21 +1120,24 @@ public class Slot extends TransformObject
 	 * 包含显示对象或子骨架的显示列表。
 	 * @version DragonBones 3.0
 	 */
-	public function get boundingBoxData(): BoundingBoxData 
+	public var boundingBoxData(get, never):BoundingBoxData;
+	private function get_boundingBoxData(): BoundingBoxData 
 	{
 		return _boundingBoxData;
 	}
 	/**
 	 * @private
 	 */
-	public function get rawDisplay():Object
+	public var rawDisplay(get, never):Dynamic;
+	private function get_rawDisplay():Dynamic
 	{
 		return _rawDisplay;
 	}
 	/**
 	 * @private
 	 */
-	public function get meshDisplay():Object
+	public var meshDisplay(get, never):Dynamic;
+	private function get_meshDisplay():Dynamic
 	{
 		return _meshDisplay;
 	}
@@ -1140,40 +1146,44 @@ public class Slot extends TransformObject
 	 * 此时显示的显示对象在显示列表中的索引。
 	 * @version DragonBones 4.5
 	 */
-	public function get displayIndex():Int
+	public var displayIndex(get, set):Int;
+	private function get_displayIndex():Int
 	{
 		return _displayIndex;
 	}
-	public function set displayIndex(value:Int):Void
+	private function set_displayIndex(value:Int):Int
 	{
 		if (_setDisplayIndex(value))
 		{
 			_update(-1);
 		}
+		return value;
 	}
 	/**
 	 * @language zh_CN
 	 * 包含显示对象或子骨架的显示列表。
 	 * @version DragonBones 3.0
 	 */
-	public function get displayList():Vector.<Object>
+	public var displayList(get, set):Vector<Dynamic>;
+	private function get_displayList():Vector<Dynamic>
 	{
 		return _displayList.concat();
 	}
-	public function set displayList(value:Vector.<Object>):Void
+	private function set_displayList(value:Vector<Dynamic>):Vector<Dynamic>
 	{
-		inline var backupDisplayList:Vector.<Object> = _displayList.concat();
-		inline var disposeDisplayList:Vector.<Object> = new Vector.<Object>();
+		var backupDisplayList:Vector<Dynamic> = _displayList.concat();
+		var disposeDisplayList:Vector<Dynamic> = new Vector<Dynamic>();
 		
 		if (_setDisplayList(value))
 		{
 			_update(-1);
 		}
 		
-		for (var i:UInt = 0, l:UInt = backupDisplayList.length; i < l; ++i) 
+		var l:UInt = backupDisplayList.length;
+		for (i in 0...l)
 		{
-			var eachDisplay:Object = backupDisplayList[i];
-			if (eachDisplay && eachDisplay != _rawDisplay && _displayList.indexOf(eachDisplay) < 0)
+			var eachDisplay:Dynamic = backupDisplayList[i];
+			if (eachDisplay != null && eachDisplay != _rawDisplay && _displayList.indexOf(eachDisplay) < 0)
 			{
 				if (disposeDisplayList.indexOf(eachDisplay) < 0)
 				{
@@ -1182,33 +1192,36 @@ public class Slot extends TransformObject
 			}
 		}
 		
-		for (i = 0, l = disposeDisplayList.length; i < l; ++i) 
+		l = disposeDisplayList.length;
+		for (i in 0...l)
 		{
 			eachDisplay = disposeDisplayList[i];
-			if (eachDisplay is Armature)
+			if (Std.is(eachDisplay, Armature))
 			{
-				(eachDisplay as Armature).dispose();
+				cast(eachDisplay, Armature).dispose();
 			}
 			else
 			{
 				_disposeDisplay(eachDisplay);
 			}
 		}
+		return value;
 	}
 	/**
 	 * @language zh_CN
 	 * 此时显示的显示对象。
 	 * @version DragonBones 3.0
 	 */
-	public function get display():Object
+	public var display(get, set):Dynamic;
+	private function get_display():Dynamic
 	{
 		return _display;
 	}
-	public function set display(value:Object):Void
+	private function set_display(value:Dynamic):Dynamic
 	{
-		if (_display === value)
+		if (_display == value)
 		{
-			return;
+			return value;
 		}
 		
 		inline var displayListLength:UInt = _displayList.length;
@@ -1219,11 +1232,11 @@ public class Slot extends TransformObject
 		
 		if (_displayIndex < 0)
 		{
-			return;
+			return value;
 		}
 		else
 		{
-			inline var replaceDisplayList:Vector.<Object> = displayList; // copy
+			inline var replaceDisplayList:Vector<Dynamic> = displayList; // copy
 			if (displayListLength <= _displayIndex)
 			{
 				replaceDisplayList.length = _displayIndex + 1;
@@ -1232,6 +1245,7 @@ public class Slot extends TransformObject
 			replaceDisplayList[_displayIndex] = value;
 			displayList = replaceDisplayList;
 		}
+		return value;
 	}
 	/**
 	 * @language zh_CN
@@ -1239,17 +1253,19 @@ public class Slot extends TransformObject
 	 * @see dragonBones.Armature
 	 * @version DragonBones 3.0
 	 */
-	public function get childArmature():Armature
+	public var childArmature(get, set):Armature;
+	private function get_childArmature():Armature
 	{
 		return _childArmature;
 	}
-	public function set childArmature(value:Armature):Void
+	private function set_childArmature(value:Armature):Armature
 	{
 		if (_childArmature === value)
 		{
-			return;
+			return value;
 		}
 
 		display = value;
+		return value;
 	}
 }

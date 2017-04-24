@@ -76,7 +76,7 @@ import dragonBones.textures.TextureAtlasData;
 	@:allow("dragonBones") private var _skinData:SkinData;
 	private var _animation:Animation;
 	private var _proxy:IArmatureProxy;
-	private var _display:Object;
+	private var _display:Dynamic;
 	private var _eventManager:IEventDispatcher;
 	/**
 	 * @private Slot
@@ -235,7 +235,7 @@ import dragonBones.textures.TextureAtlasData;
 	 */
 	public function _init(
 		armatureData: ArmatureData, skinData: SkinData,
-		display: Object, proxy: IArmatureProxy, eventManager: IEventDispatcher
+		display:Dynamic, proxy: IArmatureProxy, eventManager: IEventDispatcher
 	):Void 
 	{
 		if (_armatureData != null) 
@@ -317,7 +317,7 @@ import dragonBones.textures.TextureAtlasData;
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones") private function _sortZOrder(slotIndices: Vector.<int>):Void 
+	@:allow("dragonBones") private function _sortZOrder(slotIndices: Vector<Int>):Void 
 	{
 		var sortedSlots:Vector<SlotData> = _armatureData.sortedSlots;
 		var isOriginal:Bool = slotIndices == null || slotIndices.length < 1;
@@ -739,7 +739,7 @@ import dragonBones.textures.TextureAtlasData;
 	 * @see dragonBones.Bone
 	 * @version DragonBones 3.0
 	 */
-	public function getBoneByDisplay(display:Object):Bone
+	public function getBoneByDisplay(display:Dynamic):Bone
 	{
 		var slot:Slot = getSlotByDisplay(display);
 		
@@ -823,7 +823,7 @@ import dragonBones.textures.TextureAtlasData;
      * @param texture 贴图。
 	 * @version DragonBones 4.5
 	 */
-	public function replaceTexture(texture:Object):Void
+	public function replaceTexture(texture:Dynamic):Void
 	{
 		replacedTexture = texture;
 	}
@@ -833,7 +833,7 @@ import dragonBones.textures.TextureAtlasData;
 	 * @see dragonBones.Bone
 	 * @version DragonBones 3.0
 	 */
-	public function getBones():Vector.<Bone>
+	public function getBones():Vector<Bone>
 	{
 		return _bones;
 	}
@@ -843,7 +843,7 @@ import dragonBones.textures.TextureAtlasData;
 	 * @see dragonBones.Slot
 	 * @version DragonBones 3.0
 	 */
-	public function getSlots():Vector.<Slot>
+	public function getSlots():Vector<Slot>
 	{
 		return _slots;
 	}

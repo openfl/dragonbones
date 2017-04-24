@@ -40,7 +40,7 @@ public class DataParser
 	private static inline var DATA_VERSION_4_5:String = "4.5";
 	private static inline var DATA_VERSION_5_0:String = "5.0";
 	private static inline var DATA_VERSION:String = DATA_VERSION_5_0;
-	private static inline var DATA_VERSIONS:Vector.<String> = Vector.<String>([
+	private static inline var DATA_VERSIONS:Vector<String> = Vector<String>([
 		DATA_VERSION_5_0,
 		DATA_VERSION_4_5,
 		DATA_VERSION_4_0,
@@ -284,7 +284,7 @@ public class DataParser
 	private inline var _helpTransformA:Transform = new Transform();
 	private inline var _helpTransformB:Transform = new Transform();
 	private inline var _helpMatrix:Matrix = new Matrix();
-	private inline var _rawBones:Vector.<BoneData> = new Vector.<BoneData>();
+	private inline var _rawBones:Vector<BoneData> = new Vector<BoneData>();
 	
 	private var _data:DragonBonesData = null;
 	private var _armature:ArmatureData = null;
@@ -303,7 +303,7 @@ public class DataParser
 	/** 
 	 * @private 
 	 */
-	public function parseDragonBonesData(rawData:Object, scale:Float = 1):DragonBonesData
+	public function parseDragonBonesData(rawData:Dynamic, scale:Float = 1):DragonBonesData
 	{
 		throw new Error(DragonBones.ABSTRACT_METHOD_ERROR);
 		return null;
@@ -311,7 +311,7 @@ public class DataParser
 	/** 
 	 * @private 
 	 */
-	public function parseTextureAtlasData(rawData:Object, textureAtlasData:TextureAtlasData, scale:Float = 0, rawScale:Float = 0):Void
+	public function parseTextureAtlasData(rawData:Dynamic, textureAtlasData:TextureAtlasData, scale:Float = 0, rawScale:Float = 0):Void
 	{
 		throw new Error(DragonBones.ABSTRACT_METHOD_ERROR);
 	}
@@ -336,7 +336,7 @@ public class DataParser
 					tweenProgress = TweenTimelineState._getEasingValue(tweenProgress, frame.tweenEasing);
 				}
 			}
-			else if (frame.curve) 
+			else if (frame.curve != null) 
 			{
 				tweenProgress = (position - frame.position) / frame.duration;
 				tweenProgress = TweenTimelineState._getCurveEasingValue(tweenProgress, frame.curve);
@@ -364,13 +364,14 @@ public class DataParser
 	
 	private function _globalToLocal(armature:ArmatureData):Void // Support 2.x ~ 3.x data.
 	{
-		inline var keyFrames:Vector.<BoneFrameData> = new Vector.<BoneFrameData>();
-		inline var bones:Vector.<BoneData> = armature.sortedBones.concat().reverse();
+		inline var keyFrames:Vector<BoneFrameData> = new Vector<BoneFrameData>();
+		inline var bones:Vector<BoneData> = armature.sortedBones.concat().reverse();
 		
-		for (var i:UInt = 0, l:UInt = bones.length; i < l; ++i)
+		var l:UInt = bones.length;
+		for (i in 0...l)
 		{
 			inline var bone:BoneData = bones[i];
-			if (bone.parent) 
+			if (bone.parent != null) 
 			{
 				bone.parent.transform.toMatrix(_helpMatrix);
 				_helpMatrix.invert();
@@ -385,7 +386,7 @@ public class DataParser
 			{
 				inline var timeline:BoneTimelineData = animation.getBoneTimeline(bone.name);
 				
-				if (!timeline)
+				if (timeline == null)
 				{
 					continue;	
 				}
@@ -405,7 +406,7 @@ public class DataParser
 					
 					keyFrames.push(frame);
 					
-					if (parentTimeline)
+					if (parentTimeline != null)
 					{
 						_getTimelineFrameMatrix(animation, parentTimeline, frame.position, _helpTransformA);
 						frame.transform.add(_helpTransformB);
@@ -437,10 +438,10 @@ public class DataParser
 		}
 	}
 	
-	private function _mergeFrameToAnimationTimeline(framePositon:Float, actions:Vector.<ActionData>, events:Vector.<EventData>):Void 
+	private function _mergeFrameToAnimationTimeline(framePositon:Float, actions:Vector<ActionData>, events:Vector<EventData>):Void 
 	{
 		inline var frameStart:UInt = Math.floor(framePositon * _armature.frameRate); // uint()
-		inline var frames:Vector.<FrameData> = _animation.frames;
+		inline var frames:Vector<FrameData> = _animation.frames;
 		
 		frames.fixed = false;
 		
@@ -463,7 +464,7 @@ public class DataParser
 		var insertedFrame:AnimationFrameData = null;
 		inline var replacedFrame:AnimationFrameData = frames.length? frames[frameStart] as AnimationFrameData: null;
 		
-		if (replacedFrame && (frameStart == 0 || frames[frameStart - 1] == replacedFrame.prev)) // Key frame.
+		if (replacedFrame != null && (frameStart == 0 || frames[frameStart - 1] == replacedFrame.prev)) // Key frame.
 		{
 			insertedFrame = replacedFrame;
 		} 
@@ -482,11 +483,12 @@ public class DataParser
 			}
 		}
 		
-		if (actions) // Merge actions.
+		if (actions != null) // Merge actions.
 		{
 			insertedFrame.actions.fixed = false;
 			
-			for (i = 0, l = actions.length; i < l; ++i) 
+			l = actions.length;
+			for (i in 0...l)
 			{
 				insertedFrame.actions.push(actions[i]);
 			}
@@ -494,11 +496,12 @@ public class DataParser
 			insertedFrame.actions.fixed = true;
 		}
 		
-		if (events) // Merge events.
+		if (events != null) // Merge events.
 		{
 			insertedFrame.events.fixed = false;
 			
-			for (i = 0, l = events.length; i < l; ++i) 
+			l = events.length;
+			for (i in 0...l)
 			{
 				insertedFrame.events.push(events[i]);
 			}
@@ -509,14 +512,15 @@ public class DataParser
 		// Modify frame link and duration.
 		var prevFrame:AnimationFrameData = null;
 		var nextFrame:AnimationFrameData = null;
-		for (i = 0, l = frames.length; i < l; ++i) 
+		l = frames.length;
+		for (i in 0...l)
 		{
 			inline var currentFrame:AnimationFrameData = frames[i] as AnimationFrameData;
-			if (currentFrame && nextFrame != currentFrame) 
+			if (currentFrame != null && nextFrame != currentFrame) 
 			{
 				nextFrame = currentFrame;
 				
-				if (prevFrame) 
+				if (prevFrame != null) 
 				{
 					nextFrame.prev = prevFrame;
 					prevFrame.next = nextFrame;

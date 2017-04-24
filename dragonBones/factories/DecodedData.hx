@@ -63,7 +63,7 @@ public final class DecodedData extends Loader
 	 * @param textureAtlasBytes.
 	 * @return DragonBones data ByteArray instance.
 	 */
-	public static function encode(dragonBonesData:Object, textureAtlasData:Object, textureAtlasBytes:ByteArray):ByteArray
+	public static function encode(dragonBonesData:Dynamic, textureAtlasData:Dynamic, textureAtlasBytes:ByteArray):ByteArray
 	{
 		inline var outputBytes:ByteArray = new ByteArray();
 		inline var dbDataBytes:ByteArray = new ByteArray();
@@ -196,12 +196,12 @@ public final class DecodedData extends Loader
 	/**
 	 * The XML or JSON for DragonBones data.
 	 */
-	public var dragonBonesData:Object = null;
+	public var dragonBonesData:Dynamic = null;
 	
 	/**
 	 * The XML or JSON for TextureAtlas data.
 	 */
-	public var textureAtlasData:Object = null;
+	public var textureAtlasData:Dynamic = null;
 	
 	/**
 	 * The non parsed TextureAtlas bytes.
@@ -215,17 +215,17 @@ public final class DecodedData extends Loader
 	
 	public function dispose():Void
 	{
-		if (dragonBonesData && dragonBonesData is XML)
+		if (dragonBonesData != null && dragonBonesData is XML)
 		{
 			System.disposeXML(dragonBonesData as XML);
 		}
 		
-		if (textureAtlasData && textureAtlasData is XML)
+		if (textureAtlasData != null && textureAtlasData is XML)
 		{
 			System.disposeXML(textureAtlasData as XML);
 		}
 		
-		if (textureAtlasBytes)
+		if (textureAtlasBytes != null)
 		{
 			textureAtlasBytes.clear();
 		}

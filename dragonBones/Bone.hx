@@ -318,7 +318,7 @@ import dragonBones.objects.BoneData;
 	/**
 	 * @private
 	 */
-	override @:allow("dragonBones") private function _setArmature(value:Armature):Void
+	override private function _setArmature(value:Armature):Void
 	{
 		_armature = value;
 		_armature._addBoneToBoneList(this);
@@ -390,9 +390,9 @@ import dragonBones.objects.BoneData;
 	{
 		_updateState = -1;
 		
-		if (cacheFrameIndex >= 0 && _cachedFrameIndices) 
+		if (cacheFrameIndex >= 0 && _cachedFrameIndices != null) 
 		{
-			inline var cachedFrameIndex:Int = _cachedFrameIndices[cacheFrameIndex];
+			var cachedFrameIndex:Int = _cachedFrameIndices[cacheFrameIndex];
 			if (cachedFrameIndex >= 0 && _cachedFrameIndex === cachedFrameIndex) // Same cache.
 			{
 				_transformDirty = 0;
@@ -404,8 +404,8 @@ import dragonBones.objects.BoneData;
 			}
 			else if (
 				_transformDirty === 2 ||
-				(_parent && _parent._transformDirty !== 0) ||
-				(_ik && ikWeight > 0 && _ik._transformDirty !== 0)
+				(_parent != null && _parent._transformDirty !== 0) ||
+				(_ik != null && ikWeight > 0 && _ik._transformDirty !== 0)
 			) // Dirty.
 			{
 				_transformDirty = 2;
@@ -424,8 +424,8 @@ import dragonBones.objects.BoneData;
 		}
 		else if (
 			_transformDirty === 2 ||
-			(_parent && _parent._transformDirty !== 0) ||
-			(_ik && ikWeight > 0 && _ik._transformDirty !== 0)
+			(_parent != null && _parent._transformDirty !== 0) ||
+			(_ik != null && ikWeight > 0 && _ik._transformDirty !== 0)
 		) // Dirty.
 		{
 			cacheFrameIndex = -1;
@@ -478,9 +478,9 @@ import dragonBones.objects.BoneData;
 	 */
 	public function contains(child:TransformObject):Bool
 	{
-		if (child)
+		if (child != null)
 		{
-			if (child === this)
+			if (child == this)
 			{
 				return false;
 			}
@@ -491,7 +491,7 @@ import dragonBones.objects.BoneData;
 				ancestor = ancestor.parent;
 			}
 			
-			return ancestor === this;
+			return ancestor == this;
 		}
 		
 		return false;
@@ -501,15 +501,17 @@ import dragonBones.objects.BoneData;
 	 * 所有的子骨骼。
 	 * @version DragonBones 3.0
 	 */
-	public function getBones():Vector.<Bone>
+	public function getBones():Vector<Bone>
 	{
 		_bones.length = 0;
 		
-		inline var bones:Vector.<Bone> = _armature.getBones();
-		for (var i:UInt = 0, l:UInt = bones.length; i < l; ++i) 
+		var bones:Vector<Bone> = _armature.getBones();
+		var l:UInt = bones.length;
+		var bone:Bone;
+		for (i in 0...l) 
 		{
-			inline var bone:Bone = bones[i];
-			if (bone.parent === this)
+			bone = bones[i];
+			if (bone.parent == this)
 			{
 				_bones.push(bone);	
 			}
@@ -523,15 +525,17 @@ import dragonBones.objects.BoneData;
 	 * @see dragonBones.Slot
 	 * @version DragonBones 3.0
 	 */
-	public function getSlots():Vector.<Slot>
+	public function getSlots():Vector<Slot>
 	{
 		_slots.length = 0;
 		
-		inline var slots:Vector.<Slot> = _armature.getSlots();
-		for (var i:UInt = 0, l:UInt = slots.length; i < l; ++i) 
+		var slots:Vector<Slot> = _armature.getSlots();
+		var l:UInt = slots.length;
+		var slot:Slot;
+		for (i in 0...l)
 		{
-			inline var slot:Slot = slots[i];
-			if (slot.parent === this)
+			slot = slots[i];
+			if (slot.parent == this)
 			{
 				_slots.push(slot);	
 			}
@@ -542,7 +546,8 @@ import dragonBones.objects.BoneData;
 	/**
 	 * @private
 	 */
-	public function get boneData():BoneData
+	private var boneData(get, never):BoneData;
+	private function get_boneData():BoneData
 	{
 		return _boneData;
 	}
@@ -553,21 +558,23 @@ import dragonBones.objects.BoneData;
 	 * @see dragonBones.Slot
 	 * @version DragonBones 3.0
 	 */
-	public function get visible():Bool
+	public var visible(get, set):Bool;
+	private function get_visible():Bool
 	{
 		return _visible;
 	}
-	public function set visible(value:Bool):Void
+	private function set_visible(value:Bool):Bool
 	{
 		if (_visible == value)
 		{
-			return;
+			return value;
 		}
 		
 		_visible = value;
 		
-		inline var slots:Vector.<Slot> = _armature.getSlots();
-		for (var i:UInt = 0, l:UInt = slots.length; i < l; ++i) 
+		inline var slots:Vector<Slot> = _armature.getSlots();
+		var l:UInt = slots.length;
+		for (i in 0...l)
 		{
 			inline var slot:Slot = slots[i];
 			if (slot._parent == this)
@@ -575,26 +582,31 @@ import dragonBones.objects.BoneData;
 				slot._updateVisible();
 			}
 		}
+		
+		return value;
 	}
 	
 	/**
 	 * @deprecated
 	 */
-	public function get ikChain():UInt
+	@:deprecated public var ikChain(get, never):UInt;
+	private function get_ikChain():UInt
 	{
 		return _ikChain;
 	}
 	/**
 	 * @deprecated
 	 */
-	public function get ikChainIndex():Int
+	@:deprecated public var ikChainIndex(get, never):UInt;
+	private function get_ikChainIndex():Int
 	{
 		return _ikChainIndex;
 	}
 	/**
 	 * @deprecated
 	 */
-	public function get ik():Bone
+	@:deprecated public var ik(get, never):Bone;
+	private function get_ik():Bone
 	{
 		return _ik;
 	}

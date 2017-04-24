@@ -42,7 +42,7 @@ class Animation extends BaseObject
 	@:allow("dragonBones") private var _cacheFrameIndex:Float;
 	private inline var _animationNames:Vector<String> = new Vector<String>();
 	private inline var _animations:Map<String, AnimationData> = new Map<String, AnimationData>();
-	private inline var _animationStates:Vector.<AnimationState> = new Vector.<AnimationState>();
+	private inline var _animationStates:Vector<AnimationState> = new Vector<AnimationState>();
 	private var _armature:Armature;
 	private var _lastAnimationState:AnimationState;
 	private var _animationConfig:AnimationConfig;
@@ -58,7 +58,8 @@ class Animation extends BaseObject
 	 */
 	override private function _onClear():Void
 	{
-		for (var i:UInt = 0, l:UInt = _animationStates.length; i < l; ++i) 
+		var l:UInt = _animationStates.length;
+		for (i in 0...l)
 		{
 			_animationStates[i].returnToPool();
 		}
@@ -145,7 +146,7 @@ class Animation extends BaseObject
 	 */
 	public function _init(armature:Armature):Void 
 	{
-		if (_armature) 
+		if (_armature != null) 
 		{
 			return;
 		}
@@ -168,7 +169,7 @@ class Animation extends BaseObject
 			passedTime = -passedTime;
 		}
 		
-		if (_armature.inheritAnimation && _armature._parent) // Inherit parent animation timeScale.
+		if (_armature.inheritAnimation && _armature._parent != null) // Inherit parent animation timeScale.
 		{
 			passedTime *= _armature._parent._armature.animation.timeScale;
 		}
@@ -200,15 +201,17 @@ class Animation extends BaseObject
 				{
 					_animationStateDirty = false;
 					
-					inline var bones:Vector.<Bone> = _armature.getBones();
-					for (var i:UInt = 0, l:UInt = bones.length; i < l; ++i) 
+					inline var bones:Vector<Bone> = _armature.getBones();
+					var l:UInt = bones.length;
+					for (i in 0...l)
 					{
 						inline var bone:Bone = bones[i];
 						bone._cachedFrameIndices = animationData.getBoneCachedFrameIndices(bone.name);
 					}
 					
-					inline var slots:Vector.<Slot> = _armature.getSlots();
-					for (i = 0, l = slots.length; i < l; ++i) 
+					inline var slots:Vector<Slot> = _armature.getSlots();
+					l = slots.length;
+					for (i in 0...l)
 					{
 						inline var slot:Slot = slots[i];
 						slot._cachedFrameIndices = animationData.getSlotCachedFrameIndices(slot.name);
@@ -226,7 +229,7 @@ class Animation extends BaseObject
 		else if (animationStateCount > 1)
 		{
 			var r:UInt = 0;
-			for (i = 0; i < animationStateCount; ++i)
+			for (i in 0...animationStateCount)
 			{
 				animationState = _animationStates[i];
 				if (animationState._fadeState > 0 && animationState._fadeProgress <= 0)
@@ -235,7 +238,7 @@ class Animation extends BaseObject
 					animationState.returnToPool();
 					_animationStateDirty = true;
 					
-					if (_lastAnimationState === animationState)
+					if (_lastAnimationState == animationState)
 					{
 						_lastAnimationState = null;
 					}
@@ -255,7 +258,7 @@ class Animation extends BaseObject
 					animationState._advanceTime(passedTime, 0.0);
 				}
 				
-				if (i === animationStateCount - 1 && r > 0)
+				if (i == animationStateCount - 1 && r > 0)
 				{
 					_animationStates.length -= r;
 					
@@ -283,7 +286,8 @@ class Animation extends BaseObject
 	 */
 	public function reset():Void
 	{
-		for (var i:UInt = 0, l:UInt = _animationStates.length; i < l; ++i)
+		var l:UInt = _animationStates.length;
+		for (i in 0...l)
 		{
 			_animationStates[i].returnToPool();
 		}
@@ -305,10 +309,10 @@ class Animation extends BaseObject
 	 */
 	public function stop(animationName:String = null):Void
 	{
-		if (animationName)
+		if (animationName != null)
 		{
 			inline var animationState:AnimationState = getState(animationName);
-			if (animationState)
+			if (animationState != null)
 			{
 				animationState.stop();
 			}
@@ -432,12 +436,13 @@ class Animation extends BaseObject
 		}
 		
 		// Child armature play same name animation.
-		inline var slots:Vector.<Slot> = _armature.getSlots();
-		for (var i:UInt = 0, l:UInt = slots.length; i < l; ++i) 
+		inline var slots:Vector<Slot> = _armature.getSlots();
+		var l:UInt = slots.length;
+		for (i in 0...l)
 		{
 			inline var childArmature:Armature = slots[i].childArmature;
 			if (
-				childArmature && childArmature.inheritAnimation &&
+				childArmature != null && childArmature.inheritAnimation &&
 				childArmature.animation.hasAnimation(animationName) &&
 				!childArmature.animation.getState(animationName)
 			) 
@@ -503,11 +508,11 @@ class Animation extends BaseObject
 		_animationConfig.fadeInTime = 0.0;
 		_animationConfig.animationName = animationName;
 		
-		if (animationName) 
+		if (animationName != null) 
 		{
 			playConfig(_animationConfig);
 		}
-		else if (!_lastAnimationState) 
+		else if (_lastAnimationState == null) 
 		{
 			inline var defaultAnimation:AnimationData = _armature.armatureData.defaultAnimation;
 			if (defaultAnimation) 
@@ -630,7 +635,7 @@ class Animation extends BaseObject
 	public function gotoAndStopByFrame(animationName:String, frame:UInt = 0):AnimationState
 	{
 		inline var animationState:AnimationState = gotoAndPlayByFrame(animationName, frame, 1);
-		if (animationState)
+		if (animationState != null)
 		{
 			animationState.stop();
 		}
@@ -649,7 +654,7 @@ class Animation extends BaseObject
 	public function gotoAndStopByProgress(animationName:String, progress:Float = 0):AnimationState
 	{
 		inline var animationState:AnimationState = gotoAndPlayByProgress(animationName, progress, 1);
-		if (animationState)
+		if (animationState != null)
 		{
 			animationState.stop();
 		}
@@ -665,10 +670,11 @@ class Animation extends BaseObject
 	 */
 	public function getState(animationName:String):AnimationState
 	{
-		for (var i:UInt = 0, l:UInt = _animationStates.length; i < l; ++i) 
+		var l:UInt = _animationStates.length;
+		for (i in 0...l)
 		{
 			inline var animationState:AnimationState = _animationStates[i];
-			if (animationState.name === animationName)
+			if (animationState.name == animationName)
 			{
 				return animationState;
 			}
@@ -698,7 +704,7 @@ class Animation extends BaseObject
 		{
 			return _isPlaying && !isCompleted;
 		}
-		else if (_lastAnimationState) 
+		else if (_lastAnimationState != null) 
 		{
 			return _isPlaying && _lastAnimationState.isPlaying;
 		}
@@ -720,7 +726,8 @@ class Animation extends BaseObject
 				return false;
 			}
 			
-			for (var i:UInt = 0, l:UInt = _animationStates.length; i < l; ++i) 
+			var l:UInt = _animationStates.length;
+			for (i in 0...l)
 			{
 				if (!_animationStates[i].isCompleted)
 				{
@@ -770,7 +777,7 @@ class Animation extends BaseObject
 	 * @see #animations
 	 * @version DragonBones 4.5
 	 */
-	public function get animationNames():Vector.<String>
+	public function get animationNames():Vector<String>
 	{
 		return _animationNames;
 	}
@@ -780,11 +787,11 @@ class Animation extends BaseObject
 	 * @see dragonBones.objects.AnimationData
 	 * @version DragonBones 4.5
 	 */
-	public function get animations():Object
+	public function get animations():Dynamic
 	{
 		return _animations;
 	}
-	public function set animations(value:Object):Void
+	public function set animations(value:Dynamic):Void
 	{
 		if (_animations == value)
 		{
@@ -794,7 +801,7 @@ class Animation extends BaseObject
 		_animationNames.length = 0;
 		_animations = new Map();
 		
-		if (value)
+		if (value != null)
 		{
 			for (k in value)
 			{

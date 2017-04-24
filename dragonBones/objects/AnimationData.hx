@@ -48,27 +48,27 @@ public final class AnimationData extends TimelineData
 	/**
 	 * @private
 	 */
-	public inline var boneTimelines:Object = {};
+	public inline var boneTimelines:Dynamic = {};
 	/**
 	 * @private
 	 */
-	public inline var slotTimelines:Object = {};
+	public inline var slotTimelines:Dynamic = {};
 	/**
 	 * @private
 	 */
-	public inline var ffdTimelines:Object = {}; // skinName ,slotName, mesh
+	public inline var ffdTimelines:Dynamic = {}; // skinName ,slotName, mesh
 	/**
 	 * @private
 	 */
-	public inline var cachedFrames:Vector.<Boolean> = new Vector.<Boolean>();
+	public inline var cachedFrames:Vector<Bool> = new Vector<Bool>();
 	/**
 	 * @private
 	 */
-	public inline var boneCachedFrameIndices: Object = {}; //Object<Vector.<Number>>
+	public inline var boneCachedFrameIndices:Dynamic = {}; //Object<Vector<Float>>
 	/**
 	 * @private
 	 */
-	public inline var slotCachedFrameIndices: Object = {}; //Object<Vector.<Number>>
+	public inline var slotCachedFrameIndices:Dynamic = {}; //Object<Vector<Float>>
 	/**
 	 * @private
 	 */
@@ -118,7 +118,7 @@ public final class AnimationData extends TimelineData
 			delete slotCachedFrameIndices[k];
 		}
 		
-		if (zOrderTimeline) 
+		if (zOrderTimeline != null) 
 		{
 			zOrderTimeline.returnToPool();
 		}
@@ -155,8 +155,9 @@ public final class AnimationData extends TimelineData
 		
 		for (var k:String in boneTimelines) 
 		{
-			var indices:Vector.<int> = new Vector.<int>(cacheFrameCount, true)
-			for (var i:UInt = 0, l:UInt = indices.length; i < l; ++ i)
+			var indices:Vector<Int> = new Vector<Int>(cacheFrameCount, true)
+			var l:UInt = indices.length;
+			for (i in 0...l)
 			{
 				indices[i] = -1;
 			}
@@ -166,8 +167,9 @@ public final class AnimationData extends TimelineData
 		
 		for (k in slotTimelines) 
 		{
-			indices = new Vector.<int>(cacheFrameCount, true)
-			for (i = 0, l = indices.length; i < l; ++ i)
+			indices = new Vector<Int>(cacheFrameCount, true)
+			var l = indices.length;
+			for (i in 0...l)
 			{
 				indices[i] = -1;
 			}
@@ -180,7 +182,7 @@ public final class AnimationData extends TimelineData
 	 */
 	public function addBoneTimeline(value:BoneTimelineData):Void
 	{
-		if (value && value.bone && !boneTimelines[value.bone.name])
+		if (value != null && value.bone != null && boneTimelines[value.bone.name] == null)
 		{
 			boneTimelines[value.bone.name] = value;
 		}
@@ -194,7 +196,7 @@ public final class AnimationData extends TimelineData
 	 */
 	public function addSlotTimeline(value:SlotTimelineData):Void
 	{
-		if (value && value.slot && !slotTimelines[value.slot.name])
+		if (value != null && value.slot != null && slotTimelines[value.slot.name] == null)
 		{
 			slotTimelines[value.slot.name] = value;
 		}
@@ -208,10 +210,10 @@ public final class AnimationData extends TimelineData
 	 */
 	public function addFFDTimeline(value:FFDTimelineData):Void
 	{
-		if (value && value.skin && value.slot)
+		if (value != null && value.skin != null && value.slot != null)
 		{
-			inline var skin:Object = ffdTimelines[value.skin.name] = ffdTimelines[value.skin.name] || {};
-			inline var slot:Object = skin[value.slot.slot.name] = skin[value.slot.slot.name] || {};
+			inline var skin:Dynamic = ffdTimelines[value.skin.name] = ffdTimelines[value.skin.name] || {};
+			inline var slot:Dynamic = skin[value.slot.slot.name] = skin[value.slot.slot.name] || {};
 			if (!slot[value.display.name])
 			{
 				slot[value.display.name] = value;
@@ -243,10 +245,10 @@ public final class AnimationData extends TimelineData
 	/**
 	 * @private
 	 */
-	public function getFFDTimeline(skinName:String, slotName:String):Object
+	public function getFFDTimeline(skinName:String, slotName:String):Dynamic
 	{
-		inline var skin:Object = ffdTimelines[skinName];
-		if (skin)
+		inline var skin:Dynamic = ffdTimelines[skinName];
+		if (skin != null)
 		{
 			return skin[slotName];
 		}
@@ -256,14 +258,14 @@ public final class AnimationData extends TimelineData
 	/**
 	 * @private
 	 */
-	public function getBoneCachedFrameIndices(name: String): Vector.<int> 
+	public function getBoneCachedFrameIndices(name: String): Vector<Int> 
 	{
 		return boneCachedFrameIndices[name];
 	}
 	/**
 	 * @private
 	 */
-	public function getSlotCachedFrameIndices(name: String): Vector.<int> 
+	public function getSlotCachedFrameIndices(name: String): Vector<Int> 
 	{
 		return slotCachedFrameIndices[name];
 	}

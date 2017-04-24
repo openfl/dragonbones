@@ -55,7 +55,7 @@ public class FlashArmatureDisplay extends Sprite implements IArmatureDisplay
 	{
 		if (isEnabled)
 		{
-			if (!_debugDrawer) 
+			if (_debugDrawer == null) 
 			{
 				_debugDrawer = new Sprite();
 			}
@@ -63,8 +63,9 @@ public class FlashArmatureDisplay extends Sprite implements IArmatureDisplay
 			addChild(_debugDrawer);
 			_debugDrawer.graphics.clear();
 			
-			inline var bones:Vector.<Bone> = _armature.getBones();
-			for (var i:UInt = 0, l:UInt = bones.length; i < l; ++i) 
+			inline var bones:Vector<Bone> = _armature.getBones();
+			var l:UInt = bones.length;
+			for (i in 0...l)
 			{
 				inline var bone:Bone = bones[i];
 				inline var boneLength:Float = bone.length;
@@ -82,16 +83,17 @@ public class FlashArmatureDisplay extends Sprite implements IArmatureDisplay
 				_debugDrawer.graphics.endFill();
 			}
 			
-			inline var slots:Vector.<Slot> = _armature.getSlots();
-			for (i = 0, l = slots.length; i < l; ++i) 
+			inline var slots:Vector<Slot> = _armature.getSlots();
+			l = slots.length;
+			for (i in 0...l)
 			{
 				inline var slot:Slot = slots[i];
 				inline var boundingBoxData:BoundingBoxData = slot.boundingBoxData;
 				
-				if (boundingBoxData) 
+				if (boundingBoxData != null) 
 				{
 					var child:Shape = _debugDrawer.getChildByName(slot.name) as Shape;
-					if (!child) 
+					if (child == null) 
 					{
 						child = new Shape();
 						child.name = slot.name;
@@ -112,7 +114,7 @@ public class FlashArmatureDisplay extends Sprite implements IArmatureDisplay
 							break;
 						
 						case BoundingBoxType.Polygon:
-							inline var vertices:Vector.<Number> = boundingBoxData.vertices;
+							inline var vertices:Vector<Float> = boundingBoxData.vertices;
 							for (var iA:UInt = 0, lA:UInt = boundingBoxData.vertices.length; iA < lA; iA += 2) 
 							{
 								if (iA === 0) 
@@ -137,14 +139,14 @@ public class FlashArmatureDisplay extends Sprite implements IArmatureDisplay
 				else
 				{
 					child = _debugDrawer.getChildByName(slot.name) as Shape;
-					if (child) 
+					if (child != null) 
 					{
 						_debugDrawer.removeChild(child);
 					}
 				}
 			}
 		}
-		else if (_debugDrawer && _debugDrawer.parent === this)
+		else if (_debugDrawer != null && _debugDrawer.parent == this)
 		{
 			removeChild(_debugDrawer);
 		}
@@ -154,7 +156,7 @@ public class FlashArmatureDisplay extends Sprite implements IArmatureDisplay
 	 */
 	public function dispose():Void
 	{
-		if (_armature)
+		if (_armature != null)
 		{
 			_armature.dispose();
 			_armature = null;

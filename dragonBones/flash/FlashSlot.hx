@@ -45,13 +45,13 @@ public class FlashSlot extends Slot
 	/**
 	 * @private
 	 */
-	override private function _initDisplay(value:Object):Void
+	override private function _initDisplay(value:Dynamic):Void
 	{
 	}
 	/**
 	 * @private
 	 */
-	override private function _disposeDisplay(value:Object):Void
+	override private function _disposeDisplay(value:Dynamic):Void
 	{
 	}
 	/**
@@ -72,7 +72,7 @@ public class FlashSlot extends Slot
 	/**
 	 * @private
 	 */
-	override private function _replaceDisplay(prevDisplay:Object):Void
+	override private function _replaceDisplay(prevDisplay:Dynamic):Void
 	{
 		inline var container:FlashArmatureDisplay = _armature.display as FlashArmatureDisplay;
 		inline var displayObject:DisplayObject = prevDisplay as DisplayObject;
@@ -94,7 +94,7 @@ public class FlashSlot extends Slot
 	{
 		inline var container:FlashArmatureDisplay = _armature.display as FlashArmatureDisplay;
 		inline var index:Int = container.getChildIndex(_renderDisplay);
-		if (index === _zOrder) 
+		if (index == _zOrder) 
 		{
 			return;
 		}
@@ -104,7 +104,7 @@ public class FlashSlot extends Slot
 	/**
 	 * @private
 	 */
-	override @:allow("dragonBones") private function _updateVisible():Void
+	override private function _updateVisible():Void
 	{
 		_renderDisplay.visible = _parent.visible;
 	}
@@ -190,15 +190,15 @@ public class FlashSlot extends Slot
 		inline var isMeshDisplay:Bool = _meshData && _renderDisplay === _meshDisplay;
 		var currentTextureData:FlashTextureData = _textureData as FlashTextureData;
 		
-		if (_displayIndex >= 0 && _display && currentTextureData)
+		if (_displayIndex >= 0 && _display != null && currentTextureData != null)
 		{
 			var currentTextureAtlasData:FlashTextureAtlasData = currentTextureData.parent as FlashTextureAtlasData;
 			
 			// Update replaced texture atlas.
-			if (_armature.replacedTexture && _displayData && currentTextureAtlasData === _displayData.texture.parent) 
+			if (_armature.replacedTexture != null && _displayData != null && currentTextureAtlasData == _displayData.texture.parent) 
 			{
 				currentTextureAtlasData = _armature._replaceTextureAtlasData as FlashTextureAtlasData;
-				if (!currentTextureAtlasData) 
+				if (currentTextureAtlasData == null) 
 				{
 					currentTextureAtlasData = BaseObject.borrowObject(FlashTextureAtlasData) as FlashTextureAtlasData;
 					currentTextureAtlasData.copyFrom(_textureData.parent);
@@ -210,16 +210,16 @@ public class FlashSlot extends Slot
 			}
 			
 			inline var currentTextureAtlas:BitmapData = currentTextureAtlasData.texture;
-			if (currentTextureAtlas)
+			if (currentTextureAtlas != null)
 			{
 				inline var textureAtlasWidth:Float = currentTextureAtlasData.width > 0.0 ? currentTextureAtlasData.width : currentTextureAtlas.width;
 				inline var textureAtlasHeight:Float = currentTextureAtlasData.height > 0.0 ? currentTextureAtlasData.height : currentTextureAtlas.height;
 				
-				if (isMeshDisplay) // Mesh.
+				if (isMeshDisplay != null) // Mesh.
 				{
 					var meshDisplay:Shape = _renderDisplay as Shape;
 					
-					if (_path)
+					if (_path != null)
 					{
 						_path.uvtData.fixed = false;
 						_path.vertices.fixed = false;
@@ -236,9 +236,9 @@ public class FlashSlot extends Slot
 					else
 					{
 						_path = new GraphicsTrianglePath(
-							new Vector.<Number>(_meshData.uvs.length, true),
-							new Vector.<int>(_meshData.vertexIndices.length, true),
-							new Vector.<Number>(_meshData.vertices.length, true)
+							new Vector<Float>(_meshData.uvs.length, true),
+							new Vector<Int>(_meshData.vertexIndices.length, true),
+							new Vector<Float>(_meshData.vertices.length, true)
 						);
 					}
 					
@@ -264,7 +264,7 @@ public class FlashSlot extends Slot
 					
 					meshDisplay.graphics.clear();
 					
-					if (currentTextureAtlas)
+					if (currentTextureAtlas != null)
 					{
 						meshDisplay.graphics.beginBitmapFill(currentTextureAtlas, null, false, true);
 						meshDisplay.graphics.drawTriangles(_path.vertices, _path.indices, _path.uvtData);
@@ -312,7 +312,7 @@ public class FlashSlot extends Slot
 					
 					normalDisplay.graphics.clear();
 					
-					if (currentTextureAtlas)
+					if (currentTextureAtlas != null)
 					{
 						normalDisplay.graphics.beginBitmapFill(currentTextureAtlas, _helpMatrix, false, true);
 						normalDisplay.graphics.drawRect(-_pivotX, -_pivotY, width, height);
@@ -349,7 +349,7 @@ public class FlashSlot extends Slot
 	{
 		inline var meshDisplay:Shape = _renderDisplay as Shape;
 		
-		if (!_meshTexture)
+		if (_meshTexture == null)
 		{
 			return;	
 		}
@@ -366,9 +366,9 @@ public class FlashSlot extends Slot
 			{
 				iH = i / 2;
 				
-				inline var boneIndices:Vector.<uint> = _meshData.boneIndices[iH];
-				inline var boneVertices:Vector.<Number> = _meshData.boneVertices[iH];
-				inline var weights:Vector.<Number> = _meshData.weights[iH];
+				inline var boneIndices:Vector<UInt> = _meshData.boneIndices[iH];
+				inline var boneVertices:Vector<Float> = _meshData.boneVertices[iH];
+				inline var weights:Vector<Float> = _meshData.weights[iH];
 				
 				xG = 0, yG = 0;
 				
@@ -408,7 +408,7 @@ public class FlashSlot extends Slot
 		{
 			meshDisplay.graphics.clear();
 			
-			inline var vertices:Vector.<Number> = _meshData.vertices;
+			inline var vertices:Vector<Float> = _meshData.vertices;
 			for (i = 0; i < l; i += 2)
 			{
 				xG = vertices[i] + _ffdVertices[i];

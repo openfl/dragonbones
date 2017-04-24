@@ -21,7 +21,7 @@ public final class EventData extends BaseObject
 	
 	override private function _onClear():Void
 	{
-		if (data)
+		if (data != null)
 		{
 			data.returnToPool();
 		}

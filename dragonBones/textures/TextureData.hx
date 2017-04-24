@@ -48,16 +48,16 @@ public class TextureData extends BaseObject
 		rotated = value.rotated;
 		name = value.name;
 		
-		if (!frame && value.frame) 
+		if (frame == null && value.frame != null) 
 		{
 			frame = TextureData.generateRectangle();
 		}
-		else if (frame && !value.frame) 
+		else if (frame != null && value.frame == null) 
 		{
 			frame = null;
 		}
 		
-		if (frame && value.frame) 
+		if (frame != null && value.frame != null) 
 		{
 			frame.copyFrom(value.frame);
 		}

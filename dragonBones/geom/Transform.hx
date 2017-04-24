@@ -156,12 +156,12 @@ public final class Transform
 		//skewY = Math.atan2(matrix.b, matrix.a);
 		skewX = Math.atan(-matrix.c / matrix.d);
 		skewY = Math.atan(matrix.b / matrix.a);
-		if (skewX !== skewX) 
+		if (skewX != skewX) 
 		{
 			skewX = 0.0;
 		}
 		
-		if (skewY !== skewY) 
+		if (skewY != skewY) 
 		{
 			skewY = 0.0;
 		}
@@ -213,7 +213,7 @@ public final class Transform
 			matrix.a = Math.cos(skewY);
 			matrix.b = Math.sin(skewY);
 			
-			if (skewX === skewY) 
+			if (skewX == skewY) 
 			{
 				matrix.c = -matrix.b;
 				matrix.d = matrix.a;
@@ -224,7 +224,7 @@ public final class Transform
 				matrix.d = Math.cos(skewX);
 			}
 			
-			if (scaleX !== 1.0 || scaleY !== 1.0) 
+			if (scaleX != 1.0 || scaleY != 1.0) 
 			{
 				matrix.a *= scaleX;
 				matrix.b *= scaleX;

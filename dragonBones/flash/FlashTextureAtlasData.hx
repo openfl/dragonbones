@@ -23,7 +23,7 @@ public final class FlashTextureAtlasData extends TextureAtlasData
 	{
 		super._onClear();
 		
-		if (texture)
+		if (texture != null)
 		{
 			texture.dispose();
 			texture = null;

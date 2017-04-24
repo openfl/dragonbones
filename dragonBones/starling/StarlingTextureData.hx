@@ -20,7 +20,7 @@ public final class StarlingTextureData extends TextureData
 	{
 		super._onClear();
 		
-		if (texture)
+		if (texture != null)
 		{
 			texture.dispose();
 			texture = null;

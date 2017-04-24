@@ -14,19 +14,19 @@ public final class CustomData extends BaseObject
 	 * 自定义整数。
 	 * @version DragonBones 5.0
 	 */
-	public inline var ints: Vector.<Number> = new Vector.<Number>();
+	public inline var ints: Vector<Float> = new Vector<Float>();
 	/**
 	 * @language zh_CN
 	 * 自定义浮点数。
 	 * @version DragonBones 5.0
 	 */
-	public inline var floats: Vector.<Number> = new Vector.<Number>();
+	public inline var floats: Vector<Float> = new Vector<Float>();
 	/**
 	 * @language zh_CN
 	 * 自定义字符串。
 	 * @version DragonBones 5.0
 	 */
-	public inline var strings: Vector.<String> = new Vector.<String>();
+	public inline var strings: Vector<String> = new Vector<String>();
 	/**
 	 * @private
 	 */

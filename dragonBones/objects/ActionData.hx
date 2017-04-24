@@ -20,7 +20,7 @@ public final class ActionData extends BaseObject
 	
 	override private function _onClear():Void
 	{
-		if (animationConfig)
+		if (animationConfig != null)
 		{
 			animationConfig..returnToPool();
 		}

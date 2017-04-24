@@ -5,7 +5,7 @@ package dragonBones.objects
  */
 public final class ZOrderFrameData extends FrameData
 {
-	public inline var zOrder:Vector.<int> = new Vector.<int>();
+	public inline var zOrder:Vector<Int> = new Vector<Int>();
 	
 	public function ZOrderFrameData()
 	{

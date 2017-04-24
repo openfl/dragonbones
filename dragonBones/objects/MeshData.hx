@@ -13,16 +13,16 @@ public final class MeshData extends BaseObject
 	public var name:String;
 	public inline var slotPose:Matrix = new Matrix();
 	
-	public inline var uvs:Vector.<Number> = new Vector.<Number>(); // vertices * 2
-	public inline var vertices:Vector.<Number> = new Vector.<Number>(); // vertices * 2
-	public inline var vertexIndices:Vector.<uint> = new Vector.<uint>(); // triangles * 3
+	public inline var uvs:Vector<Float> = new Vector<Float>(); // vertices * 2
+	public inline var vertices:Vector<Float> = new Vector<Float>(); // vertices * 2
+	public inline var vertexIndices:Vector<UInt> = new Vector<UInt>(); // triangles * 3
 	
-	public inline var boneIndices:Vector.<Vector.<uint>> = new Vector.<Vector.<uint>>(); // vertices bones
-	public inline var weights:Vector.<Vector.<Number>> = new Vector.<Vector.<Number>>(); // vertices bones
-	public inline var boneVertices:Vector.<Vector.<Number>> = new Vector.<Vector.<Number>>(); // vertices bones * 2
+	public inline var boneIndices:Vector<Vector<UInt>> = new Vector<Vector<UInt>>(); // vertices bones
+	public inline var weights:Vector<Vector<Float>> = new Vector<Vector<Float>>(); // vertices bones
+	public inline var boneVertices:Vector<Vector<Float>> = new Vector<Vector<Float>>(); // vertices bones * 2
 	
-	public inline var bones:Vector.<BoneData> = new Vector.<BoneData>(); // bones
-	public inline var inverseBindPose:Vector.<Matrix> = new Vector.<Matrix>(); // bones
+	public inline var bones:Vector<BoneData> = new Vector<BoneData>(); // bones
+	public inline var inverseBindPose:Vector<Matrix> = new Vector<Matrix>(); // bones
 	
 	public function MeshData()
 	{

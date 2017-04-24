@@ -6,8 +6,8 @@ package dragonBones.objects
 public final class AnimationFrameData extends FrameData
 {
 	
-	public inline var actions:Vector.<ActionData> = new Vector.<ActionData>();
-	public inline var events:Vector.<EventData> = new Vector.<EventData>();
+	public inline var actions:Vector<ActionData> = new Vector<ActionData>();
+	public inline var events:Vector<EventData> = new Vector<EventData>();
 	
 	public function AnimationFrameData()
 	{
@@ -18,12 +18,14 @@ public final class AnimationFrameData extends FrameData
 	{
 		super._onClear();
 		
-		for (var i:UInt = 0, l:UInt = actions.length; i < l; ++i)
+		var l:UInt = actions.length;
+		for (i in 0...l)
 		{
 			actions[i].returnToPool();
 		}
 		
-		for (i = 0, l = events.length; i < l; ++i)
+		l = events.length;
+		for (i in 0...l)
 		{
 			events[i].returnToPool();
 		}

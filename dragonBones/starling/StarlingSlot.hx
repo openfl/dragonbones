@@ -37,7 +37,7 @@ public final class StarlingSlot extends Slot
 	 */
 	@:allow("dragonBones") static function getEmptyTexture():Texture
 	{
-		if (!_emptyEtexture)
+		if (_emptyEtexture == null)
 		{
 			_emptyEtexture = Texture.empty(1, 1);
 		}
@@ -77,13 +77,13 @@ public final class StarlingSlot extends Slot
 		transformUpdateEnabled = false;
 		
 		#if (starling >= "2.0")
-		if (_indexData)
+		if (_indexData != null)
 		{
 			_indexData.clear();
 			_indexData = null;
 		}
 		
-		if (_vertexData)
+		if (_vertexData != null)
 		{
 			_vertexData.clear();
 			_vertexData = null;
@@ -95,13 +95,13 @@ public final class StarlingSlot extends Slot
 	/**
 	 * @private
 	 */
-	override private function _initDisplay(value:Object):Void
+	override private function _initDisplay(value:Dynamic):Void
 	{
 	}
 	/**
 	 * @private
 	 */
-	override private function _disposeDisplay(value:Object):Void
+	override private function _disposeDisplay(value:Dynamic):Void
 	{
 		(value as DisplayObject).dispose();
 	}
@@ -123,7 +123,7 @@ public final class StarlingSlot extends Slot
 	/**
 	 * @private
 	 */
-	override private function _replaceDisplay(value:Object):Void
+	override private function _replaceDisplay(value:Dynamic):Void
 	{
 		inline var container:StarlingArmatureDisplay = _armature.display as StarlingArmatureDisplay;
 		inline var prevDisplay:DisplayObject = value as DisplayObject;
@@ -155,7 +155,7 @@ public final class StarlingSlot extends Slot
 	/**
 	 * @private
 	 */
-	override @:allow("dragonBones") private function _updateVisible():Void
+	override private function _updateVisible():Void
 	{
 		_renderDisplay.visible = _parent.visible;
 	}
@@ -198,7 +198,7 @@ public final class StarlingSlot extends Slot
 		_renderDisplay.alpha = _colorTransform.alphaMultiplier;
 		
 		inline var quad:Quad = _renderDisplay as Quad;
-		if (quad)
+		if (quad != null)
 		{
 			inline var color:UInt = (uint(_colorTransform.redMultiplier * 0xFF) << 16) + (uint(_colorTransform.greenMultiplier * 0xFF) << 8) + uint(_colorTransform.blueMultiplier * 0xFF);
 			if (quad.color != color)
@@ -220,10 +220,10 @@ public final class StarlingSlot extends Slot
 			var currentTextureAtlasData:StarlingTextureAtlasData = currentTextureData.parent as StarlingTextureAtlasData;
 			
 			// Update replaced texture atlas.
-			if (_armature.replacedTexture && _displayData && currentTextureAtlasData === _displayData.texture.parent) 
+			if (_armature.replacedTexture != null && _displayData != null && currentTextureAtlasData == _displayData.texture.parent) 
 			{
 				currentTextureAtlasData = _armature._replaceTextureAtlasData as StarlingTextureAtlasData;
-				if (!currentTextureAtlasData) 
+				if (currentTextureAtlasData == null) 
 				{
 					currentTextureAtlasData = BaseObject.borrowObject(StarlingTextureAtlasData) as StarlingTextureAtlasData;
 					currentTextureAtlasData.copyFrom(_textureData.parent);
@@ -235,9 +235,9 @@ public final class StarlingSlot extends Slot
 			}
 			
 			inline var currentTextureAtlas:Texture = currentTextureAtlasData.texture;
-			if (currentTextureAtlas)
+			if (currentTextureAtlas != null)
 			{
-				if (!currentTextureData.texture) // Create texture.
+				if (currentTextureData.texture == null) // Create texture.
 				{
 					currentTextureData.texture = new SubTexture(currentTextureAtlas, currentTextureData.region, false, null, currentTextureData.rotated);
 				}
@@ -250,7 +250,8 @@ public final class StarlingSlot extends Slot
 					_indexData.clear();
 					_vertexData.clear();
 					
-					for (var i:UInt = 0, l:UInt = _meshData.vertexIndices.length; i < l; ++i)
+					var l:UInt = _meshData.vertexIndices.length;
+					for (i in 0...l)
 					{
 						_indexData.setIndex(i, _meshData.vertexIndices[i]);
 					}
@@ -317,9 +318,9 @@ public final class StarlingSlot extends Slot
 			{
 				iH = i / 2;
 				
-				inline var boneIndices:Vector.<uint> = _meshData.boneIndices[iH];
-				inline var boneVertices:Vector.<Number> = _meshData.boneVertices[iH];
-				inline var weights:Vector.<Number> = _meshData.weights[iH];
+				inline var boneIndices:Vector<UInt> = _meshData.boneIndices[iH];
+				inline var boneVertices:Vector<Float> = _meshData.boneVertices[iH];
+				inline var weights:Vector<Float> = _meshData.weights[iH];
 				
 				xG = 0, yG = 0;
 				
@@ -353,7 +354,7 @@ public final class StarlingSlot extends Slot
 		}
 		else if (hasFFD)
 		{
-			inline var vertices:Vector.<Number> = _meshData.vertices;
+			inline var vertices:Vector<Float> = _meshData.vertices;
 			for (i = 0; i < l; i += 2)
 			{
 				xG = vertices[i] + _ffdVertices[i];

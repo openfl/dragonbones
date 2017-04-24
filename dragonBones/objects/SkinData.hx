@@ -8,7 +8,7 @@ import dragonBones.core.BaseObject;
 public final class SkinData extends BaseObject
 {
 	public var name:String;
-	public inline var slots:Object = {};
+	public inline var slots:Dynamic = {};
 	
 	public function SkinData()
 	{
@@ -29,7 +29,7 @@ public final class SkinData extends BaseObject
 	
 	public function addSlot(value:SkinSlotData):Void
 	{
-		if (value && value.slot && !slots[value.slot.name])
+		if (value != null && value.slot != null && slots[value.slot.name] == null)
 		{
 			slots[value.slot.name] = value;
 		}

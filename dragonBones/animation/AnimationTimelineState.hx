@@ -25,16 +25,18 @@ public final class AnimationTimelineState extends TimelineState
 	{
 		if (_animationState.actionEnabled)
 		{
-			inline var actions:Vector.<ActionData> = (frame as AnimationFrameData).actions;
-			for (var i:UInt = 0, l:UInt = actions.length; i < l; ++i)
+			inline var actions:Vector<ActionData> = (frame as AnimationFrameData).actions;
+			l:UInt = actions.length;
+			for (i in 0...l)
 			{
 				_armature._bufferAction(actions[i]);
 			}
 		}
 		
 		inline var eventDispatcher:IEventDispatcher = _armature.eventDispatcher;
-		inline var events:Vector.<EventData> = (frame as AnimationFrameData).events;
-		for (i = 0, l = events.length; i < l; ++i)
+		inline var events:Vector<EventData> = (frame as AnimationFrameData).events;
+		var l = events.length;
+		for (i in 0...l)
 		{
 			inline var eventData:EventData = events[i];
 			
@@ -58,12 +60,12 @@ public final class AnimationTimelineState extends TimelineState
 				eventObject.data = eventData.data;
 				eventObject.animationState = _animationState;
 				
-				if (eventData.bone) 
+				if (eventData.bone != null) 
 				{
 					eventObject.bone = _armature.getBone(eventData.bone.name);
 				}
 				
-				if (eventData.slot) 
+				if (eventData.slot != null) 
 				{
 					eventObject.slot = _armature.getSlot(eventData.slot.name);
 				}
@@ -85,7 +87,7 @@ public final class AnimationTimelineState extends TimelineState
 			
 			if (prevState < 0 && _playState !== prevState) 
 			{
-				if (_animationState.displayControl)
+				if (_animationState.displayControl != null)
 				{
 					_armature._sortZOrder(null);
 				}
@@ -113,7 +115,7 @@ public final class AnimationTimelineState extends TimelineState
 					var crossedFrame:AnimationFrameData = _currentFrame as AnimationFrameData;
 					_currentFrame = currentFrame;
 					
-					if (!crossedFrame) 
+					if (crossedFrame == null) 
 					{
 						inline var prevFrameIndex:UInt = Math.floor(prevTime * _frameRate);
 						crossedFrame = _timelineData.frames[prevFrameIndex] as AnimationFrameData;

@@ -65,11 +65,11 @@ public class FlashFactory extends BaseFactory
 	/**
 	 * @private
 	 */
-	override private function _generateTextureAtlasData(textureAtlasData:TextureAtlasData, textureAtlas:Object):TextureAtlasData
+	override private function _generateTextureAtlasData(textureAtlasData:TextureAtlasData, textureAtlas:Dynamic):TextureAtlasData
 	{
-		if (textureAtlasData)
+		if (textureAtlasData != null)
 		{
-			if (textureAtlas is BitmapData)
+			if (Std.is(textureAtlas, BitmapData))
 			{
 				(textureAtlasData as FlashTextureAtlasData).texture = textureAtlas as BitmapData;
 			}
@@ -110,23 +110,24 @@ public class FlashFactory extends BaseFactory
 	{
 		inline var slot:FlashSlot = BaseObject.borrowObject(FlashSlot) as FlashSlot;
 		inline var slotData:SlotData = skinSlotData.slot;
-		inline var displayList:Vector.<Object> = new Vector.<Object>(skinSlotData.displays.length, true);
+		inline var displayList:Vector<Dynamic> = new Vector<Dynamic>(skinSlotData.displays.length, true);
 		inline var slotDisplay:Shape = new Shape();
 		
 		slot._init(skinSlotData, slotDisplay, slotDisplay);
 		
-		for (var i:UInt = 0, l:UInt = skinSlotData.displays.length; i < l; ++i) 
+		var l:UInt = skinSlotData.displays.length;
+		for (i in 0...l)
 		{
 			inline var displayData:DisplayData = skinSlotData.displays[i];
 			switch (displayData.type)
 			{
 				case DisplayType.Image:
-					if (!displayData.texture)
+					if (displayData.texture == null)
 					{
 						displayData.texture = _getTextureData(dataPackage.dataName, displayData.path);
 					}
 					
-					if (dataPackage.textureAtlasName)
+					if (dataPackage.textureAtlasName != null)
 					{
 						slot._textureDatas[i] = _getTextureData(dataPackage.textureAtlasName, displayData.path)
 					}
@@ -135,12 +136,12 @@ public class FlashFactory extends BaseFactory
 					break;
 				
 				case DisplayType.Mesh:
-					if (!displayData.texture)
+					if (displayData.texture == null)
 					{
 						displayData.texture = _getTextureData(dataPackage.dataName, displayData.path);
 					}
 					
-					if (dataPackage.textureAtlasName)
+					if (dataPackage.textureAtlasName != null)
 					{
 						slot._textureDatas[i] = _getTextureData(dataPackage.textureAtlasName, displayData.path)
 					}
@@ -150,11 +151,11 @@ public class FlashFactory extends BaseFactory
 				
 				case DisplayType.Armature:
 					inline var childArmature:Armature = buildArmature(displayData.path, dataPackage.dataName, null, dataPackage.textureAtlasName);
-					if (childArmature) 
+					if (childArmature != null) 
 					{
 						if (!childArmature.inheritAnimation)
 						{
-							inline var actions:Vector.<ActionData> = slotData.actions.length > 0? slotData.actions: childArmature.armatureData.actions;
+							inline var actions:Vector<ActionData> = slotData.actions.length > 0? slotData.actions: childArmature.armatureData.actions;
 							if (actions.length > 0) 
 							{
 								for each (var action:ActionData in actions) 
@@ -198,7 +199,7 @@ public class FlashFactory extends BaseFactory
 	public function buildArmatureDisplay(armatureName:String, dragonBonesName:String = null, skinName:String = null, textureAtlasName:String = null):FlashArmatureDisplay
 	{
 		inline var armature:Armature = buildArmature(armatureName, dragonBonesName, skinName, textureAtlasName);
-		if (armature)
+		if (armature != null)
 		{
 			_clock.add(armature);
 			return armature.display as FlashArmatureDisplay;
@@ -216,7 +217,7 @@ public class FlashFactory extends BaseFactory
 	public function getTextureDisplay(textureName:String, textureAtlasName:String = null):Shape 
 	{
 		inline var textureData:FlashTextureData = _getTextureData(textureAtlasName, textureName) as FlashTextureData;
-		if (textureData)
+		if (textureData != null)
 		{
 			var width:Float = 0;
 			var height:Float = 0;
