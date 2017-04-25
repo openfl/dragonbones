@@ -1,22 +1,19 @@
-package dragonBones.objects
-{
+package dragonBones.objects;
+
 import dragonBones.core.BaseObject;
 import dragonBones.enum.ActionType;
 
 /**
  * @private
  */
-public final class ActionData extends BaseObject
+@:final class ActionData extends BaseObject
 {
 	public var type:Int;
 	public var bone:BoneData;
 	public var slot:SlotData;
 	public var animationConfig:AnimationConfig;
 	
-	public function ActionData()
-	{
-		super(this);
-	}
+	private function new() {}
 	
 	override private function _onClear():Void
 	{

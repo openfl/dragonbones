@@ -1,18 +1,15 @@
-package dragonBones.objects
-{
-	import openfl.Vector;
+package dragonBones.objects;
+
+import openfl.Vector;
 	
 /**
  * @private
  */
-public final class ExtensionFrameData extends TweenFrameData
+@:final class ExtensionFrameData extends TweenFrameData
 {
 	public inline var tweens:Vector<Float> = new Vector<Float>();
 	
-	public function ExtensionFrameData()
-	{
-		super(this);
-	}
+	private function new() {}
 	
 	override private function _onClear():Void
 	{
@@ -21,5 +18,4 @@ public final class ExtensionFrameData extends TweenFrameData
 		tweens.fixed = false;
 		tweens.length = 0;
 	}
-}
 }

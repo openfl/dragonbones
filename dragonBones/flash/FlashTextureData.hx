@@ -1,15 +1,4 @@
-package dragonBones.flash
-{
-import dragonBones.textures.TextureData;
+package dragonBones.flash;
 
-/**
- * @private
- */
-public final class FlashTextureData extends TextureData
-{
-	public function FlashTextureData()
-	{
-		super(this);
-	}
-}
-}
+
+typedef FlashTextureData = dragonBones.openfl.OpenFLTextureData;

@@ -1,5 +1,5 @@
-package dragonBones.objects
-{
+package dragonBones.objects;
+
 import openfl.geom.Matrix;
 import openfl.Vector;
 
@@ -8,27 +8,24 @@ import dragonBones.core.BaseObject;
 /**
  * @private
  */
-public final class MeshData extends BaseObject
+@:final class MeshData extends BaseObject
 {
 	public var skinned:Bool;
 	public var name:String;
-	public inline var slotPose:Matrix = new Matrix();
+	public var slotPose:Matrix = new Matrix();
 	
-	public inline var uvs:Vector<Float> = new Vector<Float>(); // vertices * 2
-	public inline var vertices:Vector<Float> = new Vector<Float>(); // vertices * 2
-	public inline var vertexIndices:Vector<UInt> = new Vector<UInt>(); // triangles * 3
+	public var uvs:Vector<Float> = new Vector<Float>(); // vertices * 2
+	public var vertices:Vector<Float> = new Vector<Float>(); // vertices * 2
+	public var vertexIndices:Vector<UInt> = new Vector<UInt>(); // triangles * 3
 	
-	public inline var boneIndices:Vector<Vector<UInt>> = new Vector<Vector<UInt>>(); // vertices bones
-	public inline var weights:Vector<Vector<Float>> = new Vector<Vector<Float>>(); // vertices bones
-	public inline var boneVertices:Vector<Vector<Float>> = new Vector<Vector<Float>>(); // vertices bones * 2
+	public var boneIndices:Vector<Vector<UInt>> = new Vector<Vector<UInt>>(); // vertices bones
+	public var weights:Vector<Vector<Float>> = new Vector<Vector<Float>>(); // vertices bones
+	public var boneVertices:Vector<Vector<Float>> = new Vector<Vector<Float>>(); // vertices bones * 2
 	
-	public inline var bones:Vector<BoneData> = new Vector<BoneData>(); // bones
-	public inline var inverseBindPose:Vector<Matrix> = new Vector<Matrix>(); // bones
+	public var bones:Vector<BoneData> = new Vector<BoneData>(); // bones
+	public var inverseBindPose:Vector<Matrix> = new Vector<Matrix>(); // bones
 	
-	public function MeshData()
-	{
-		super(this);
-	}
+	private function new() {}
 	
 	override private function _onClear():Void
 	{
@@ -52,5 +49,4 @@ public final class MeshData extends BaseObject
 		inverseBindPose.fixed = false;
 		inverseBindPose.length = 0;
 	}
-}
 }

@@ -1,6 +1,6 @@
-package dragonBones.objects
-{
-	import openfl.Vector;
+package dragonBones.objects;
+
+import openfl.Vector;
 	
 import dragonBones.core.BaseObject;
 
@@ -9,7 +9,7 @@ import dragonBones.core.BaseObject;
  * 自定义数据。
  * @version DragonBones 5.0
  */
-public final class CustomData extends BaseObject
+@:final class CustomData extends BaseObject
 {
 	/**
 	 * @language zh_CN
@@ -32,10 +32,7 @@ public final class CustomData extends BaseObject
 	/**
 	 * @private
 	 */
-	public function CustomData()
-	{
-		super(this);
-	}
+	private function new() {}
 	/**
 	 * @private
 	 */

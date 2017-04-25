@@ -1,5 +1,5 @@
-package dragonBones.starling
-{
+package dragonBones.starling;
+
 import dragonBones.core.BaseObject;
 import dragonBones.textures.TextureAtlasData;
 import dragonBones.textures.TextureData;
@@ -8,16 +8,17 @@ import starling.textures.SubTexture;
 import starling.textures.Texture;
 import starling.textures.TextureAtlas;
 
-public final class StarlingTextureAtlasData extends TextureAtlasData
+@:final class StarlingTextureAtlasData extends TextureAtlasData
 {
 	public static function fromTextureAtlas(textureAtlas:TextureAtlas):StarlingTextureAtlasData
 	{
-		inline var textureAtlasData:StarlingTextureAtlasData = BaseObject.borrowObject(StarlingTextureAtlasData) as StarlingTextureAtlasData;
-		for each(var textureName:String in textureAtlas.getNames())
+		var textureAtlasData:StarlingTextureAtlasData = cast BaseObject.borrowObject(StarlingTextureAtlasData);
+		var textureData:StarlingTextureData;
+		for (textureName in textureAtlas.getNames())
 		{
-			inline var textureData:StarlingTextureData = textureAtlasData.generateTexture() as StarlingTextureData;
+			textureData = cast textureAtlasData.generateTexture();
 			textureData.name = textureName;
-			textureData.texture = textureAtlas.getTexture(textureName) as SubTexture;
+			textureData.texture = cast textureAtlas.getTexture(textureName);
 			textureData.rotated = textureAtlas.getRotation(textureName);
 			textureData.region.copyFrom(textureAtlas.getRegion(textureName));
 			//textureData.frame = textureAtlas.getFrame(textureName);
@@ -38,10 +39,7 @@ public final class StarlingTextureAtlasData extends TextureAtlasData
 	/**
 	 * @private
 	 */
-	public function StarlingTextureAtlasData()
-	{
-		super(this);
-	}
+	private function new() {}
 	/**
 	 * @private
 	 */
@@ -69,7 +67,6 @@ public final class StarlingTextureAtlasData extends TextureAtlasData
 	 */
 	override public function generateTexture():TextureData
 	{
-		return BaseObject.borrowObject(StarlingTextureData) as StarlingTextureData;
+		return cast BaseObject.borrowObject(StarlingTextureData);
 	}
-}
 }

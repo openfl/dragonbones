@@ -1,5 +1,5 @@
-package dragonBones.objects
-{
+package dragonBones.objects;
+
 import openfl.geom.Matrix;
 import openfl.geom.Rectangle;
 import openfl.Vector;
@@ -14,7 +14,7 @@ import dragonBones.geom.Transform;
  * @see dragonBones.Armature
  * @version DragonBones 3.0
  */
-public class ArmatureData extends BaseObject
+class ArmatureData extends BaseObject
 {
 	private static function _onSortSlots(a:SlotData, b:SlotData):Int
 	{
@@ -47,35 +47,35 @@ public class ArmatureData extends BaseObject
 	/**
 	 * @private
 	 */
-	public inline var aabb:Rectangle = new Rectangle();
+	public var aabb:Rectangle = new Rectangle();
 	/**
 	 * @language zh_CN
 	 * 所有骨骼数据。
 	 * @see dragonBones.objects.BoneData
 	 * @version DragonBones 3.0
 	 */
-	public inline var bones:Dynamic = {};
+	public inline var bones:Map<String, BoneData> = new Map<String, BoneData>();
 	/**
 	 * @language zh_CN
 	 * 所有插槽数据。
 	 * @see dragonBones.objects.SlotData
 	 * @version DragonBones 3.0
 	 */
-	public inline var slots:Dynamic = {};
+	public inline var slots:Map<String, SlotData> = new Map<String, SlotData>();
 	/**
 	 * @language zh_CN
 	 * 所有皮肤数据。
 	 * @see dragonBones.objects.SkinData
 	 * @version DragonBones 3.0
 	 */
-	public inline var skins:Dynamic = {};
+	public inline var skins:Map<String, SkinData> = new Map<String, SkinData>();
 	/**
 	 * @language zh_CN
 	 * 所有动画数据。
 	 * @see dragonBones.objects.AnimationData
 	 * @version DragonBones 3.0
 	 */
-	public inline var animations:Dynamic = {};
+	public inline var animations:Map<String, AnimationData> = new Map<String, AnimationData>();
 	/**
 	 * @private
 	 */
@@ -97,43 +97,40 @@ public class ArmatureData extends BaseObject
 	private inline var _animationNames:Vector<String> = new Vector<String>();
 	private inline var _sortedBones:Vector<BoneData> = new Vector<BoneData>();
 	private inline var _sortedSlots:Vector<SlotData> = new Vector<SlotData>();
-	private inline var _bonesChildren:Dynamic = {};
+	private inline var _bonesChildren:Map<String, Vector<BoneData>> = new Map<String, Vector<BoneData>>();
 	private var _defaultSkin:SkinData;
 	private var _defaultAnimation:AnimationData;
 	/**
 	 * @private
 	 */
-	public function ArmatureData()
-	{
-		super(this);
-	}
+	private function new() {}
 	/**
 	 * @private
 	 */
 	override private function _onClear():Void
 	{
-		for (var k:String in bones)
+		for (k in bones.keys())
 		{
-			(bones[k] as BoneData).returnToPool();
-			delete bones[k];
+			bones[k].returnToPool();
+			bones.remove(k);
 		}
 		
-		for (k in slots)
+		for (k in slots.keys())
 		{
-			(slots[k] as SlotData).returnToPool();
-			delete slots[k];
+			slots[k].returnToPool();
+			slots.remove(k);
 		}
 		
-		for (k in skins)
+		for (k in skins.keys())
 		{
-			(skins[k] as SkinData).returnToPool();
-			delete skins[k];
+			skins[k].returnToPool();
+			skins.remove(k);
 		}
 		
-		for (k in animations)
+		for (k in animations.keys())
 		{
-			(animations[k] as AnimationData).returnToPool();
-			delete animations[k];
+			animations[k].returnToPool();
+			animations.remove(k);
 		}
 		
 		var l:UInt = actions.length;
@@ -142,10 +139,7 @@ public class ArmatureData extends BaseObject
 			actions[i].returnToPool();
 		}
 		
-		for (k in _bonesChildren)
-		{
-			delete _bonesChildren[k];
-		}
+		_bonesChildren = new Map();
 		
 		if (userData != null) 
 		{
@@ -180,21 +174,22 @@ public class ArmatureData extends BaseObject
 	
 	private function _sortBones():Void
 	{
-		inline var total:UInt = _sortedBones.length;
-		if (!total)
+		var total:UInt = _sortedBones.length;
+		if (total == 0)
 		{
 			return;
 		}
 		
-		inline var sortHelper:Vector<BoneData> = _sortedBones.concat();
+		var sortHelper:Vector<BoneData> = _sortedBones.concat();
 		var index:UInt = 0;
 		var count:UInt = 0;
 		
 		_sortedBones.length = 0;
+		var bone:BoneData;
 		
 		while(count < total)
 		{
-			inline var bone:BoneData = sortHelper[index++];
+			bone = sortHelper[index++];
 			
 			if (index >= total)
 			{
@@ -245,7 +240,7 @@ public class ArmatureData extends BaseObject
 		
 		cacheFrameRate = frameRate;
 		
-		for each (var animation:AnimationData in animations) 
+		for (animation in animations) 
 		{
 			animation.cacheFrames(cacheFrameRate);
 		}
@@ -254,8 +249,8 @@ public class ArmatureData extends BaseObject
 	 * @private
 	 */
 	public function setCacheFrame(globalTransformMatrix: Matrix, transform: Transform):Float {
-		inline var dataArray:Vector<Float> = parent.cachedFrames;
-		inline var arrayOffset:UInt = dataArray.length;
+		var dataArray:Vector<Float> = parent.cachedFrames;
+		var arrayOffset:UInt = dataArray.length;
 		
 		dataArray.length += 10;
 		dataArray[arrayOffset] = globalTransformMatrix.a;
@@ -275,7 +270,7 @@ public class ArmatureData extends BaseObject
 	 * @private
 	 */
 	public function getCacheFrame(globalTransformMatrix: Matrix, transform: Transform, arrayOffset:Float):Void {
-		inline var dataArray:Vector<Float> = parent.cachedFrames;
+		var dataArray:Vector<Float> = parent.cachedFrames;
 		
 		globalTransformMatrix.a = dataArray[arrayOffset];
 		globalTransformMatrix.b = dataArray[arrayOffset + 1];
@@ -297,7 +292,7 @@ public class ArmatureData extends BaseObject
 		{
 			if (parentName != null)
 			{
-				inline var parent:BoneData = getBone(parentName);
+				var parent:BoneData = getBone(parentName);
 				if (parent)
 				{
 					value.parent = parent;
@@ -308,7 +303,7 @@ public class ArmatureData extends BaseObject
 				}
 			}
 			
-			inline var children:Vector<BoneData> = _bonesChildren[value.name];
+			var children:Vector<BoneData> = _bonesChildren[value.name];
 			if (children != null)
 			{
 				var l :UInt= children.length;
@@ -479,5 +474,4 @@ public class ArmatureData extends BaseObject
 	{
 		return _defaultAnimation;
 	}
-}
 }

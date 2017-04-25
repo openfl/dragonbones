@@ -1,19 +1,16 @@
-package dragonBones.objects
-{
+package dragonBones.objects;
+
 import dragonBones.geom.Transform;
 
 /**
  * @private
  */
-public final class BoneTimelineData extends TimelineData
+@:final class BoneTimelineData extends TimelineData
 {
-	public inline var originalTransform:Transform = new Transform();
+	public var originalTransform:Transform = new Transform();
 	public var bone:BoneData;
 	
-	public function BoneTimelineData()
-	{
-		super(this);
-	}
+	private function new() {}
 	
 	override private function _onClear():Void
 	{
@@ -22,5 +19,4 @@ public final class BoneTimelineData extends TimelineData
 		originalTransform.identity();
 		bone = null;
 	}
-}
 }

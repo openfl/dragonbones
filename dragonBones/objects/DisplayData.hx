@@ -1,5 +1,5 @@
-package dragonBones.objects
-{
+package dragonBones.objects;
+
 import openfl.geom.Point;
 
 import dragonBones.core.BaseObject;
@@ -10,7 +10,7 @@ import dragonBones.textures.TextureData;
 /**
  * @private
  */
-public class DisplayData extends BaseObject
+class DisplayData extends BaseObject
 {
 	public var isRelativePivot:Bool;
 	public var inheritAnimation:Bool;
@@ -18,17 +18,14 @@ public class DisplayData extends BaseObject
 	public var name:String;
 	public var path:String;
 	public var share:String;
-	public inline var pivot:Point = new Point();
-	public inline var transform:Transform = new Transform();
+	public var pivot:Point = new Point();
+	public var transform:Transform = new Transform();
 	public var texture:TextureData;
 	public var armature:ArmatureData;
 	public var mesh:MeshData;
 	public var boundingBox: BoundingBoxData;
 	
-	public function DisplayData()
-	{
-		super(this);
-	}
+	private function new() {}
 	
 	override private function _onClear():Void
 	{
@@ -50,5 +47,4 @@ public class DisplayData extends BaseObject
 		mesh = null;
 		boundingBox = null;
 	}
-}
 }

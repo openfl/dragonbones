@@ -1,26 +1,23 @@
-package dragonBones.objects
-{
+package dragonBones.objects;
+
 import dragonBones.core.BaseObject;
 
 /**
  * @private
  */
-public final class SkinData extends BaseObject
+@:final class SkinData extends BaseObject
 {
 	public var name:String;
-	public inline var slots:Dynamic = {};
+	public var slots:Map<String, SkinSlotData> = new Map<String, SkinSlotData>();
 	
-	public function SkinData()
-	{
-		super(this);
-	}
+	private function new() {}
 	
 	override private function _onClear():Void
 	{
-		for (var k:String in slots)
+		for (k in slots.keys())
 		{
-			(slots[k] as SkinSlotData).returnToPool();
-			delete slots[k];
+			slots[k].returnToPool();
+			slots.remove(k);
 		}
 		
 		name = null;
@@ -29,7 +26,7 @@ public final class SkinData extends BaseObject
 	
 	public function addSlot(value:SkinSlotData):Void
 	{
-		if (value != null && value.slot != null && slots[value.slot.name] == null)
+		if (value != null && value.slot != null && !slots.exists(value.slot.name))
 		{
 			slots[value.slot.name] = value;
 		}
@@ -41,7 +38,7 @@ public final class SkinData extends BaseObject
 	
 	public function getSlot(name:String):SkinSlotData
 	{
-		return slots[name] as SkinSlotData;
+		return slots[name];
 	}
 }
 }

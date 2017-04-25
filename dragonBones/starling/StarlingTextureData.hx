@@ -1,5 +1,5 @@
-package dragonBones.starling
-{
+package dragonBones.starling;
+
 import dragonBones.textures.TextureData;
 
 import starling.textures.SubTexture;
@@ -7,14 +7,11 @@ import starling.textures.SubTexture;
 /**
  * @private
  */
-public final class StarlingTextureData extends TextureData
+@:final class StarlingTextureData extends TextureData
 {
 	public var texture:SubTexture = null;
 	
-	public function StarlingTextureData()
-	{
-		super(this);
-	}
+	private function new() {}
 	
 	override private function _onClear():Void
 	{
@@ -26,5 +23,4 @@ public final class StarlingTextureData extends TextureData
 			texture = null;
 		}
 	}
-}
 }

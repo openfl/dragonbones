@@ -1,27 +1,19 @@
-package dragonBones.objects
-{
+package dragonBones.objects;
+
 import dragonBones.core.BaseObject;
 import dragonBones.core.DragonBones;
 
 /**
  * @private
  */
-public class FrameData extends BaseObject
+class FrameData extends BaseObject
 {
 	public var position:Float;
 	public var duration:Float;
 	public var prev:FrameData;
 	public var next:FrameData;
 	
-	public function FrameData(self:FrameData)
-	{
-		super(this);
-		
-		if (self != this)
-		{
-			throw new Error(DragonBones.ABSTRACT_CLASS_ERROR);
-		}
-	}
+	private function new() {}
 	
 	override private function _onClear():Void
 	{
@@ -30,5 +22,4 @@ public class FrameData extends BaseObject
 		prev = null;
 		next = null;
 	}
-}
 }

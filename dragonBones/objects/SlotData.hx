@@ -1,5 +1,5 @@
-package dragonBones.objects
-{
+package dragonBones.objects;
+
 import openfl.geom.ColorTransform;
 import openfl.Vector;
 
@@ -12,12 +12,12 @@ import dragonBones.enum.BlendMode;
  * @see dragonBones.Slot
  * @version DragonBones 3.0
  */
-public class SlotData extends BaseObject
+class SlotData extends BaseObject
 {
 	/**
 	 * @private
 	 */
-	public static inline var DEFAULT_COLOR:ColorTransform = new ColorTransform();
+	public static var DEFAULT_COLOR:ColorTransform = new ColorTransform();
 	/**
 	 * @private
 	 */
@@ -65,10 +65,7 @@ public class SlotData extends BaseObject
 	/**
 	 * @private
 	 */
-	public function SlotData()
-	{
-		super(this);
-	}
+	private function new() {}
 	/**
 	 * @private
 	 */
@@ -94,5 +91,4 @@ public class SlotData extends BaseObject
 		color = null;
 		userData = null;
 	}
-}
 }

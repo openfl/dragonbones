@@ -1,22 +1,19 @@
-package dragonBones.objects
-{
-	import openfl.Vector;
+package dragonBones.objects;
+
+import openfl.Vector;
 	
 import dragonBones.core.BaseObject;
 
 /**
  * @private
  */
-public final class SkinSlotData extends BaseObject
+@:final class SkinSlotData extends BaseObject
 {
-	public inline var displays:Vector<DisplayData> = new Vector<DisplayData>();
-	public inline var meshs:Dynamic = {};
+	public var displays:Vector<DisplayData> = new Vector<DisplayData>();
+	public var meshs:Map<String, MeshData> = new Map<String, MeshData>();
 	public var slot:SlotData;
 	
-	public function SkinSlotData()
-	{
-		super(this);
-	}
+	private function new () {}
 	
 	override private function _onClear():Void
 	{
@@ -26,10 +23,10 @@ public final class SkinSlotData extends BaseObject
 			displays[i].returnToPool();
 		}
 		
-		for (var k:String in meshs) 
+		for (k in meshs.keys()) 
 		{
 			meshs[k].returnToPool();
-			delete meshs[k];
+			meshs.remove(k);
 		}
 		
 		displays.fixed = false;
@@ -41,9 +38,10 @@ public final class SkinSlotData extends BaseObject
 	public function getDisplay(name: String): DisplayData 
 	{
 		var l:UInt = displays.length;
+		var display:DisplayData;
 		for (i in 0...l)
 		{
-			inline var display:DisplayData = displays[i];
+			display = displays[i];
 			if (display.name == name) 
 			{
 				return display;
@@ -55,7 +53,7 @@ public final class SkinSlotData extends BaseObject
 	
 	public function addMesh(value: MeshData):Void 
 	{
-		if (value != null && value.name != null && meshs[value.name] == null) 
+		if (value != null && value.name != null && !meshs.exists(value.name)) 
 		{
 			meshs[value.name] = value;
 		}
@@ -69,5 +67,4 @@ public final class SkinSlotData extends BaseObject
 	{
 		return meshs[name];
 	}
-}
 }

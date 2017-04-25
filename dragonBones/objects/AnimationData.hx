@@ -1,13 +1,13 @@
-﻿package dragonBones.objects
-{
-	import openfl.Vector;
+﻿package dragonBones.objects;
+
+import openfl.Vector;
 	
 /**
  * @language zh_CN
  * 动画数据。
  * @version DragonBones 3.0
  */
-public final class AnimationData extends TimelineData
+@:final class AnimationData extends TimelineData
 {
 	/**
 	 * @language zh_CN
@@ -50,15 +50,15 @@ public final class AnimationData extends TimelineData
 	/**
 	 * @private
 	 */
-	public inline var boneTimelines:Dynamic = {};
+	public inline var boneTimelines:Map<String, BoneTimelineData> = new Map<String, BoneTimelineData>();
 	/**
 	 * @private
 	 */
-	public inline var slotTimelines:Dynamic = {};
+	public inline var slotTimelines:Map<String, SlotTimelineData> = new Map<String, SlotTimelineData>();
 	/**
 	 * @private
 	 */
-	public inline var ffdTimelines:Dynamic = {}; // skinName ,slotName, mesh
+	public inline var ffdTimelines:Map<String, Map<String, Map<String, FFDTimelineData>>> = Map<String, Map<String, Map<String, FFDTimelineData>>>(); // skinName ,slotName, mesh
 	/**
 	 * @private
 	 */
@@ -66,18 +66,15 @@ public final class AnimationData extends TimelineData
 	/**
 	 * @private
 	 */
-	public inline var boneCachedFrameIndices:Dynamic = {}; //Object<Vector<Float>>
+	public inline var boneCachedFrameIndices:Map<String, Vector<Int>> = new Map<String, Vector<Int>>(); //Object<Vector<Float>>
 	/**
 	 * @private
 	 */
-	public inline var slotCachedFrameIndices:Dynamic = {}; //Object<Vector<Float>>
+	public inline var slotCachedFrameIndices:Map<String, Vector<Int>> = new Map<String, Vector<Int>>(); //Object<Vector<Float>>
 	/**
 	 * @private
 	 */
-	public function AnimationData()
-	{
-		super(this);
-	}
+	private function new() {}
 	/**
 	 * @private
 	 */
@@ -85,40 +82,32 @@ public final class AnimationData extends TimelineData
 	{
 		super._onClear();
 		
-		for (var k:String in boneTimelines)
+		for (k in boneTimelines.keys())
 		{
-			(boneTimelines[k] as BoneTimelineData).returnToPool();
-			delete boneTimelines[k];
+			boneTimelines[k].returnToPool();
+			boneTimelines.remove(k);
 		}
 		
-		for (k in slotTimelines)
+		for (k in slotTimelines.keys())
 		{
-			(slotTimelines[k] as SlotTimelineData).returnToPool();
-			delete slotTimelines[k];
+			slotTimelines[k].returnToPool();
+			slotTimelines.remove(k);
 		}
 		
-		for (k in ffdTimelines) {
-			for (var kA:String in ffdTimelines[k]) 
-			{
-				for (var kB:String in ffdTimelines[k][kA]) 
-				{
-					(ffdTimelines[k][kA][kB] as FFDTimelineData).returnToPool();
-				}
-			}
+		for (k in ffdTimelines.keys()) {
+			// for (kA in ffdTimelines[k].keys()) 
+			// {
+			// 	for (kB in ffdTimelines[k][kA].keys()) 
+			// 	{
+			// 		ffdTimelines[k][kA][kB].returnToPool();
+			// 	}
+			// }
 			
-			delete ffdTimelines[k];
+			ffdTimelines.remove(k);
 		}
 		
-		for (k in boneCachedFrameIndices) 
-		{
-			// boneCachedFrameIndices[i].length = 0;
-			delete boneCachedFrameIndices[k];
-		}
-		
-		for (k in slotCachedFrameIndices) {
-			// slotCachedFrameIndices[i].length = 0;
-			delete slotCachedFrameIndices[k];
-		}
+		boneCachedFrameIndices = new Map();
+		slotCachedFrameIndices = new Map();
 		
 		if (zOrderTimeline != null) 
 		{
@@ -151,11 +140,11 @@ public final class AnimationData extends TimelineData
 		}
 		
 		cacheFrameRate = Math.max(Math.ceil(frameRate * scale), 1.0);
-		inline var cacheFrameCount:UInt = Math.ceil(cacheFrameRate * duration) + 1; // uint
+		var cacheFrameCount:UInt = Math.ceil(cacheFrameRate * duration) + 1; // uint
 		cachedFrames.length = cacheFrameCount;
 		cachedFrames.fixed = true;
 		
-		for (var k:String in boneTimelines) 
+		for (k in boneTimelines.keys()) 
 		{
 			var indices:Vector<Int> = new Vector<Int>(cacheFrameCount, true)
 			var l:UInt = indices.length;
@@ -167,7 +156,7 @@ public final class AnimationData extends TimelineData
 			boneCachedFrameIndices[k] = indices;
 		}
 		
-		for (k in slotTimelines) 
+		for (k in slotTimelines.keys()) 
 		{
 			indices = new Vector<Int>(cacheFrameCount, true)
 			var l = indices.length;
@@ -184,7 +173,7 @@ public final class AnimationData extends TimelineData
 	 */
 	public function addBoneTimeline(value:BoneTimelineData):Void
 	{
-		if (value != null && value.bone != null && boneTimelines[value.bone.name] == null)
+		if (value != null && value.bone != null && !boneTimelines.exists(value.bone.name))
 		{
 			boneTimelines[value.bone.name] = value;
 		}
@@ -198,7 +187,7 @@ public final class AnimationData extends TimelineData
 	 */
 	public function addSlotTimeline(value:SlotTimelineData):Void
 	{
-		if (value != null && value.slot != null && slotTimelines[value.slot.name] == null)
+		if (value != null && value.slot != null && !slotTimelines.exists(value.slot.name))
 		{
 			slotTimelines[value.slot.name] = value;
 		}
@@ -214,9 +203,17 @@ public final class AnimationData extends TimelineData
 	{
 		if (value != null && value.skin != null && value.slot != null)
 		{
-			inline var skin:Dynamic = ffdTimelines[value.skin.name] = ffdTimelines[value.skin.name] || {};
-			inline var slot:Dynamic = skin[value.slot.slot.name] = skin[value.slot.slot.name] || {};
-			if (!slot[value.display.name])
+			if (!ffdTimelines.exists(value.skin.name))
+			{
+				ffdTimelines[value.skin.name] = new Map();
+			}
+			var skin = ffdTimelines[value.skin.name];
+			if (!skin.exists(value.slot.slot.name))
+			{
+				skin[value.slot.slot.name] = new Map();
+			}
+			var slot = skin[value.slot.slot.name];
+			if (!slot.exists(value.display.name))
 			{
 				slot[value.display.name] = value;
 			}
@@ -235,26 +232,24 @@ public final class AnimationData extends TimelineData
 	 */
 	public function getBoneTimeline(name:String):BoneTimelineData
 	{
-		return boneTimelines[name] as BoneTimelineData;
+		return boneTimelines[name];
 	}
 	/**
 	 * @private
 	 */
 	public function getSlotTimeline(name:String):SlotTimelineData
 	{
-		return slotTimelines[name] as SlotTimelineData;
+		return slotTimelines[name];
 	}
 	/**
 	 * @private
 	 */
-	public function getFFDTimeline(skinName:String, slotName:String):Dynamic
+	public function getFFDTimeline(skinName:String, slotName:String):Map<String, FFDTimelineData>
 	{
-		inline var skin:Dynamic = ffdTimelines[skinName];
-		if (skin != null)
+		if (ffdTimelines.exists(skinName))
 		{
-			return skin[slotName];
+			return ffdTimelines[skinName][slotName];
 		}
-		
 		return null;
 	}
 	/**
@@ -271,5 +266,4 @@ public final class AnimationData extends TimelineData
 	{
 		return slotCachedFrameIndices[name];
 	}
-}
 }

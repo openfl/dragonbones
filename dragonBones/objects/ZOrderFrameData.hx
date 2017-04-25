@@ -1,18 +1,15 @@
-package dragonBones.objects
-{
-	import openfl.Vector;
+package dragonBones.objects;
+
+import openfl.Vector;
 	
 /**
  * @private
  */
-public final class ZOrderFrameData extends FrameData
+@:final class ZOrderFrameData extends FrameData
 {
 	public inline var zOrder:Vector<Int> = new Vector<Int>();
 	
-	public function ZOrderFrameData()
-	{
-		super(this);
-	}
+	private function new() {}
 	
 	override private function _onClear():Void 
 	{
@@ -20,5 +17,4 @@ public final class ZOrderFrameData extends FrameData
 		
 		zOrder.length = 0;
 	}
-}
 }

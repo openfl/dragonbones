@@ -1,5 +1,5 @@
-package dragonBones.starling
-{
+package dragonBones.starling;
+
 import dragonBones.Armature;
 import dragonBones.animation.Animation;
 import dragonBones.core.IArmatureDisplay;
@@ -12,7 +12,7 @@ import starling.display.Sprite;
 /**
  * @inheritDoc
  */
-public final class StarlingArmatureDisplay extends Sprite implements IArmatureDisplay
+@:final class StarlingArmatureDisplay extends Sprite implements IArmatureDisplay
 {
 	public static var useDefaultStarlingEvent:Bool = false;
 	/**
@@ -22,10 +22,7 @@ public final class StarlingArmatureDisplay extends Sprite implements IArmatureDi
 	/**
 	 * @private
 	 */
-	public function StarlingArmatureDisplay()
-	{
-		super();
-	}
+	private function new() {}
 	/**
 	 * @private
 	 */
@@ -44,7 +41,7 @@ public final class StarlingArmatureDisplay extends Sprite implements IArmatureDi
 		}
 		else
 		{
-			inline var event:StarlingEvent = new StarlingEvent(type, eventObject);
+			var event:StarlingEvent = new StarlingEvent(type, eventObject);
 			dispatchEvent(event);
 		}
 	}
@@ -91,14 +88,16 @@ public final class StarlingArmatureDisplay extends Sprite implements IArmatureDi
 	/**
 	 * @inheritDoc
 	 */
-	public function get armature():Armature
+	public var armature(get, never):Armature;
+	private function get_armature():Armature
 	{
 		return _armature;
 	}
 	/**
 	 * @inheritDoc
 	 */
-	public function get animation():Animation
+	public var animation(get, never):Animation;
+	private function get_animation():Animation
 	{
 		return _armature.animation;
 	}

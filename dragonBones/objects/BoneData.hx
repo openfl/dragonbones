@@ -1,5 +1,5 @@
-package dragonBones.objects
-{
+package dragonBones.objects;
+
 import dragonBones.core.BaseObject;
 import dragonBones.geom.Transform;
 
@@ -9,7 +9,7 @@ import dragonBones.geom.Transform;
  * @see dragonBones.Bone
  * @version DragonBones 3.0
  */
-public class BoneData extends BaseObject
+class BoneData extends BaseObject
 {
 	/**
 	 * @private
@@ -103,5 +103,4 @@ public class BoneData extends BaseObject
 	{
 		return name;
 	}
-}
 }

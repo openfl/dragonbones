@@ -33,7 +33,7 @@ import dragonBones.textures.TextureAtlasData;
 /**
  * @private
  */
-public class DataParser
+class DataParser
 {
 	private static inline var DATA_VERSION_2_3:String = "2.3";
 	private static inline var DATA_VERSION_3_0:String = "3.0";
@@ -41,7 +41,7 @@ public class DataParser
 	private static inline var DATA_VERSION_4_5:String = "4.5";
 	private static inline var DATA_VERSION_5_0:String = "5.0";
 	private static inline var DATA_VERSION:String = DATA_VERSION_5_0;
-	private static inline var DATA_VERSIONS:Vector<String> = Vector<String>([
+	private static var DATA_VERSIONS:Vector<String> = Vector<String>([
 		DATA_VERSION_5_0,
 		DATA_VERSION_4_5,
 		DATA_VERSION_4_0,
@@ -279,13 +279,13 @@ public class DataParser
 	private var _isGlobalTransform:Bool = false;
 	private var _isAutoTween:Bool = false;
 	private var _animationTweenEasing:Float = 0.0;
-	private inline var _timelinePivot:Point = new Point();
+	private var _timelinePivot:Point = new Point();
 	
-	private inline var _helpPoint:Point = new Point();
-	private inline var _helpTransformA:Transform = new Transform();
-	private inline var _helpTransformB:Transform = new Transform();
-	private inline var _helpMatrix:Matrix = new Matrix();
-	private inline var _rawBones:Vector<BoneData> = new Vector<BoneData>();
+	private var _helpPoint:Point = new Point();
+	private var _helpTransformA:Transform = new Transform();
+	private var _helpTransformB:Transform = new Transform();
+	private var _helpMatrix:Matrix = new Matrix();
+	private var _rawBones:Vector<BoneData> = new Vector<BoneData>();
 	
 	private var _data:DragonBonesData = null;
 	private var _armature:ArmatureData = null;
@@ -294,13 +294,8 @@ public class DataParser
 	private var _animation:AnimationData = null;
 	private var _timeline:TimelineData = null;
 	
-	public function DataParser(self:DataParser)
-	{
-		if (self != this)
-		{
-			throw new Error(DragonBones.ABSTRACT_CLASS_ERROR);
-		}
-	}
+	private function new() {}
+	
 	/** 
 	 * @private 
 	 */
@@ -319,14 +314,14 @@ public class DataParser
 	
 	private function _getTimelineFrameMatrix(animation:AnimationData, timeline:BoneTimelineData, position:Float, transform:Transform):Void 
 	{
-		inline var frameIndex:UInt = uint(position * animation.frameCount / animation.duration);
+		var frameIndex:UInt = Std.int(position * animation.frameCount / animation.duration);
 		if (timeline.frames.length == 1 || frameIndex >= timeline.frames.length) 
 		{
 			transform.copyFrom((timeline.frames[0] as BoneFrameData).transform);
 		} 
 		else 
 		{
-			inline var frame:BoneFrameData = timeline.frames[frameIndex] as BoneFrameData;
+			var frame:BoneFrameData = cast timeline.frames[frameIndex];
 			var tweenProgress:Float = 0;
 			
 			if (frame.tweenEasing != DragonBones.NO_TWEEN) 
@@ -343,7 +338,7 @@ public class DataParser
 				tweenProgress = TweenTimelineState._getCurveEasingValue(tweenProgress, frame.curve);
 			}
 			
-			inline var nextFrame:BoneFrameData = frame.next as BoneFrameData;
+			var nextFrame:BoneFrameData = cast frame.next;
 			
 			transform.x = nextFrame.transform.x - frame.transform.x;
 			transform.y = nextFrame.transform.y - frame.transform.y;
@@ -365,13 +360,15 @@ public class DataParser
 	
 	private function _globalToLocal(armature:ArmatureData):Void // Support 2.x ~ 3.x data.
 	{
-		inline var keyFrames:Vector<BoneFrameData> = new Vector<BoneFrameData>();
-		inline var bones:Vector<BoneData> = armature.sortedBones.concat().reverse();
+		var keyFrames:Vector<BoneFrameData> = new Vector<BoneFrameData>();
+		var bones:Vector<BoneData> = armature.sortedBones.concat().reverse();
 		
 		var l:UInt = bones.length;
+		var bone:BoneData, frame:BoneFrameData, timeline:BoneTimelineData, parentTimeline:BoneTimelineData;
+		var lJ:UInt;
 		for (i in 0...l)
 		{
-			inline var bone:BoneData = bones[i];
+			bone = bones[i];
 			if (bone.parent != null) 
 			{
 				bone.parent.transform.toMatrix(_helpMatrix);
@@ -382,23 +379,24 @@ public class DataParser
 				bone.transform.rotation -= bone.parent.transform.rotation;
 			}
 			
-			var frame:BoneFrameData = null;
-			for each (var animation:AnimationData in armature.animations) 
+			frame = null;
+			for (animation in armature.animations) 
 			{
-				inline var timeline:BoneTimelineData = animation.getBoneTimeline(bone.name);
+				timeline = animation.getBoneTimeline(bone.name);
 				
 				if (timeline == null)
 				{
 					continue;	
 				}
 				
-				inline var parentTimeline:BoneTimelineData = bone.parent? animation.getBoneTimeline(bone.parent.name): null;
+				parentTimeline = bone.parent? animation.getBoneTimeline(bone.parent.name): null;
 				_helpTransformB.copyFrom(timeline.originalTransform);
 				keyFrames.length = 0;
 				
-				for (var j:UInt = 0, lJ:UInt = timeline.frames.length; j < lJ; ++j) 
+				lJ = timeline.frames.length;
+				for (j in 0...lJ)
 				{
-					frame = timeline.frames[j] as BoneFrameData;
+					frame = cast timeline.frames[j];
 					
 					if (keyFrames.indexOf(frame) >= 0) 
 					{
@@ -441,19 +439,19 @@ public class DataParser
 	
 	private function _mergeFrameToAnimationTimeline(framePositon:Float, actions:Vector<ActionData>, events:Vector<EventData>):Void 
 	{
-		inline var frameStart:UInt = Math.floor(framePositon * _armature.frameRate); // uint()
-		inline var frames:Vector<FrameData> = _animation.frames;
+		var frameStart:UInt = Math.floor(framePositon * _armature.frameRate); // uint()
+		var frames:Vector<FrameData> = _animation.frames;
 		
 		frames.fixed = false;
 		
 		if (frames.length == 0) {
-			inline var startFrame:AnimationFrameData = BaseObject.borrowObject(AnimationFrameData) as AnimationFrameData; // Add start frame.
+			var startFrame:AnimationFrameData = cast BaseObject.borrowObject(AnimationFrameData); // Add start frame.
 			startFrame.position = 0;
 			
 			if (_animation.frameCount > 1) {
 				frames.length = _animation.frameCount + 1; // One more count for zero duration frame.
 				
-				inline var endFrame:AnimationFrameData = BaseObject.borrowObject(AnimationFrameData) as AnimationFrameData; // Add end frame to keep animation timeline has two different frames atleast.
+				var endFrame:AnimationFrameData = cast BaseObject.borrowObject(AnimationFrameData); // Add end frame to keep animation timeline has two different frames atleast.
 				endFrame.position = _animation.frameCount / _armature.frameRate;
 				
 				frames[0] = startFrame;
@@ -463,7 +461,7 @@ public class DataParser
 		
 		var i:UInt = 0, l:UInt = 0;
 		var insertedFrame:AnimationFrameData = null;
-		inline var replacedFrame:AnimationFrameData = frames.length? frames[frameStart] as AnimationFrameData: null;
+		var replacedFrame:AnimationFrameData = frames.length? cast(frames[frameStart], AnimationFrameData): null;
 		
 		if (replacedFrame != null && (frameStart == 0 || frames[frameStart - 1] == replacedFrame.prev)) // Key frame.
 		{
@@ -471,11 +469,11 @@ public class DataParser
 		} 
 		else 
 		{
-			insertedFrame = BaseObject.borrowObject(AnimationFrameData) as AnimationFrameData; // Create frame.
+			insertedFrame = cast BaseObject.borrowObject(AnimationFrameData); // Create frame.
 			insertedFrame.position = frameStart / _armature.frameRate;
 			frames[frameStart] = insertedFrame;
 			
-			for (i = frameStart + 1, l = frames.length; i < l; ++i) // Clear replaced frame.
+			for (i in (frameStart + 1)...l) // Clear replaced frame.
 			{
 				if (replacedFrame && frames[i] == replacedFrame) 
 				{
@@ -514,9 +512,10 @@ public class DataParser
 		var prevFrame:AnimationFrameData = null;
 		var nextFrame:AnimationFrameData = null;
 		l = frames.length;
+		var currentFrame:AnimationFrameData;
 		for (i in 0...l)
 		{
-			inline var currentFrame:AnimationFrameData = frames[i] as AnimationFrameData;
+			currentFrame = cast(frames[i], AnimationFrameData);
 			if (currentFrame != null && nextFrame != currentFrame) 
 			{
 				nextFrame = currentFrame;
@@ -538,11 +537,10 @@ public class DataParser
 		
 		nextFrame.duration = _animation.duration - nextFrame.position;
 		
-		nextFrame = frames[0] as AnimationFrameData;
+		nextFrame = cast(frames[0], AnimationFrameData);
 		prevFrame.next = nextFrame;
 		nextFrame.prev = prevFrame;
 		
 		frames.fixed = true;
 	}
-}
 }

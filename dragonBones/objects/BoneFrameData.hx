@@ -1,20 +1,17 @@
-package dragonBones.objects
-{
+package dragonBones.objects;
+
 import dragonBones.geom.Transform;
 
 /**
  * @private
  */
-public final class BoneFrameData extends TweenFrameData
+@:final class BoneFrameData extends TweenFrameData
 {
 	public var tweenScale:Bool;
 	public var tweenRotate:Float;
-	public inline var transform:Transform = new Transform();
+	public var transform:Transform = new Transform();
 	
-	public function BoneFrameData()
-	{
-		super(this);
-	}
+	private function new() {}
 	
 	override private function _onClear():Void
 	{
@@ -24,5 +21,4 @@ public final class BoneFrameData extends TweenFrameData
 		tweenRotate = 0.0;
 		transform.identity();
 	}
-}
 }

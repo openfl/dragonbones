@@ -1,5 +1,5 @@
-package dragonBones.objects
-{
+package dragonBones.objects;
+
 import openfl.geom.Point;
 import openfl.Vector;
 
@@ -11,7 +11,7 @@ import dragonBones.enum.BoundingBoxType;
  * 自定义包围盒数据。
  * @version DragonBones 5.0
  */
-public final class BoundingBoxData extends BaseObject
+@:final class BoundingBoxData extends BaseObject
 {
 	/**
 	 * Cohen–Sutherland algorithm https://en.wikipedia.org/wiki/Cohen%E2%80%93Sutherland_algorithm
@@ -66,8 +66,8 @@ public final class BoundingBoxData extends BaseObject
 		normalRadians: Point = null
 	):Int 
 	{
-		inline var inSideA:Bool = xA > xMin && xA < xMax && yA > yMin && yA < yMax;
-		inline var inSideB:Bool = xB > xMin && xB < xMax && yB > yMin && yB < yMax;
+		var inSideA:Bool = xA > xMin && xA < xMax && yA > yMin && yA < yMax;
+		var inSideB:Bool = xB > xMin && xB < xMax && yB > yMin && yB < yMax;
 		
 		if (inSideA && inSideB) 
 		{
@@ -365,10 +365,10 @@ public final class BoundingBoxData extends BaseObject
 			yA = yB + 0.01;
 		}
 		
-		inline var l:UInt = vertices.length;
-		inline var dXAB:Float = xA - xB
-		inline var dYAB:Float = yA - yB;
-		inline var llAB:Float = xA * yB - yA * xB;
+		var l:UInt = vertices.length;
+		var dXAB:Float = xA - xB
+		var dYAB:Float = yA - yB;
+		var llAB:Float = xA * yB - yA * xB;
 		var intersectionCount:Int = 0;
 		var xC:Float = vertices[l - 2];
 		var yC:Float = vertices[l - 1];
@@ -379,35 +379,39 @@ public final class BoundingBoxData extends BaseObject
 		var xMax:Float = 0.0;
 		var yMax:Float = 0.0;
 		
-		for (var i:UInt = 0; i < l; i += 2) 
+		var i:UInt = 0;
+		var xD:Float, yD:Float, dXCD:Float, dYCD:Float, llCD:Float, ll:Float, x:Float;
+		var y:Float, d:Float;
+		
+		while (i < l)
 		{
-			inline var xD:Float = vertices[i];
-			inline var yD:Float = vertices[i + 1];
+			xD = vertices[i];
+			yD = vertices[i + 1];
 			
-			if (xC === xD) 
+			if (xC == xD) 
 			{
 				xC = xD + 0.01;
 			}
 			
-			if (yC === yD) 
+			if (yC == yD) 
 			{
 				yC = yD + 0.01;
 			}
 			
-			inline var dXCD:Float = xC - xD;
-			inline var dYCD:Float = yC - yD;
-			inline var llCD:Float = xC * yD - yC * xD;
-			inline var ll:Float = dXAB * dYCD - dYAB * dXCD;
-			inline var x:Float = (llAB * dXCD - dXAB * llCD) / ll;
+			dXCD = xC - xD;
+			dYCD = yC - yD;
+			llCD = xC * yD - yC * xD;
+			ll = dXAB * dYCD - dYAB * dXCD;
+			x = (llAB * dXCD - dXAB * llCD) / ll;
 			
-			if (((x >= xC && x <= xD) || (x >= xD && x <= xC)) && (dXAB === 0 || (x >= xA && x <= xB) || (x >= xB && x <= xA))) 
+			if (((x >= xC && x <= xD) || (x >= xD && x <= xC)) && (dXAB == 0 || (x >= xA && x <= xB) || (x >= xB && x <= xA))) 
 			{
-				inline var y:Float = (llAB * dYCD - dYAB * llCD) / ll;
-				if (((y >= yC && y <= yD) || (y >= yD && y <= yC)) && (dYAB === 0 || (y >= yA && y <= yB) || (y >= yB && y <= yA))) 
+				y = (llAB * dYCD - dYAB * llCD) / ll;
+				if (((y >= yC && y <= yD) || (y >= yD && y <= yC)) && (dYAB == 0 || (y >= yA && y <= yB) || (y >= yB && y <= yA))) 
 				{
 					if (intersectionPointB != null) 
 					{
-						var d:Float = x - xA;
+						d = x - xA;
 						if (d < 0.0) 
 						{
 							d = -d;
@@ -470,6 +474,8 @@ public final class BoundingBoxData extends BaseObject
 							normalRadians.x = Math.atan2(yD - yC, xD - xC) - Math.PI * 0.5;
 							normalRadians.y = normalRadians.x;
 						}
+						
+						i += 2;
 						break;
 					}
 				}
@@ -477,9 +483,11 @@ public final class BoundingBoxData extends BaseObject
 			
 			xC = xD;
 			yC = yD;
+			
+			i += 2;
 		}
 		
-		if (intersectionCount === 1) 
+		if (intersectionCount == 1) 
 		{
 			if (intersectionPointA != null) 
 			{
@@ -544,10 +552,7 @@ public final class BoundingBoxData extends BaseObject
 	/**
 	 * @private
 	 */
-	public function BoundingBoxData()
-	{
-		super(this);
-	}
+	private function new() {}
 	/**
 	 * @private
 	 */
@@ -571,18 +576,20 @@ public final class BoundingBoxData extends BaseObject
 	{
 		var isInSide:Bool = false;
 		
-		if (type === BoundingBoxType.Polygon) 
+		if (type == BoundingBoxType.Polygon) 
 		{
 			if (pX >= x && pX <= width && pY >= y && pY <= height) 
 			{
-				for (var i:UInt = 0, l:UInt = vertices.length, iP:UInt = l - 2; i < l; i += 2) 
+				var i:UInt = 0, l:UInt = vertices.length, iP:UInt = l - 2;
+				var yA:Float, yB:Float, xA:Float, xB:Float;
+				while (i < l)
 				{
-					inline var yA:Float = vertices[iP + 1];
-					inline var yB:Float = vertices[i + 1];
+					yA = vertices[iP + 1];
+					yB = vertices[i + 1];
 					if ((yB < pY && yA >= pY) || (yA < pY && yB >= pY)) 
 					{
-						inline var xA:Float = vertices[iP];
-						inline var xB:Float = vertices[i];
+						xA = vertices[iP];
+						xB = vertices[i];
 						if ((pY - yB) * (xA - xB) / (yA - yB) + xB < pX) 
 						{
 							isInSide = !isInSide;
@@ -590,18 +597,19 @@ public final class BoundingBoxData extends BaseObject
 					}
 					
 					iP = i;
+					i += 2;
 				}
 			}
 		}
 		else 
 		{
-			inline var widthH:Float = width * 0.5;
+			var widthH = width * 0.5;
 			if (pX >= -widthH && pX <= widthH) 
 			{
-				inline var heightH:Float = height * 0.5;
+				var heightH:Float = height * 0.5;
 				if (pY >= -heightH && pY <= heightH) 
 				{
-					if (type === BoundingBoxType.Ellipse) 
+					if (type == BoundingBoxType.Ellipse) 
 					{
 						pY *= widthH / heightH;
 						isInSide = Math.sqrt(pX * pX + pY * pY) <= widthH;
@@ -632,14 +640,13 @@ public final class BoundingBoxData extends BaseObject
 		switch (type) 
 		{
 			case BoundingBoxType.Rectangle:
-				inline var widthH:Float = width * 0.5;
-				inline var heightH:Float = height * 0.5;
+				var widthH:Float = width * 0.5;
+				var heightH:Float = height * 0.5;
 				intersectionCount = segmentIntersectsRectangle(
 					xA, yA, xB, yB,
 					-widthH, -heightH, widthH, heightH,
 					intersectionPointA, intersectionPointB, normalRadians
 				);
-				break;
 			
 			case BoundingBoxType.Ellipse:
 				intersectionCount = segmentIntersectsEllipse(
@@ -647,7 +654,6 @@ public final class BoundingBoxData extends BaseObject
 					0.0, 0.0, width * 0.5, height * 0.5,
 					intersectionPointA, intersectionPointB, normalRadians
 				);
-				break;
 			
 			case BoundingBoxType.Polygon:
 				if (segmentIntersectsRectangle(xA, yA, xB, yB, x, y, width, height, null, null) !== 0) 
@@ -658,13 +664,10 @@ public final class BoundingBoxData extends BaseObject
 						intersectionPointA, intersectionPointB, normalRadians
 					);
 				}
-				break;
 			
 			default:
-				break;
 		}
 		
 		return intersectionCount;
 	}
-}
 }

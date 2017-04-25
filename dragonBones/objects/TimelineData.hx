@@ -1,6 +1,6 @@
-package dragonBones.objects
-{
-	import openfl.Vector;
+package dragonBones.objects;
+
+import openfl.Vector;
 	
 import dragonBones.core.BaseObject;
 import dragonBones.core.DragonBones;
@@ -8,7 +8,7 @@ import dragonBones.core.DragonBones;
 /**
  * @private
  */
-public class TimelineData extends BaseObject
+class TimelineData extends BaseObject
 {
 	public var scale:Float;
 	/**
@@ -18,19 +18,11 @@ public class TimelineData extends BaseObject
 	/**
 	 * @private
 	 */
-	public inline var frames:Vector<FrameData> = new Vector<FrameData>();
+	public var frames:Vector<FrameData> = new Vector<FrameData>();
 	/**
 	 * @private
 	 */
-	public function TimelineData(self:TimelineData)
-	{
-		super(this);
-		
-		if (self != this)
-		{
-			throw new Error(DragonBones.ABSTRACT_CLASS_ERROR);
-		}
-	}
+	private function new() {}
 	/**
 	 * @private
 	 */
@@ -41,9 +33,10 @@ public class TimelineData extends BaseObject
 		
 		var prevFrame:FrameData = null;
 		var l:UInt = frames.length;
+		var frame:FrameData;
 		for (i in 0...l) // Find key frame data.
 		{
-			inline var frame:FrameData = frames[i];
+			frame = frames[i];
 			if (prevFrame != null && frame !== prevFrame)
 			{
 				prevFrame.returnToPool();
@@ -55,5 +48,4 @@ public class TimelineData extends BaseObject
 		frames.fixed = false;
 		frames.length = 0;
 	}
-}
 }

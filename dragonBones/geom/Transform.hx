@@ -1,5 +1,5 @@
-package dragonBones.geom
-{
+package dragonBones.geom;
+
 import openfl.geom.Matrix;
 import openfl.geom.Point;
 
@@ -8,7 +8,7 @@ import openfl.geom.Point;
  * 2D 变换。
  * @version DragonBones 3.0
  */
-public final class Transform
+@:final class Transform
 {
 	/**
 	 * @private
@@ -73,9 +73,7 @@ public final class Transform
 	/**
 	 * @private
 	 */
-	public function Transform()
-	{
-	}
+	private function new() {}
 	/**
 	 * @private
 	 */
@@ -86,8 +84,7 @@ public final class Transform
 	/**
 	 * @private
 	 */
-	[inline]
-	final public function copyFrom(value:Transform):Transform
+	@:final public #if !js inline #end function copyFrom(value:Transform):Transform
 	{
 		x = value.x;
 		y = value.y;
@@ -101,8 +98,7 @@ public final class Transform
 	/**
 	 * @private
 	 */
-	[inline]
-	final public function identity():Transform
+	@:final public #if !js inline #end function identity():Transform
 	{
 		x = y = skewX = skewY = 0.0;
 		scaleX = scaleY = 1.0;
@@ -112,8 +108,7 @@ public final class Transform
 	/**
 	 * @private
 	 */
-	[inline]
-	final public function add(value:Transform):Transform
+	@:final public #if !js inline #end function add(value:Transform):Transform
 	{
 		x += value.x;
 		y += value.y;
@@ -127,8 +122,7 @@ public final class Transform
 	/**
 	 * @private
 	 */
-	[inline]
-	final public function minus(value:Transform):Transform
+	@:final public #if !js inline #end function minus(value:Transform):Transform
 	{
 		x -= value.x;
 		y -= value.y;
@@ -142,12 +136,11 @@ public final class Transform
 	/**
 	 * @private
 	 */
-	[inline]
-	final public function fromMatrix(matrix:Matrix):Transform
+	@:final public #if !js inline #end function fromMatrix(matrix:Matrix):Transform
 	{
-		inline var PI_Q:Float = Math.PI * 0.25;
+		var PI_Q:Float = Math.PI * 0.25;
 		
-		inline var backupScaleX:Float = scaleX, backupScaleY:Float = scaleY;
+		var backupScaleX:Float = scaleX, backupScaleY:Float = scaleY;
 		
 		x = matrix.tx;
 		y = matrix.ty;
@@ -205,10 +198,9 @@ public final class Transform
 	 * 转换为矩阵。
 	 * @version DragonBones 3.0
 	 */
-	[inline]
-	final public function toMatrix(matrix:Matrix):Transform
+	@:final public #if !js inline #end function toMatrix(matrix:Matrix):Transform
 	{
-		if (skewX !== 0.0 || skewY !== 0.0) 
+		if (skewX != 0.0 || skewY != 0.0) 
 		{
 			matrix.a = Math.cos(skewY);
 			matrix.b = Math.sin(skewY);
@@ -250,17 +242,17 @@ public final class Transform
 	 * 旋转。 (以弧度为单位)
 	 * @version DragonBones 3.0
 	 */
-	[inline]
-	final public function get rotation():Float
+	@:final public var rotation(get, set):Float;
+	private #if !js inline #end function get_rotation():Float
 	{
 		return skewY;
 	}
-	[inline]
-	final public function set rotation(value:Float):Void
+	private #if !js inline #end function set_rotation(value:Float):Float
 	{
-		inline var dValue:Float = value - skewY;
+		var dValue:Float = value - skewY;
 		skewX += dValue;
 		skewY += dValue;
+		return value;
 	}
 }
 }

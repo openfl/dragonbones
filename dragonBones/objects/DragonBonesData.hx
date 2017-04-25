@@ -1,6 +1,6 @@
-package dragonBones.objects
-{
-	import openfl.Vector;
+package dragonBones.objects;
+
+import openfl.Vector;
 	
 import dragonBones.core.BaseObject;
 
@@ -11,7 +11,7 @@ import dragonBones.core.BaseObject;
  * @see dragonBones.objects.ArmatureData
  * @version DragonBones 3.0
  */
-public class DragonBonesData extends BaseObject
+class DragonBonesData extends BaseObject
 {
 	/**
 	 * @language zh_CN
@@ -38,7 +38,7 @@ public class DragonBonesData extends BaseObject
 	 * @see dragonBones.objects.ArmatureData
 	 * @version DragonBones 3.0
 	 */
-	public inline var armatures:Dynamic = {};
+	public inline var armatures:Map<String, ArmatureData> = {};
 	/**
 	 * @private
 	 */
@@ -52,19 +52,16 @@ public class DragonBonesData extends BaseObject
 	/**
 	 * @private
 	 */
-	public function DragonBonesData()
-	{
-		super(this);
-	}
+	private function new() {}
 	/**
 	 * @private
 	 */
 	override private function _onClear():Void
 	{
-		for (var k:String in armatures)
+		for (k in armatures.keys())
 		{
-			(armatures[k] as ArmatureData).returnToPool();
-			delete armatures[k];
+			armatures[k].returnToPool();
+			armatures.remove(k);
 		}
 		
 		if (userData != null) 
@@ -86,7 +83,7 @@ public class DragonBonesData extends BaseObject
 	 */
 	public function addArmature(value:ArmatureData):Void
 	{
-		if (value != null && value.name != null && armatures[value.name] == null)
+		if (value != null && value.name != null && !armatures.exists(value.name))
 		{
 			armatures[value.name] = value;
 			_armatureNames.push(value.name);
@@ -107,7 +104,7 @@ public class DragonBonesData extends BaseObject
 	 */
 	public function getArmature(name:String):ArmatureData
 	{
-		return armatures[name] as ArmatureData;
+		return armatures[name];
 	}
 	/**
 	 * @language zh_CN
@@ -115,7 +112,8 @@ public class DragonBonesData extends BaseObject
 	 * @see #armatures
 	 * @version DragonBones 3.0
 	 */
-	public function get armatureNames():Vector<String>
+	public var armatureNames(get, never):Vector<String>;
+	private function get_armatureNames():Vector<String>
 	{
 		return _armatureNames;
 	}

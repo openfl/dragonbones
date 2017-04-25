@@ -1,18 +1,15 @@
-package dragonBones.objects 
-{
+package dragonBones.objects;
+
 /**
  * @private
  */
-public class FFDTimelineData extends TimelineData
+class FFDTimelineData extends TimelineData
 {
 	public var skin:SkinData;
 	public var slot:SkinSlotData;
 	public var display:DisplayData;
 	
-	public function FFDTimelineData() 
-	{
-		super(this);
-	}
+	private function new() {}
 	
 	override private function _onClear():Void
 	{
@@ -22,6 +19,4 @@ public class FFDTimelineData extends TimelineData
 		slot = null;
 		display = null;
 	}
-}
-
 }

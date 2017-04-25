@@ -1,13 +1,13 @@
-package dragonBones.objects
-{
+package dragonBones.objects;
+
 import openfl.geom.ColorTransform;
 
 /**
  * @private
  */
-public final class SlotFrameData extends TweenFrameData
+@:final class SlotFrameData extends TweenFrameData
 {
-	public static inline var DEFAULT_COLOR:ColorTransform = new ColorTransform();
+	public static var DEFAULT_COLOR:ColorTransform = new ColorTransform();
 	
 	public static function generateColor():ColorTransform
 	{
@@ -17,10 +17,7 @@ public final class SlotFrameData extends TweenFrameData
 	public var displayIndex:Int;
 	public var color:ColorTransform;
 	
-	public function SlotFrameData()
-	{
-		super(this);
-	}
+	private function new() {}
 	
 	override private function _onClear():Void
 	{
@@ -29,5 +26,4 @@ public final class SlotFrameData extends TweenFrameData
 		displayIndex = 0;
 		color = null;
 	}
-}
 }

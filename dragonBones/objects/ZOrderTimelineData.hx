@@ -1,10 +1,6 @@
-package dragonBones.objects
+package dragonBones.objects;
+
+@:final class ZOrderTimelineData extends TimelineData
 {
-public final class ZOrderTimelineData extends TimelineData
-{
-	public function ZOrderTimelineData()
-	{
-		super(this);
-	}
-}
+	private function new() {}
 }

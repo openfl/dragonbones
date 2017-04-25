@@ -1,16 +1,13 @@
-package dragonBones.objects
-{
+package dragonBones.objects;
+
 /**
  * @private
  */
-public final class SlotTimelineData extends TimelineData
+@:final class SlotTimelineData extends TimelineData
 {
 	public var slot:SlotData;
 	
-	public function SlotTimelineData()
-	{
-		super(this);
-	}
+	private function new() {}
 	
 	override private function _onClear():Void
 	{
@@ -18,5 +15,4 @@ public final class SlotTimelineData extends TimelineData
 		
 		slot = null;
 	}
-}
 }

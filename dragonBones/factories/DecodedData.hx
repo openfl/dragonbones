@@ -205,10 +205,7 @@ import openfl.utils.ByteArray;
 	 */
 	public var textureAtlasBytes:ByteArray = null;
 	
-	public function DecodedData()
-	{
-		super();
-	}
+	private function new() {}
 	
 	public function dispose():Void
 	{

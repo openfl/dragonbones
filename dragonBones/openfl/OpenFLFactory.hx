@@ -1,6 +1,10 @@
-﻿package dragonBones.starling;
+﻿package dragonBones.openfl;
 
 import openfl.display.BitmapData;
+import openfl.display.Shape;
+import openfl.events.Event;
+import openfl.geom.Matrix;
+import openfl.utils.getTimer;
 import openfl.Vector;
 
 import dragonBones.Armature;
@@ -18,30 +22,18 @@ import dragonBones.objects.SlotData;
 import dragonBones.parsers.DataParser;
 import dragonBones.textures.TextureAtlasData;
 
-import starling.core.Starling;
-import starling.display.Image;
-import starling.events.EnterFrameEvent;
-import starling.textures.SubTexture;
-import starling.textures.Texture;
-
-#if (starling >= "2.0")
-import starling.display.Mesh;
-import starling.rendering.IndexData;
-import starling.rendering.VertexData;
-#end
-
 
 /**
  * @language zh_CN
- * Starling 工厂。
+ * 基于 Flash 传统显示列表的工厂。
  * @version DragonBones 3.0
  */
-@:final class StarlingFactory extends BaseFactory
+class OpenFLFactory extends BaseFactory
 {
 	/**
 	 * @private
 	 */
-	private static var _eventManager:StarlingArmatureDisplay = new StarlingArmatureDisplay();
+	private static var _eventManager:OpenFLArmatureDisplay = new OpenFLArmatureDisplay();
 	/**
 	 * @private
 	 */
@@ -51,17 +43,17 @@ import starling.rendering.VertexData;
 	 * 一个可以直接使用的全局工厂实例.
 	 * @version DragonBones 4.7
 	 */
-	public static var factory:StarlingFactory = new StarlingFactory();
+	public static var factory:OpenFLFactory = new OpenFLFactory();
 	/**
 	 * @private
 	 */
-	private static function _clockHandler(event:EnterFrameEvent):Void 
+	private static function _clockHandler(event:Event):Void 
 	{
-		_clock.advanceTime(event.passedTime);
+		var time:Float = getTimer() * 0.001;
+		var passedTime:Float = time - _clock.time;
+		_clock.advanceTime(passedTime);
+		_clock.time = time;
 	}
-	
-	public var generateMipMaps:Bool = true;
-	
 	/**
 	 * @language zh_CN
 	 * 创建一个工厂。
@@ -78,29 +70,14 @@ import starling.rendering.VertexData;
 	{
 		if (textureAtlasData != null)
 		{
-			var starlingTextureAtlasData:StarlingTextureAtlasData = textureAtlasData as StarlingTextureAtlasData;
-			
 			if (Std.is(textureAtlas, BitmapData))
 			{
-				starlingTextureAtlasData.texture = Texture.fromBitmapData(cast textureAtlas, generateMipMaps, false, textureAtlasData.scale);
-				starlingTextureAtlasData.disposeTexture = true;
-				
-				#if (starling < "2.0")
-				if (starlingTextureAtlasData.bitmapData && !Starling.handleLostContext)
-				{
-					starlingTextureAtlasData.bitmapData.dispose();
-					starlingTextureAtlasData.bitmapData = null;
-				}
-				#end
-			}
-			else if (Std.is(textureAtlas, Texture))
-			{
-				cast(textureAtlasData, StarlingTextureAtlasData).texture = cast textureAtlas;
+				cast(textureAtlasData, OpenFLTextureAtlasData).texture = cast textureAtlas;
 			}
 		}
 		else
 		{
-			textureAtlasData = cast BaseObject.borrowObject(StarlingTextureAtlasData);
+			textureAtlasData = cast BaseObject.borrowObject(OpenFLTextureAtlasData);
 		}
 		
 		return textureAtlasData;
@@ -110,13 +87,14 @@ import starling.rendering.VertexData;
 	 */
 	override private function _generateArmature(dataPackage:BuildArmaturePackage):Armature
 	{
-		if (Starling.current != null && !Starling.current.stage.hasEventListener(EnterFrameEvent.ENTER_FRAME))
+		if (!_eventManager.hasEventListener(Event.ENTER_FRAME))
 		{
-			Starling.current.stage.addEventListener(EnterFrameEvent.ENTER_FRAME, _clockHandler);
+			_clock.time = getTimer() * 0.001;
+			_eventManager.addEventListener(Event.ENTER_FRAME, _clockHandler, false, -999999);
 		}
 		
 		var armature:Armature = cast BaseObject.borrowObject(Armature);
-		var armatureDisplay:StarlingArmatureDisplay = new StarlingArmatureDisplay();
+		var armatureDisplay:OpenFLArmatureDisplay = new OpenFLArmatureDisplay();
 		armatureDisplay._armature = armature;
 		
 		armature._init(
@@ -131,18 +109,12 @@ import starling.rendering.VertexData;
 	 */
 	override private function _generateSlot(dataPackage:BuildArmaturePackage, skinSlotData:SkinSlotData, armature:Armature):Slot
 	{
-		inline var slot:StarlingSlot = cast BaseObject.borrowObject(StarlingSlot);
-		inline var slotData:SlotData = skinSlotData.slot;
-		inline var displayList:Vector<Dynamic> = new Vector<Dynamic>(skinSlotData.displays.length, true);
+		var slot:FlashSlot = cast BaseObject.borrowObject(OpenFLSlot);
+		var slotData:SlotData = skinSlotData.slot;
+		var displayList:Vector<Dynamic> = new Vector<Dynamic>(skinSlotData.displays.length, true);
+		var slotDisplay:Shape = new Shape();
 		
-		#if (starling >= "2.0")
-		slot._indexData = new IndexData();
-		slot._vertexData = new VertexData();
-		
-		slot._init(skinSlotData, new Image(null), new Mesh(slot._vertexData, slot._indexData));
-		#else
-		slot._init(skinSlotData, new Image(StarlingSlot.getEmptyTexture()), null);
-		#end
+		slot._init(skinSlotData, slotDisplay, slotDisplay);
 		
 		var l:UInt = skinSlotData.displays.length;
 		var displayData:DisplayData, childArmature:Armature, actions:Vector<ActionData>;
@@ -152,23 +124,33 @@ import starling.rendering.VertexData;
 			switch (displayData.type)
 			{
 				case DisplayType.Image:
-					if (displayData.texture == null || dataPackage.textureAtlasName != null)
+					if (displayData.texture == null)
 					{
-						displayData.texture = _getTextureData(dataPackage.textureAtlasName || dataPackage.dataName, displayData.name);
+						displayData.texture = _getTextureData(dataPackage.dataName, displayData.path);
+					}
+					
+					if (dataPackage.textureAtlasName != null)
+					{
+						slot._textureDatas[i] = _getTextureData(dataPackage.textureAtlasName, displayData.path)
 					}
 					
 					displayList[i] = slot.rawDisplay;
 				
 				case DisplayType.Mesh:
-					if (displayData.texture == null #if (starling < "2.0") || dataPackage.textureAtlasName != null #end)
+					if (displayData.texture == null)
 					{
-						displayData.texture = _getTextureData(dataPackage.textureAtlasName || dataPackage.dataName, displayData.name);
+						displayData.texture = _getTextureData(dataPackage.dataName, displayData.path);
 					}
 					
-					displayList[i] = #if (starling >= "2.0") slot.meshDisplay #else slot.rawDisplay #end;
+					if (dataPackage.textureAtlasName != null)
+					{
+						slot._textureDatas[i] = _getTextureData(dataPackage.textureAtlasName, displayData.path)
+					}
+					
+					displayList[i] = slot.meshDisplay;
 				
 				case DisplayType.Armature:
-					childArmature = buildArmature(displayData.name, dataPackage.dataName, null, dataPackage.textureAtlasName);
+					childArmature = buildArmature(displayData.path, dataPackage.dataName, null, dataPackage.textureAtlasName);
 					if (childArmature != null) 
 					{
 						if (!childArmature.inheritAnimation)
@@ -201,7 +183,6 @@ import starling.rendering.VertexData;
 		
 		return slot;
 	}
-	
 	/**
 	 * @language zh_CN
 	 * 创建一个指定名称的骨架，并使用骨架的显示容器来更新骨架动画。
@@ -210,10 +191,10 @@ import starling.rendering.VertexData;
 	 * @param skinName 皮肤名称，如果未设置，则使用默认皮肤。
 	 * @param textureAtlasName 贴图集数据名称，如果未设置，则使用龙骨数据名称。
 	 * @return 骨架的显示容器。
-	 * @see dragonBones.starling.StarlingArmatureDisplay
+	 * @see dragonBones.flash.FlashArmatureDisplay
 	 * @version DragonBones 4.5
 	 */
-	public function buildArmatureDisplay(armatureName:String, dragonBonesName:String = null, skinName:String = null, textureAtlasName:String = null):StarlingArmatureDisplay
+	public function buildArmatureDisplay(armatureName:String, dragonBonesName:String = null, skinName:String = null, textureAtlasName:String = null):OpenFLArmatureDisplay
 	{
 		var armature:Armature = buildArmature(armatureName, dragonBonesName, skinName, textureAtlasName);
 		if (armature != null)
@@ -231,18 +212,51 @@ import starling.rendering.VertexData;
 	 * @param textureAtlasName 指定的贴图集数据名称，如果未设置，将检索所有的贴图集数据。
 	 * @version DragonBones 3.0
 	 */
-	public function getTextureDisplay(textureName:String, textureAtlasName:String = null):Image 
+	public function getTextureDisplay(textureName:String, textureAtlasName:String = null):Shape 
 	{
-		var textureData:StarlingTextureData = cast _getTextureData(textureAtlasName, textureName);
+		var textureData:OpenFLTextureData = cast(_getTextureData(textureAtlasName, textureName), FlashTextureData);
 		if (textureData != null)
 		{
-			if (textureData.texture == null)
+			var width:Float = 0;
+			var height:Float = 0;
+			if (textureData.rotated)
 			{
-				var textureAtlasTexture:Texture = cast(textureData.parent, StarlingTextureAtlasData).texture;
-				textureData.texture = new SubTexture(textureAtlasTexture, textureData.region, false, null, textureData.rotated);
+				width = textureData.region.height;
+				height = textureData.region.width;
+			}
+			else
+			{
+				height = textureData.region.height;
+				width = textureData.region.width;
 			}
 			
-			return new Image(textureData.texture);
+			var scale:Float = 1 / textureData.parent.scale;
+			var helpMatrix:Matrix = new Matrix();
+			
+			if (textureData.rotated)
+			{
+				helpMatrix.a = 0;
+				helpMatrix.b = -scale;
+				helpMatrix.c = scale;
+				helpMatrix.d = 0;
+				helpMatrix.tx = - textureData.region.y;
+				helpMatrix.ty = textureData.region.x + height;
+			}
+			else
+			{
+				helpMatrix.a = scale;
+				helpMatrix.b = 0;
+				helpMatrix.c = 0;
+				helpMatrix.d = scale;
+				helpMatrix.tx = - textureData.region.x;
+				helpMatrix.ty = - textureData.region.y;
+			}
+			
+			var shape:Shape = new Shape();
+			shape.graphics.beginBitmapFill(cast(textureData.parent, OpenFLTextureAtlasData).texture, helpMatrix, false, true);
+			shape.graphics.drawRect(0, 0, width, height);
+			
+			return shape;
 		}
 		
 		return null;
@@ -250,11 +264,12 @@ import starling.rendering.VertexData;
 	/**
 	 * @language zh_CN
 	 * 获取全局声音事件管理器。
-	 * @version DragonBones 4.5
+	 * @version DragonBones 3.0
 	 */
-	public var soundEventManager(get, never):StarlingArmatureDisplay;
-	private function get_soundEventManager(): StarlingArmatureDisplay
+	public var soundEventManager(get, never):OpenFLArmatureDisplay;
+	private function get_soundEventManager(): OpenFLArmatureDisplay
 	{
 		return _eventManager;
 	}
+}
 }

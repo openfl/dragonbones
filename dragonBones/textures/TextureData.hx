@@ -1,5 +1,5 @@
-package dragonBones.textures
-{
+package dragonBones.textures;
+
 import openfl.geom.Rectangle;
 
 import dragonBones.core.BaseObject;
@@ -8,7 +8,7 @@ import dragonBones.core.DragonBones;
 /**
  * @private
  */
-public class TextureData extends BaseObject
+class TextureData extends BaseObject
 {
 	public static function generateRectangle():Rectangle
 	{
@@ -17,19 +17,11 @@ public class TextureData extends BaseObject
 	
 	public var rotated:Bool;
 	public var name:String;
-	public inline var region:Rectangle = new Rectangle();
+	public var region:Rectangle = new Rectangle();
 	public var frame:Rectangle;
 	public var parent:TextureAtlasData;
 	
-	public function TextureData(self:TextureData)
-	{
-		super(this);
-		
-		if (self != this)
-		{
-			throw new Error(DragonBones.ABSTRACT_CLASS_ERROR);
-		}
-	}
+	private function new() {}
 	
 	override private function _onClear():Void
 	{
@@ -65,5 +57,4 @@ public class TextureData extends BaseObject
 		parent = value.parent;
 		region.copyFrom(value.region);
 	}
-}
 }

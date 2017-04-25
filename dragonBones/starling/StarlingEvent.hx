@@ -1,19 +1,19 @@
-package dragonBones.starling
-{
+package dragonBones.starling;
+
 import dragonBones.events.EventObject;
 
 import starling.events.Event;
 
-public final class StarlingEvent extends Event
+@:final class StarlingEvent extends Event
 {
-	public function StarlingEvent(type:String, data:EventObject)
+	public function new(type:String, data:EventObject)
 	{
 		super(type, false, data);
 	}
 	
-	public function get eventObject():EventObject
+	public var eventObject(get, never):EventObject;
+	private function get_eventObject():EventObject
 	{
-		return data as EventObject;
+		return cast data;
 	}
-}
 }

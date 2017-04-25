@@ -1,12 +1,12 @@
-package dragonBones.objects
-{
+package dragonBones.objects;
+
 import dragonBones.core.BaseObject;
 import dragonBones.enum.EventType;
 
 /**
  * @private
  */
-public final class EventData extends BaseObject
+@:final class EventData extends BaseObject
 {
 	public var type:Int;
 	public var name:String;
@@ -14,10 +14,7 @@ public final class EventData extends BaseObject
 	public var slot:SlotData;
 	public var data:CustomData;
 	
-	public function EventData()
-	{
-		super(this);
-	}
+	private function new() {}
 	
 	override private function _onClear():Void
 	{
@@ -32,5 +29,4 @@ public final class EventData extends BaseObject
 		slot = null;
 		data = null;
 	}
-}
 }

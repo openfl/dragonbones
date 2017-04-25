@@ -1,20 +1,17 @@
-package dragonBones.objects
-{
-	import openfl.Vector;
+package dragonBones.objects;
+
+import openfl.Vector;
 	
 /**
  * @private
  */
-public final class AnimationFrameData extends FrameData
+@:final class AnimationFrameData extends FrameData
 {
 	
-	public inline var actions:Vector<ActionData> = new Vector<ActionData>();
-	public inline var events:Vector<EventData> = new Vector<EventData>();
+	public var actions:Vector<ActionData> = new Vector<ActionData>();
+	public var events:Vector<EventData> = new Vector<EventData>();
 	
-	public function AnimationFrameData()
-	{
-		super(this);
-	}
+	private function new() {}
 	
 	override private function _onClear():Void
 	{
@@ -35,5 +32,4 @@ public final class AnimationFrameData extends FrameData
 		actions.length = 0;
 		events.length = 0;
 	}
-}
 }

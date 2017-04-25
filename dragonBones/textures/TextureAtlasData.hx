@@ -1,5 +1,5 @@
-﻿package dragonBones.textures
-{
+﻿package dragonBones.textures;
+
 import openfl.display.BitmapData;
 
 import dragonBones.core.BaseObject;
@@ -10,7 +10,7 @@ import dragonBones.core.DragonBones;
  * 贴图集数据。
  * @version DragonBones 3.0
  */
-public class TextureAtlasData extends BaseObject
+class TextureAtlasData extends BaseObject
 {
 	/**
 	 * @language zh_CN
@@ -52,28 +52,20 @@ public class TextureAtlasData extends BaseObject
 	/**
 	 * @private
 	 */
-	public inline var textures:Dynamic = {};
+	public var textures:Map<String, TextureData> = new Map<String, TextureData>();
 	/**
 	 * @private
 	 */
-	public function TextureAtlasData(self:TextureAtlasData)
-	{
-		super(this);
-		
-		if (self != this)
-		{
-			throw new Error(DragonBones.ABSTRACT_CLASS_ERROR);
-		}
-	}
+	private function new() {}
 	/**
 	 * @private
 	 */
 	override private function _onClear():Void
 	{
-		for (var k:String in textures)
+		for (k in textures.keys())
 		{
-			(textures[k] as TextureData).returnToPool();
-			delete textures[k];
+			textures[k].returnToPool();
+			textures.remove(k);
 		}
 		
 		autoSearch = false;
@@ -103,7 +95,7 @@ public class TextureAtlasData extends BaseObject
 	 */
 	public function addTexture(value:TextureData):Void
 	{
-		if (value != null && value.name != null && textures[value.name] == null)
+		if (value != null && value.name != null && !textures.exists(value.name))
 		{
 			textures[value.name] = value;
 			value.parent = this;
@@ -118,7 +110,7 @@ public class TextureAtlasData extends BaseObject
 	 */
 	public function getTexture(name:String):TextureData
 	{
-		return textures[name] as TextureData;
+		return textures[name];
 	}
 	/**
 	 * @private
@@ -132,18 +124,18 @@ public class TextureAtlasData extends BaseObject
 		name = value.name;
 		imagePath = value.imagePath;
 		
-		for (var k:String in textures)
+		for (k in textures.keys())
 		{
 			textures[k].returnToPool();
-			delete textures[k];
+			textures.remove(k);
 		}
 		
-		for (k in value.textures) 
+		var texture:TextureData;
+		for (k in value.textures.keys()) 
 		{
-			inline var texture:TextureData = generateTexture();
+			texture = generateTexture();
 			texture.copyFrom(value.textures[k]);
 			textures[k] = texture;
 		}
 	}
-}
 }

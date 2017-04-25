@@ -1,5 +1,5 @@
-﻿package dragonBones.starling
-{
+﻿package dragonBones.starling;
+
 import openfl.geom.Matrix;
 import openfl.Vector;
 
@@ -29,14 +29,14 @@ import starling.styles.MeshStyle;
  * Starling 插槽。
  * @version DragonBones 3.0
  */
-public final class StarlingSlot extends Slot
+@:final class StarlingSlot extends Slot
 {
 	#if (starling < "2.0")
 	private static var _emptyEtexture:Texture = null;
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones") static function getEmptyTexture():Texture
+	@:allow("dragonBones") private static function getEmptyTexture():Texture
 	{
 		if (_emptyEtexture == null)
 		{
@@ -64,10 +64,7 @@ public final class StarlingSlot extends Slot
 	/**
 	 * @private
 	 */
-	public function StarlingSlot()
-	{
-		super(this);
-	}
+	private function new() {}
 	/**
 	 * @private
 	 */
@@ -104,21 +101,21 @@ public final class StarlingSlot extends Slot
 	 */
 	override private function _disposeDisplay(value:Dynamic):Void
 	{
-		(value as DisplayObject).dispose();
+		cast(value, DisplayObject).dispose();
 	}
 	/**
 	 * @private
 	 */
 	override private function _onUpdateDisplay():Void
 	{
-		_renderDisplay = (_display ? _display : _rawDisplay) as DisplayObject;
+		_renderDisplay = cast(_display ? _display : _rawDisplay, DisplayObject);
 	}
 	/**
 	 * @private
 	 */
 	override private function _addDisplay():Void
 	{
-		inline var container:StarlingArmatureDisplay = _armature.display as StarlingArmatureDisplay;
+		var container:StarlingArmatureDisplay = cast _armature.display;
 		container.addChild(_renderDisplay);
 	}
 	/**
@@ -126,8 +123,8 @@ public final class StarlingSlot extends Slot
 	 */
 	override private function _replaceDisplay(value:Dynamic):Void
 	{
-		inline var container:StarlingArmatureDisplay = _armature.display as StarlingArmatureDisplay;
-		inline var prevDisplay:DisplayObject = value as DisplayObject;
+		var container:StarlingArmatureDisplay = cast _armature.display;
+		var prevDisplay:DisplayObject = cast(value, DisplayObject);
 		container.addChild(_renderDisplay);
 		container.swapChildren(_renderDisplay, prevDisplay);
 		container.removeChild(prevDisplay);
@@ -144,8 +141,8 @@ public final class StarlingSlot extends Slot
 	 */
 	override private function _updateZOrder():Void
 	{
-		inline var container:StarlingArmatureDisplay = _armature.display as StarlingArmatureDisplay;
-		inline var index:Int = container.getChildIndex(_renderDisplay);
+		var container:StarlingArmatureDisplay = cast _armature.display;
+		var index:Int = container.getChildIndex(_renderDisplay);
 		if (index === _zOrder) 
 		{
 			return;
@@ -169,26 +166,20 @@ public final class StarlingSlot extends Slot
 		{
 			case dragonBones.enum.BlendMode.Normal:
 				_renderDisplay.blendMode = starling.display.BlendMode.NORMAL;
-				break;
 			
 			case dragonBones.enum.BlendMode.Add:
 				_renderDisplay.blendMode = starling.display.BlendMode.ADD;
-				break;
 			
 			case dragonBones.enum.BlendMode.Erase:
 				_renderDisplay.blendMode = starling.display.BlendMode.ERASE;
-				break;
 			
 			case dragonBones.enum.BlendMode.Multiply:
 				_renderDisplay.blendMode = starling.display.BlendMode.MULTIPLY;
-				break;
 			
 			case dragonBones.enum.BlendMode.Screen:
 				_renderDisplay.blendMode = starling.display.BlendMode.SCREEN;
-				break;
 			
 			default:
-				break;
 		}
 	}
 	/**
@@ -198,10 +189,10 @@ public final class StarlingSlot extends Slot
 	{
 		_renderDisplay.alpha = _colorTransform.alphaMultiplier;
 		
-		inline var quad:Quad = _renderDisplay as Quad;
+		var quad:Quad = _renderDisplay as Quad;
 		if (quad != null)
 		{
-			inline var color:UInt = (uint(_colorTransform.redMultiplier * 0xFF) << 16) + (uint(_colorTransform.greenMultiplier * 0xFF) << 8) + uint(_colorTransform.blueMultiplier * 0xFF);
+			var color:UInt = (uint(_colorTransform.redMultiplier * 0xFF) << 16) + (uint(_colorTransform.greenMultiplier * 0xFF) << 8) + uint(_colorTransform.blueMultiplier * 0xFF);
 			if (quad.color != color)
 			{
 				quad.color = color;
@@ -213,29 +204,29 @@ public final class StarlingSlot extends Slot
 	 */
 	override private function _updateFrame():Void
 	{
-		inline var isMeshDisplay:Bool = _meshData && _renderDisplay === _meshDisplay;
+		var isMeshDisplay:Bool = _meshData && _renderDisplay === _meshDisplay;
 		var currentTextureData:StarlingTextureData = _textureData as StarlingTextureData;
 		
 		if (_displayIndex >= 0 && _display && currentTextureData)
 		{
-			var currentTextureAtlasData:StarlingTextureAtlasData = currentTextureData.parent as StarlingTextureAtlasData;
+			var currentTextureAtlasData:StarlingTextureAtlasData = cast(currentTextureData.parent, StarlingTextureAtlasData);
 			
 			// Update replaced texture atlas.
 			if (_armature.replacedTexture != null && _displayData != null && currentTextureAtlasData == _displayData.texture.parent) 
 			{
-				currentTextureAtlasData = _armature._replaceTextureAtlasData as StarlingTextureAtlasData;
+				currentTextureAtlasData = cast(_armature._replaceTextureAtlasData, StarlingTextureAtlasData);
 				if (currentTextureAtlasData == null) 
 				{
-					currentTextureAtlasData = BaseObject.borrowObject(StarlingTextureAtlasData) as StarlingTextureAtlasData;
+					currentTextureAtlasData = cast BaseObject.borrowObject(StarlingTextureAtlasData);
 					currentTextureAtlasData.copyFrom(_textureData.parent);
-					currentTextureAtlasData.texture = _armature.replacedTexture as Texture;
+					currentTextureAtlasData.texture = cast _armature.replacedTexture;
 					_armature._replaceTextureAtlasData = currentTextureAtlasData;
 				}
 				
-				currentTextureData = currentTextureAtlasData.getTexture(currentTextureData.name) as StarlingTextureData;
+				currentTextureData = cast currentTextureAtlasData.getTexture(currentTextureData.name);
 			}
 			
-			inline var currentTextureAtlas:Texture = currentTextureAtlasData.texture;
+			var currentTextureAtlas:Texture = currentTextureAtlasData.texture;
 			if (currentTextureAtlas != null)
 			{
 				if (currentTextureData.texture == null) // Create texture.
@@ -246,7 +237,7 @@ public final class StarlingSlot extends Slot
 				if (isMeshDisplay) // Mesh.
 				{
 					#if (starling >= "2.0")
-					var meshDisplay:Mesh = _meshDisplay as Mesh;
+					var meshDisplay:Mesh = cast _meshDisplay;
 					
 					_indexData.clear();
 					_vertexData.clear();
@@ -257,12 +248,16 @@ public final class StarlingSlot extends Slot
 						_indexData.setIndex(i, _meshData.vertexIndices[i]);
 					}
 					
-					inline var meshStyle:MeshStyle = meshDisplay.style;
-					for (i = 0, l = _meshData.uvs.length; i < l; i += 2)
+					var meshStyle:MeshStyle = meshDisplay.style;
+					i = 0;
+					l = _meshData.uvs.length;
+					var iH:UInt;
+					while (i < l)
 					{
-						inline var iH:UInt = i / 2;
+						iH = Std.int(i / 2);
 						meshStyle.setTexCoords(iH, _meshData.uvs[i], _meshData.uvs[i + 1]);
 						meshStyle.setVertexPosition(iH, _meshData.vertices[i], _meshData.vertices[i + 1]);
+						i += 2;
 					}
 					
 					meshDisplay.texture = currentTextureData.texture;
@@ -270,7 +265,7 @@ public final class StarlingSlot extends Slot
 				}
 				else // Normal texture.
 				{
-					var normalDisplay:Image = _renderDisplay as Image;
+					var normalDisplay:Image = cast _renderDisplay;
 					normalDisplay.texture = currentTextureData.texture;
 					normalDisplay.readjustSize();
 				}
@@ -284,7 +279,7 @@ public final class StarlingSlot extends Slot
 		if (isMeshDisplay)
 		{
 			#if (starling >= "2.0")
-			meshDisplay = _renderDisplay as Mesh;
+			meshDisplay = cast _renderDisplay;
 			meshDisplay.visible = false;
 			meshDisplay.texture = null;
 			meshDisplay.x = 0.0;
@@ -293,7 +288,7 @@ public final class StarlingSlot extends Slot
 		}
 		else
 		{
-			normalDisplay = _renderDisplay as Image;
+			normalDisplay = cast _renderDisplay;
 			normalDisplay.visible = false;
 			normalDisplay.texture = #if (starling < "2.0") getEmptyTexture() #else null #end;
 			normalDisplay.readjustSize();
@@ -307,31 +302,35 @@ public final class StarlingSlot extends Slot
 	override private function _updateMesh():Void
 	{
 		#if (starling >= "2.0")
-		inline var meshDisplay:Mesh = _renderDisplay as Mesh;
-		inline var meshStyle:MeshStyle = meshDisplay.style;
-		inline var hasFFD:Bool = _ffdVertices.length > 0;
+		var meshDisplay:Mesh = _renderDisplay as Mesh;
+		var meshStyle:MeshStyle = meshDisplay.style;
+		var hasFFD:Bool = _ffdVertices.length > 0;
 		
 		var i:UInt = 0, iH:UInt = 0, iF:UInt = 0, l:UInt = _meshData.vertices.length;
 		var xG:Float = 0, yG:Float = 0;
 		if (_meshData.skinned)
 		{
-			for (i = 0; i < l; i += 2)
+			var boneIndices:Vector<UInt>, boneVertices:Vector<Float>, weights:Vector<Float>, lB:UInt;
+			var bone:Bone, matrix:Matrix, weight:FLoat, xL:Float, yL:Float;
+			i = 0;
+			while (i < l)
 			{
-				iH = i / 2;
+				iH = Std.int(i / 2);
 				
-				inline var boneIndices:Vector<UInt> = _meshData.boneIndices[iH];
-				inline var boneVertices:Vector<Float> = _meshData.boneVertices[iH];
-				inline var weights:Vector<Float> = _meshData.weights[iH];
+				boneIndices = _meshData.boneIndices[iH];
+				boneVertices = _meshData.boneVertices[iH];
+				weights = _meshData.weights[iH];
 				
 				xG = 0, yG = 0;
 				
-				for (var iB:UInt = 0, lB:UInt = boneIndices.length; iB < lB; ++iB)
+				for (iB in 0...lB)
 				{
-					inline var bone:Bone = _meshBones[boneIndices[iB]];
-					inline var matrix:Matrix = bone.globalTransformMatrix;
-					inline var weight:Float = weights[iB];
+					bone = _meshBones[boneIndices[iB]];
+					matrix = bone.globalTransformMatrix;
+					weight = weights[iB];
 					
-					var xL:Float = 0, yL:Float = 0;
+					xL = 0;
+					yL = 0;
 					if (hasFFD)
 					{
 						xL = boneVertices[iB * 2] + _ffdVertices[iF];
@@ -351,16 +350,19 @@ public final class StarlingSlot extends Slot
 				}
 				
 				meshStyle.setVertexPosition(iH, xG, yG);
+				i += 2;
 			}
 		}
 		else if (hasFFD)
 		{
-			inline var vertices:Vector<Float> = _meshData.vertices;
-			for (i = 0; i < l; i += 2)
+			var vertices:Vector<Float> = _meshData.vertices;
+			i = 0;
+			while (i < l)
 			{
 				xG = vertices[i] + _ffdVertices[i];
 				yG = vertices[i + 1] + _ffdVertices[i + 1];
 				meshStyle.setVertexPosition(i / 2, xG, yG);
+				i += 2;
 			}
 		}
 		#end
@@ -405,5 +407,4 @@ public final class StarlingSlot extends Slot
 			}
 		}
 	}
-}
 }
