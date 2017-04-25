@@ -3,7 +3,6 @@
 import dragonBones.Armature;
 import dragonBones.Bone;
 import dragonBones.core.DragonBones;
-import dragonBones.core.dragonBones_internal;
 import dragonBones.geom.Transform;
 import dragonBones.objects.BoneFrameData;
 import dragonBones.objects.BoneTimelineData;
@@ -26,7 +25,7 @@ import dragonBones.objects.TimelineData;
 	private var _boneTransform:Transform;
 	private var _originalTransform:Transform;
 	
-	private function new() {}}
+	private function new() {}
 	
 	override private function _onClear():Void
 	{
@@ -54,16 +53,16 @@ import dragonBones.objects.TimelineData;
 		_tweenRotate = TWEEN_TYPE_ONCE;
 		_tweenScale = TWEEN_TYPE_ONCE;
 		
-		if (_keyFrameCount > 1 && (_tweenEasing !== DragonBones.NO_TWEEN || _curve != null))
+		if (_keyFrameCount > 1 && (_tweenEasing != DragonBones.NO_TWEEN || _curve != null))
 		{
 			var currentTransform:Transform = currentFrame.transform;
-			var nextFrame:BoneFrameData = currentFrame.next as BoneFrameData;
+			var nextFrame:BoneFrameData = cast(currentFrame.next, BoneFrameData);
 			var nextTransform:Transform = nextFrame.transform;
 			
 			// Transform.
 			_durationTransform.x = nextTransform.x - currentTransform.x;
 			_durationTransform.y = nextTransform.y - currentTransform.y;
-			if (_durationTransform.x !== 0.0 || _durationTransform.y !== 0.0) 
+			if (_durationTransform.x != 0.0 || _durationTransform.y != 0.0) 
 			{
 				_tweenTransform = TWEEN_TYPE_ALWAYS;
 			}
@@ -88,7 +87,7 @@ import dragonBones.objects.TimelineData;
 					_durationTransform.skewY = Transform.normalizeRadian(nextTransform.skewY - currentTransform.skewY);
 				}
 				
-				if (_durationTransform.skewX !== 0.0 || _durationTransform.skewY !== 0.0) 
+				if (_durationTransform.skewX != 0.0 || _durationTransform.skewY != 0.0) 
 				{
 					_tweenRotate = TWEEN_TYPE_ALWAYS;
 				}
@@ -104,7 +103,7 @@ import dragonBones.objects.TimelineData;
 			{
 				_durationTransform.scaleX = nextTransform.scaleX - currentTransform.scaleX;
 				_durationTransform.scaleY = nextTransform.scaleY - currentTransform.scaleY;
-				if (_durationTransform.scaleX !== 0.0 || _durationTransform.scaleY !== 0.0) 
+				if (_durationTransform.scaleX != 0.0 || _durationTransform.scaleY != 0.0) 
 				{
 					_tweenScale = TWEEN_TYPE_ALWAYS;
 				}
@@ -251,7 +250,7 @@ import dragonBones.objects.TimelineData;
 		}
 		else if (bone._blendLeftWeight > 0.0) 
 		{
-			if (bone._blendLayer !== animationLayer) 
+			if (bone._blendLayer != animationLayer) 
 			{
 				if (bone._blendTotalWeight >= bone._blendLeftWeight) 
 				{
@@ -285,7 +284,7 @@ import dragonBones.objects.TimelineData;
 		
 		if (bone._updateState > 0) 
 		{
-			if (_transformDirty || _animationState._fadeState !== 0 || _animationState._subFadeState !== 0) 
+			if (_transformDirty || _animationState._fadeState != 0 || _animationState._subFadeState != 0) 
 			{
 				_transformDirty = false;
 				

@@ -4,7 +4,7 @@ import openfl.geom.Point;
 import openfl.Vector;
 
 import dragonBones.core.BaseObject;
-import dragonBones.enum.BoundingBoxType;
+import dragonBones.enums.BoundingBoxType;
 
 /**
  * @language zh_CN
@@ -31,7 +31,7 @@ import dragonBones.enum.BoundingBoxType;
 	/**
 	 * Compute the bit code for a point (x, y) using the clip rectangle
 	 */
-	private static function _computeOutCode(x:Float, y:Float, xMin:Float, yMin:Float, xMax:Float, yMax:Float): uint 
+	private static function _computeOutCode(x:Float, y:Float, xMin:Float, yMin:Float, xMax:Float, yMax:Float): UInt 
 	{
 		var code:UInt = OutCode_InSide; // initialised as being inside of [[clip window]]
 		
@@ -58,7 +58,7 @@ import dragonBones.enum.BoundingBoxType;
 	/**
 	 * @private
 	 */
-	public static function segmentIntersectsRectangle(
+	@:allow("dragonBones") private static function segmentIntersectsRectangle(
 		xA:Float, yA:Float, xB:Float, yB:Float,
 		xMin:Float, yMin:Float, xMax:Float, yMax:Float,
 		intersectionPointA: Point = null,
@@ -97,7 +97,7 @@ import dragonBones.enum.BoundingBoxType;
 			var normalRadian:Float = 0.0;
 			
 			// At least one endpoint is outside the clip rectangle; pick it.
-			inline var outcodeOut:UInt = outcode0 ? outcode0 : outcode1;
+			var outcodeOut:UInt = outcode0 ? outcode0 : outcode1;
 			
 			// Now find the intersection point;
 			if (outcodeOut & OutCode_Top) // point is above the clip rectangle
@@ -143,7 +143,7 @@ import dragonBones.enum.BoundingBoxType;
 			
 			// Now we move outside point to intersection point to clip
 			// and get ready for next pass.
-			if (outcodeOut === outcode0) 
+			if (outcodeOut == outcode0) 
 			{
 				xA = x;
 				yA = y;
@@ -224,7 +224,7 @@ import dragonBones.enum.BoundingBoxType;
 	/**
 	 * @private
 	 */
-	public static function segmentIntersectsEllipse(
+	@:allow("dragonBones") private static function segmentIntersectsEllipse(
 		xA:Float, yA:Float, xB:Float, yB:Float,
 		xC:Float, yC:Float, widthH:Float, heightH:Float,
 		intersectionPointA: Point = null,
@@ -232,32 +232,32 @@ import dragonBones.enum.BoundingBoxType;
 		normalRadians: Point = null
 	):Int 
 	{
-		inline var d:Float = widthH / heightH;
-		inline var dd:Float = d * d;
+		var d:Float = widthH / heightH;
+		var dd:Float = d * d;
 		
 		yA *= d;
 		yB *= d;
 		
-		inline var dX:Float = xB - xA;
-		inline var dY:Float = yB - yA;
-		inline var lAB:Float = Math.sqrt(dX * dX + dY * dY);
-		inline var xD:Float = dX / lAB;
-		inline var yD:Float = dY / lAB;
-		inline var a:Float = (xC - xA) * xD + (yC - yA) * yD;
-		inline var aa:Float = a * a;
-		inline var ee:Float = xA * xA + yA * yA;
-		inline var rr:Float = widthH * widthH;
-		inline var dR:Float = rr - ee + aa;
+		var dX:Float = xB - xA;
+		var dY:Float = yB - yA;
+		var lAB:Float = Math.sqrt(dX * dX + dY * dY);
+		var xD:Float = dX / lAB;
+		var yD:Float = dY / lAB;
+		var a:Float = (xC - xA) * xD + (yC - yA) * yD;
+		var aa:Float = a * a;
+		var ee:Float = xA * xA + yA * yA;
+		var rr:Float = widthH * widthH;
+		var dR:Float = rr - ee + aa;
 		var intersectionCount:Int = 0;
 		
 		if (dR >= 0) 
 		{
-			inline var dT:Float = Math.sqrt(dR);
-			inline var sA:Float = a - dT;
-			inline var sB:Float = a + dT;
-			inline var inSideA:Int = sA < 0.0 ? -1 : (sA <= lAB ? 0 : 1);
-			inline var inSideB:Int = sB < 0.0 ? -1 : (sB <= lAB ? 0 : 1);
-			inline var sideAB:Int = inSideA * inSideB;
+			var dT:Float = Math.sqrt(dR);
+			var sA:Float = a - dT;
+			var sB:Float = a + dT;
+			var inSideA:Int = sA < 0.0 ? -1 : (sA <= lAB ? 0 : 1);
+			var inSideB:Int = sB < 0.0 ? -1 : (sB <= lAB ? 0 : 1);
+			var sideAB:Int = inSideA * inSideB;
 			
 			if (sideAB < 0) 
 			{
@@ -347,7 +347,7 @@ import dragonBones.enum.BoundingBoxType;
 	/**
 	 * @private
 	 */
-	public static function segmentIntersectsPolygon(
+	@:allow("dragonBones") private static function segmentIntersectsPolygon(
 		xA:Float, yA:Float, xB:Float, yB:Float,
 		vertices: Vector<Float>,
 		intersectionPointA: Point = null,
@@ -366,7 +366,7 @@ import dragonBones.enum.BoundingBoxType;
 		}
 		
 		var l:UInt = vertices.length;
-		var dXAB:Float = xA - xB
+		var dXAB:Float = xA - xB;
 		var dYAB:Float = yA - yB;
 		var llAB:Float = xA * yB - yA * xB;
 		var intersectionCount:Int = 0;
@@ -417,7 +417,7 @@ import dragonBones.enum.BoundingBoxType;
 							d = -d;
 						}
 						
-						if (intersectionCount === 0) 
+						if (intersectionCount == 0) 
 						{
 							dMin = d;
 							dMax = d;
@@ -528,7 +528,7 @@ import dragonBones.enum.BoundingBoxType;
 	/**
 	 * @language zh_CN
 	 * 包围盒类型。
-	 * @see dragonBones.enum.BoundingBoxType
+	 * @see dragonBones.enums.BoundingBoxType
 	 * @version DragonBones 5.0
 	 */
 	public var type:Int;
@@ -537,7 +537,7 @@ import dragonBones.enum.BoundingBoxType;
 	 * 包围盒颜色。
 	 * @version DragonBones 5.0
 	 */
-	public var color: uint;
+	public var color: UInt;
 	
 	public var x:Float; // Polygon min x.
 	public var y:Float; // Polygon min y.
@@ -552,7 +552,10 @@ import dragonBones.enum.BoundingBoxType;
 	/**
 	 * @private
 	 */
-	private function new() {}
+	@:allow("dragonBones") @:allow("dragonBones") private function new()
+	{
+		super();
+	}
 	/**
 	 * @private
 	 */
@@ -656,7 +659,7 @@ import dragonBones.enum.BoundingBoxType;
 				);
 			
 			case BoundingBoxType.Polygon:
-				if (segmentIntersectsRectangle(xA, yA, xB, yB, x, y, width, height, null, null) !== 0) 
+				if (segmentIntersectsRectangle(xA, yA, xB, yB, x, y, width, height, null, null) != 0) 
 				{
 					intersectionCount = segmentIntersectsPolygon(
 						xA, yA, xB, yB,

@@ -4,7 +4,7 @@ import openfl.geom.ColorTransform;
 import openfl.Vector;
 
 import dragonBones.core.BaseObject;
-import dragonBones.enum.BlendMode;
+import dragonBones.enums.BlendMode;
 
 /**
  * @language zh_CN
@@ -17,26 +17,26 @@ class SlotData extends BaseObject
 	/**
 	 * @private
 	 */
-	public static var DEFAULT_COLOR:ColorTransform = new ColorTransform();
+	@:allow("dragonBones") private static var DEFAULT_COLOR:ColorTransform = new ColorTransform();
 	/**
 	 * @private
 	 */
-	public static function generateColor():ColorTransform
+	@:allow("dragonBones") private static function generateColor():ColorTransform
 	{
 		return new ColorTransform();
 	}
 	/**
 	 * @private
 	 */
-	public var displayIndex:Int;
+	@:allow("dragonBones") private var displayIndex:Int;
 	/**
 	 * @private
 	 */
-	public var zOrder:Int;
+	@:allow("dragonBones") private var zOrder:Int;
 	/**
 	 * @private
 	 */
-	public var blendMode:Int;
+	@:allow("dragonBones") private var blendMode:Int;
 	/**
 	 * @language zh_CN
 	 * 数据名称。
@@ -46,7 +46,7 @@ class SlotData extends BaseObject
 	/**
 	 * @private
 	 */
-	public inline var actions: Vector<ActionData> = new Vector<ActionData>();
+	@:allow("dragonBones") private var actions: Vector<ActionData> = new Vector<ActionData>();
 	/**
 	 * @language zh_CN
 	 * 所属的父骨骼数据。
@@ -57,15 +57,18 @@ class SlotData extends BaseObject
 	/**
 	 * @private
 	 */
-	public var color:ColorTransform;
+	@:allow("dragonBones") private var color:ColorTransform;
 	/**
 	 * @private
 	 */
-	public var userData: CustomData;
+	@:allow("dragonBones") private var userData: CustomData;
 	/**
 	 * @private
 	 */
-	private function new() {}
+	@:allow("dragonBones") @:allow("dragonBones") private function new()
+	{
+		super();
+	}
 	/**
 	 * @private
 	 */

@@ -1,6 +1,5 @@
 package dragonBones.animation;
 
-import dragonBones.core.dragonBones_internal;
 import dragonBones.objects.ZOrderFrameData;
 
 

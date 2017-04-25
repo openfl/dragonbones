@@ -3,7 +3,7 @@ package dragonBones.objects;
 import openfl.geom.Point;
 
 import dragonBones.core.BaseObject;
-import dragonBones.enum.DisplayType;
+import dragonBones.enums.DisplayType;
 import dragonBones.geom.Transform;
 import dragonBones.textures.TextureData;
 
@@ -25,7 +25,10 @@ class DisplayData extends BaseObject
 	public var mesh:MeshData;
 	public var boundingBox: BoundingBoxData;
 	
-	private function new() {}
+	@:allow("dragonBones") private function new()
+	{
+		super();
+	}
 	
 	override private function _onClear():Void
 	{

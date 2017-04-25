@@ -1,9 +1,10 @@
 package dragonBones.starling;
 
+import haxe.Constraints;
+
 import dragonBones.Armature;
 import dragonBones.animation.Animation;
 import dragonBones.core.IArmatureDisplay;
-import dragonBones.core.dragonBones_internal;
 import dragonBones.events.EventObject;
 
 import starling.display.Sprite;
@@ -22,18 +23,18 @@ import starling.display.Sprite;
 	/**
 	 * @private
 	 */
-	private function new() {}
+	@:allow("dragonBones") private function new() {}
 	/**
 	 * @private
 	 */
-	public function _onClear():Void
+	@:allow("dragonBones") private function _onClear():Void
 	{
 		_armature = null;
 	}
 	/**
 	 * @private
 	 */
-	public function _dispatchEvent(type:String, eventObject:EventObject):Void
+	@:allow("dragonBones") private function _dispatchEvent(type:String, eventObject:EventObject):Void
 	{
 		if (useDefaultStarlingEvent)
 		{
@@ -48,7 +49,7 @@ import starling.display.Sprite;
 	/**
 	 * @private
 	 */
-	public function _debugDraw(isEnabled:Bool):Void
+	@:allow("dragonBones") private function _debugDraw(isEnabled:Bool):Void
 	{
 	}
 	/**
@@ -116,5 +117,4 @@ import starling.display.Sprite;
 			StarlingFactory._clock.remove(_armature);
 		}
 	}
-}
 }

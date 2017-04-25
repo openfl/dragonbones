@@ -1,5 +1,7 @@
 package dragonBones.events;
 
+import haxe.Constraints;
+
 /**
  * @language zh_CN
  * 事件接口。
@@ -10,7 +12,7 @@ interface IEventDispatcher
 	/**
 	 * @private
 	 */
-	private function _dispatchEvent(type:String, value:EventObject):Void;
+	@:allow("dragonBones") private function _dispatchEvent(type:String, value:EventObject):Void;
 	/**
 	 * @language zh_CN
 	 * 是否包含指定类型的事件。

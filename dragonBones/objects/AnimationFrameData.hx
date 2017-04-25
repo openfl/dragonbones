@@ -11,7 +11,10 @@ import openfl.Vector;
 	public var actions:Vector<ActionData> = new Vector<ActionData>();
 	public var events:Vector<EventData> = new Vector<EventData>();
 	
-	private function new() {}
+	@:allow("dragonBones") private function new()
+	{
+		super();
+	}
 	
 	override private function _onClear():Void
 	{

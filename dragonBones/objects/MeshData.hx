@@ -25,7 +25,10 @@ import dragonBones.core.BaseObject;
 	public var bones:Vector<BoneData> = new Vector<BoneData>(); // bones
 	public var inverseBindPose:Vector<Matrix> = new Vector<Matrix>(); // bones
 	
-	private function new() {}
+	@:allow("dragonBones") private function new()
+	{
+		super();
+	}
 	
 	override private function _onClear():Void
 	{

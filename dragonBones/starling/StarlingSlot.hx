@@ -5,8 +5,7 @@ import openfl.Vector;
 
 import dragonBones.Slot;
 import dragonBones.core.BaseObject;
-import dragonBones.core.dragonBones_internal;
-import dragonBones.enum.BlendMode;
+import dragonBones.enums.BlendMode;
 
 import starling.display.BlendMode;
 import starling.display.DisplayObject;
@@ -64,7 +63,7 @@ import starling.styles.MeshStyle;
 	/**
 	 * @private
 	 */
-	private function new() {}
+	@:allow("dragonBones") private function new() {}
 	/**
 	 * @private
 	 */
@@ -143,7 +142,7 @@ import starling.styles.MeshStyle;
 	{
 		var container:StarlingArmatureDisplay = cast _armature.display;
 		var index:Int = container.getChildIndex(_renderDisplay);
-		if (index === _zOrder) 
+		if (index == _zOrder) 
 		{
 			return;
 		}
@@ -164,19 +163,19 @@ import starling.styles.MeshStyle;
 	{
 		switch (_blendMode) 
 		{
-			case dragonBones.enum.BlendMode.Normal:
+			case dragonBones.enums.BlendMode.Normal:
 				_renderDisplay.blendMode = starling.display.BlendMode.NORMAL;
 			
-			case dragonBones.enum.BlendMode.Add:
+			case dragonBones.enums.BlendMode.Add:
 				_renderDisplay.blendMode = starling.display.BlendMode.ADD;
 			
-			case dragonBones.enum.BlendMode.Erase:
+			case dragonBones.enums.BlendMode.Erase:
 				_renderDisplay.blendMode = starling.display.BlendMode.ERASE;
 			
-			case dragonBones.enum.BlendMode.Multiply:
+			case dragonBones.enums.BlendMode.Multiply:
 				_renderDisplay.blendMode = starling.display.BlendMode.MULTIPLY;
 			
-			case dragonBones.enum.BlendMode.Screen:
+			case dragonBones.enums.BlendMode.Screen:
 				_renderDisplay.blendMode = starling.display.BlendMode.SCREEN;
 			
 			default:
@@ -189,7 +188,7 @@ import starling.styles.MeshStyle;
 	{
 		_renderDisplay.alpha = _colorTransform.alphaMultiplier;
 		
-		var quad:Quad = _renderDisplay as Quad;
+		var quad:Quad = Std.is(_renderDisplay, Quad) ? cast _renderDisplay : null;
 		if (quad != null)
 		{
 			var color:UInt = (uint(_colorTransform.redMultiplier * 0xFF) << 16) + (uint(_colorTransform.greenMultiplier * 0xFF) << 8) + uint(_colorTransform.blueMultiplier * 0xFF);
@@ -204,10 +203,10 @@ import starling.styles.MeshStyle;
 	 */
 	override private function _updateFrame():Void
 	{
-		var isMeshDisplay:Bool = _meshData && _renderDisplay === _meshDisplay;
-		var currentTextureData:StarlingTextureData = _textureData as StarlingTextureData;
+		var isMeshDisplay:Bool = _meshData && _renderDisplay == _meshDisplay;
+		var currentTextureData:StarlingTextureData = cast (_textureData, StarlingTextureData);
 		
-		if (_displayIndex >= 0 && _display && currentTextureData)
+		if (_displayIndex >= 0 && _display != null && currentTextureData != null)
 		{
 			var currentTextureAtlasData:StarlingTextureAtlasData = cast(currentTextureData.parent, StarlingTextureAtlasData);
 			
@@ -302,7 +301,7 @@ import starling.styles.MeshStyle;
 	override private function _updateMesh():Void
 	{
 		#if (starling >= "2.0")
-		var meshDisplay:Mesh = _renderDisplay as Mesh;
+		var meshDisplay:Mesh = cast _renderDisplay;
 		var meshStyle:MeshStyle = meshDisplay.style;
 		var hasFFD:Bool = _ffdVertices.length > 0;
 		

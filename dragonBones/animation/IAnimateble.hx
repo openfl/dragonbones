@@ -1,5 +1,5 @@
-package dragonBones.animation
-{
+package dragonBones.animation;
+
 /**
  * @language zh_CN
  * 播放动画接口。 (Armature 和 WordClock 都实现了该接口)
@@ -20,5 +20,5 @@ interface IAnimateble
 	/**
 	 * @private
 	 */
-	private var clock(get, set):WorldClock;
+	@:allow("dragonBones") private var clock(get, set):WorldClock;
 }

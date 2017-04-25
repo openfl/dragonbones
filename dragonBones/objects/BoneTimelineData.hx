@@ -10,7 +10,10 @@ import dragonBones.geom.Transform;
 	public var originalTransform:Transform = new Transform();
 	public var bone:BoneData;
 	
-	private function new() {}
+	@:allow("dragonBones") private function new()
+	{
+		super();
+	}
 	
 	override private function _onClear():Void
 	{

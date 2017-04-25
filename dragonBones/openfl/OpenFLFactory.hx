@@ -11,8 +11,7 @@ import dragonBones.Armature;
 import dragonBones.Slot;
 import dragonBones.animation.WorldClock;
 import dragonBones.core.BaseObject;
-import dragonBones.core.dragonBones_internal;
-import dragonBones.enum.DisplayType;
+import dragonBones.enums.DisplayType;
 import dragonBones.factories.BaseFactory;
 import dragonBones.factories.BuildArmaturePackage;
 import dragonBones.objects.ActionData;
@@ -33,7 +32,7 @@ class OpenFLFactory extends BaseFactory
 	/**
 	 * @private
 	 */
-	private static var _eventManager:OpenFLArmatureDisplay = new OpenFLArmatureDisplay();
+	@:allow("dragonBones") private static var _eventManager:OpenFLArmatureDisplay = new OpenFLArmatureDisplay();
 	/**
 	 * @private
 	 */
@@ -47,7 +46,7 @@ class OpenFLFactory extends BaseFactory
 	/**
 	 * @private
 	 */
-	private static function _clockHandler(event:Event):Void 
+	@:allow("dragonBones") private static function _clockHandler(event:Event):Void 
 	{
 		var time:Float = getTimer() * 0.001;
 		var passedTime:Float = time - _clock.time;
@@ -271,5 +270,4 @@ class OpenFLFactory extends BaseFactory
 	{
 		return _eventManager;
 	}
-}
 }

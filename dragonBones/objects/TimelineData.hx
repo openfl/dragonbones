@@ -14,15 +14,18 @@ class TimelineData extends BaseObject
 	/**
 	 * @private
 	 */
-	public var offset:Float;
+	@:allow("dragonBones") private var offset:Float;
 	/**
 	 * @private
 	 */
-	public var frames:Vector<FrameData> = new Vector<FrameData>();
+	@:allow("dragonBones") private var frames:Vector<FrameData> = new Vector<FrameData>();
 	/**
 	 * @private
 	 */
-	private function new() {}
+	@:allow("dragonBones") @:allow("dragonBones") private function new()
+	{
+		super();
+	}
 	/**
 	 * @private
 	 */
@@ -37,7 +40,7 @@ class TimelineData extends BaseObject
 		for (i in 0...l) // Find key frame data.
 		{
 			frame = frames[i];
-			if (prevFrame != null && frame !== prevFrame)
+			if (prevFrame != null && frame != prevFrame)
 			{
 				prevFrame.returnToPool();
 			}

@@ -9,7 +9,10 @@ class FFDTimelineData extends TimelineData
 	public var slot:SkinSlotData;
 	public var display:DisplayData;
 	
-	private function new() {}
+	@:allow("dragonBones") private function new()
+	{
+		super();
+	}
 	
 	override private function _onClear():Void
 	{

@@ -36,7 +36,7 @@ import openfl.Vector;
 	/**
 	 * @private
 	 */
-	public var cacheFrameRate:Float;
+	@:allow("dragonBones") private var cacheFrameRate:Float;
 	/**
 	 * @language zh_CN
 	 * 数据名称。
@@ -46,35 +46,38 @@ import openfl.Vector;
 	/**
 	 * @private
 	 */
-	public var zOrderTimeline:ZOrderTimelineData;
+	@:allow("dragonBones") private var zOrderTimeline:ZOrderTimelineData;
 	/**
 	 * @private
 	 */
-	public inline var boneTimelines:Map<String, BoneTimelineData> = new Map<String, BoneTimelineData>();
+	@:allow("dragonBones") private var boneTimelines:Map<String, BoneTimelineData> = new Map<String, BoneTimelineData>();
 	/**
 	 * @private
 	 */
-	public inline var slotTimelines:Map<String, SlotTimelineData> = new Map<String, SlotTimelineData>();
+	@:allow("dragonBones") private var slotTimelines:Map<String, SlotTimelineData> = new Map<String, SlotTimelineData>();
 	/**
 	 * @private
 	 */
-	public inline var ffdTimelines:Map<String, Map<String, Map<String, FFDTimelineData>>> = Map<String, Map<String, Map<String, FFDTimelineData>>>(); // skinName ,slotName, mesh
+	@:allow("dragonBones") private var ffdTimelines:Map<String, Map<String, Map<String, FFDTimelineData>>> = new Map<String, Map<String, Map<String, FFDTimelineData>>>(); // skinName ,slotName, mesh
 	/**
 	 * @private
 	 */
-	public inline var cachedFrames:Vector<Bool> = new Vector<Bool>();
+	@:allow("dragonBones") private var cachedFrames:Vector<Bool> = new Vector<Bool>();
 	/**
 	 * @private
 	 */
-	public inline var boneCachedFrameIndices:Map<String, Vector<Int>> = new Map<String, Vector<Int>>(); //Object<Vector<Float>>
+	@:allow("dragonBones") private var boneCachedFrameIndices:Map<String, Vector<Int>> = new Map<String, Vector<Int>>(); //Object<Vector<Float>>
 	/**
 	 * @private
 	 */
-	public inline var slotCachedFrameIndices:Map<String, Vector<Int>> = new Map<String, Vector<Int>>(); //Object<Vector<Float>>
+	@:allow("dragonBones") private var slotCachedFrameIndices:Map<String, Vector<Int>> = new Map<String, Vector<Int>>(); //Object<Vector<Float>>
 	/**
 	 * @private
 	 */
-	private function new() {}
+	@:allow("dragonBones") @:allow("dragonBones") private function new()
+	{
+		super();
+	}
 	/**
 	 * @private
 	 */
@@ -132,7 +135,7 @@ import openfl.Vector;
 	/**
 	 * @private
 	 */
-	public function cacheFrames(frameRate:Float):Void
+	@:allow("dragonBones") private function cacheFrames(frameRate:Float):Void
 	{
 		if (cacheFrameRate > 0.0)
 		{
@@ -146,7 +149,7 @@ import openfl.Vector;
 		
 		for (k in boneTimelines.keys()) 
 		{
-			var indices:Vector<Int> = new Vector<Int>(cacheFrameCount, true)
+			var indices:Vector<Int> = new Vector<Int>(cacheFrameCount, true);
 			var l:UInt = indices.length;
 			for (i in 0...l)
 			{
@@ -158,7 +161,7 @@ import openfl.Vector;
 		
 		for (k in slotTimelines.keys()) 
 		{
-			indices = new Vector<Int>(cacheFrameCount, true)
+			indices = new Vector<Int>(cacheFrameCount, true);
 			var l = indices.length;
 			for (i in 0...l)
 			{
@@ -171,7 +174,7 @@ import openfl.Vector;
 	/**
 	 * @private
 	 */
-	public function addBoneTimeline(value:BoneTimelineData):Void
+	@:allow("dragonBones") private function addBoneTimeline(value:BoneTimelineData):Void
 	{
 		if (value != null && value.bone != null && !boneTimelines.exists(value.bone.name))
 		{
@@ -185,7 +188,7 @@ import openfl.Vector;
 	/**
 	 * @private
 	 */
-	public function addSlotTimeline(value:SlotTimelineData):Void
+	@:allow("dragonBones") private function addSlotTimeline(value:SlotTimelineData):Void
 	{
 		if (value != null && value.slot != null && !slotTimelines.exists(value.slot.name))
 		{
@@ -199,7 +202,7 @@ import openfl.Vector;
 	/**
 	 * @private
 	 */
-	public function addFFDTimeline(value:FFDTimelineData):Void
+	@:allow("dragonBones") private function addFFDTimeline(value:FFDTimelineData):Void
 	{
 		if (value != null && value.skin != null && value.slot != null)
 		{
@@ -230,21 +233,21 @@ import openfl.Vector;
 	/**
 	 * @private
 	 */
-	public function getBoneTimeline(name:String):BoneTimelineData
+	@:allow("dragonBones") private function getBoneTimeline(name:String):BoneTimelineData
 	{
 		return boneTimelines[name];
 	}
 	/**
 	 * @private
 	 */
-	public function getSlotTimeline(name:String):SlotTimelineData
+	@:allow("dragonBones") private function getSlotTimeline(name:String):SlotTimelineData
 	{
 		return slotTimelines[name];
 	}
 	/**
 	 * @private
 	 */
-	public function getFFDTimeline(skinName:String, slotName:String):Map<String, FFDTimelineData>
+	@:allow("dragonBones") private function getFFDTimeline(skinName:String, slotName:String):Map<String, FFDTimelineData>
 	{
 		if (ffdTimelines.exists(skinName))
 		{
@@ -255,14 +258,14 @@ import openfl.Vector;
 	/**
 	 * @private
 	 */
-	public function getBoneCachedFrameIndices(name: String): Vector<Int> 
+	@:allow("dragonBones") private function getBoneCachedFrameIndices(name: String): Vector<Int> 
 	{
 		return boneCachedFrameIndices[name];
 	}
 	/**
 	 * @private
 	 */
-	public function getSlotCachedFrameIndices(name: String): Vector<Int> 
+	@:allow("dragonBones") private function getSlotCachedFrameIndices(name: String): Vector<Int> 
 	{
 		return slotCachedFrameIndices[name];
 	}

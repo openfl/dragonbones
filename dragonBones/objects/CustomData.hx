@@ -16,23 +16,26 @@ import dragonBones.core.BaseObject;
 	 * 自定义整数。
 	 * @version DragonBones 5.0
 	 */
-	public inline var ints: Vector<Float> = new Vector<Float>();
+	public var ints: Vector<Float> = new Vector<Float>();
 	/**
 	 * @language zh_CN
 	 * 自定义浮点数。
 	 * @version DragonBones 5.0
 	 */
-	public inline var floats: Vector<Float> = new Vector<Float>();
+	public var floats: Vector<Float> = new Vector<Float>();
 	/**
 	 * @language zh_CN
 	 * 自定义字符串。
 	 * @version DragonBones 5.0
 	 */
-	public inline var strings: Vector<String> = new Vector<String>();
+	public var strings: Vector<String> = new Vector<String>();
 	/**
 	 * @private
 	 */
-	private function new() {}
+	@:allow("dragonBones") @:allow("dragonBones") private function new()
+	{
+		super();
+	}
 	/**
 	 * @private
 	 */
@@ -68,5 +71,4 @@ import dragonBones.core.BaseObject;
 	{
 		return index >= 0 && index < strings.length ? strings[index] : null;
 	}
-}
 }

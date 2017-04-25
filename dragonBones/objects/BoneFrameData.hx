@@ -11,7 +11,10 @@ import dragonBones.geom.Transform;
 	public var tweenRotate:Float;
 	public var transform:Transform = new Transform();
 	
-	private function new() {}
+	@:allow("dragonBones") private function new()
+	{
+		super();
+	}
 	
 	override private function _onClear():Void
 	{

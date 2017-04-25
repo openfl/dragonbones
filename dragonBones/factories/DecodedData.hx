@@ -169,7 +169,7 @@ import openfl.utils.ByteArray;
 					helpBytes.clear();
 					
 					decodedData.textureAtlasFormat = format;
-					decodedData.textureAtlasBytes = decodedBytes
+					decodedData.textureAtlasBytes = decodedBytes;
 					
 					return decodedData;
 				}

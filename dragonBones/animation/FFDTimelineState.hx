@@ -1,11 +1,10 @@
-package dragonBones.animation
+package dragonBones.animation;
 
 import openfl.Vector;
 	
 import dragonBones.Armature;
 import dragonBones.Slot;
 import dragonBones.core.DragonBones;
-import dragonBones.core.dragonBones_internal;
 import dragonBones.objects.ExtensionFrameData;
 import dragonBones.objects.FFDTimelineData;
 import dragonBones.objects.TimelineData;
@@ -57,7 +56,7 @@ import dragonBones.objects.TimelineData;
 		
 		_tweenFFD = TWEEN_TYPE_NONE;
 		
-		if (_tweenEasing !== DragonBones.NO_TWEEN || _curve)
+		if (_tweenEasing != DragonBones.NO_TWEEN || _curve)
 		{
 			var currentFFDVertices:Vector<Float> = currentFrame.tweens;
 			var nextFFDVertices:Vector<Float> = cast(currentFrame.next, ExtensionFrameData).tweens;
@@ -147,7 +146,7 @@ import dragonBones.objects.TimelineData;
 	{
 		super.update(passedTime);
 		
-		if (slot._meshData != (_timelineData as FFDTimelineData).display.mesh) 
+		if (slot._meshData != cast(_timelineData, FFDTimelineData).display.mesh) 
 		{
 			return;
 		}
@@ -156,7 +155,7 @@ import dragonBones.objects.TimelineData;
 		if (_tweenFFD != TWEEN_TYPE_NONE || _ffdDirty)
 		{
 			var l:UInt;
-			if (_animationState._fadeState !== 0 || _animationState._subFadeState !== 0)
+			if (_animationState._fadeState != 0 || _animationState._subFadeState != 0)
 			{
 				var fadeProgress:Float = Math.pow(_animationState._fadeProgress, 4.0);
 				

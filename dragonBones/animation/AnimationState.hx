@@ -6,7 +6,6 @@ import dragonBones.Armature;
 import dragonBones.Bone;
 import dragonBones.Slot;
 import dragonBones.core.BaseObject;
-import dragonBones.core.dragonBones_internal;
 import dragonBones.events.EventObject;
 import dragonBones.objects.AnimationConfig;
 import dragonBones.objects.AnimationData;
@@ -72,7 +71,7 @@ import dragonBones.objects.SlotTimelineData;
 	/**
 	 * @private
 	 */
-	public var fadeTotalTime:Float;
+	@:allow("dragonBones") private var fadeTotalTime:Float;
 	/**
 	 * @private
 	 */
@@ -100,11 +99,11 @@ import dragonBones.objects.SlotTimelineData;
 	/**
 	 * @private
 	 */
-	private var _fadeTime:Float;
+	@:allow("dragonBones") private var _fadeTime:Float;
 	/**
 	 * @private
 	 */
-	private var _time:Float;
+	@:allow("dragonBones") private var _time:Float;
 	/**
 	 * @private
 	 */
@@ -116,7 +115,7 @@ import dragonBones.objects.SlotTimelineData;
 	/**
 	 * @private
 	 */
-	private var _name:String;
+	@:allow("dragonBones") private var _name:String;
 	/**
 	 * @private
 	 */
@@ -124,27 +123,27 @@ import dragonBones.objects.SlotTimelineData;
 	/**
 	 * @private
 	 */
-	private inline var _boneMask:Vector<String> = new Vector<String>();
+	@:allow("dragonBones") private var _boneMask:Vector<String> = new Vector<String>();
 	/**
 	 * @private
 	 */
-	private inline var _boneTimelines:Vector<BoneTimelineState> = new Vector<BoneTimelineState>();
+	@:allow("dragonBones") private var _boneTimelines:Vector<BoneTimelineState> = new Vector<BoneTimelineState>();
 	/**
 	 * @private
 	 */
-	private inline var _slotTimelines:Vector<SlotTimelineState> = new Vector<SlotTimelineState>();
+	@:allow("dragonBones") private var _slotTimelines:Vector<SlotTimelineState> = new Vector<SlotTimelineState>();
 	/**
 	 * @private
 	 */
-	private inline var _ffdTimelines:Vector<FFDTimelineState> = new Vector<FFDTimelineState>();
+	@:allow("dragonBones") private var _ffdTimelines:Vector<FFDTimelineState> = new Vector<FFDTimelineState>();
 	/**
 	 * @private
 	 */
-	private var _animationData:AnimationData;
+	@:allow("dragonBones") private var _animationData:AnimationData;
 	/**
 	 * @private
 	 */
-	private var _armature:Armature;
+	@:allow("dragonBones") private var _armature:Armature;
 	/**
 	 * @private
 	 */
@@ -152,11 +151,11 @@ import dragonBones.objects.SlotTimelineData;
 	/**
 	 * @private
 	 */
-	private var _zOrderTimeline: ZOrderTimelineState;
+	@:allow("dragonBones") private var _zOrderTimeline: ZOrderTimelineState;
 	/**
 	 * @private
 	 */
-	public function AnimationState()
+	@:allow("dragonBones") private function AnimationState()
 	{
 		super(this);
 	}
@@ -286,7 +285,7 @@ import dragonBones.objects.SlotTimelineData;
 	/**
 	 * @private
 	 */
-	public function _init(armature: Armature, animationData: AnimationData, animationConfig: AnimationConfig):Void 
+	@:allow("dragonBones") private function _init(armature: Armature, animationData: AnimationData, animationConfig: AnimationConfig):Void 
 	{
 		_armature = armature;
 		_animationData = animationData;
@@ -344,12 +343,12 @@ import dragonBones.objects.SlotTimelineData;
 			_boneMask.fixed = true;
 		}
 		
-		_timeline = BaseObject.borrowObject(AnimationTimelineState) as AnimationTimelineState;
+		_timeline = cast BaseObject.borrowObject(AnimationTimelineState);
 		_timeline._init(_armature, this, _animationData);
 		
 		if (_animationData.zOrderTimeline) 
 		{
-			_zOrderTimeline = BaseObject.borrowObject(ZOrderTimelineState) as ZOrderTimelineState;
+			_zOrderTimeline = cast BaseObject.borrowObject(ZOrderTimelineState);
 			_zOrderTimeline._init(_armature, this, _animationData.zOrderTimeline);
 		}
 		
@@ -381,7 +380,7 @@ import dragonBones.objects.SlotTimelineData;
 		var bone:Bone, boneTimelineName:String, boneTimelineData:BoneTimelineData;
 		for (i in 0...l)
 		{
-			bone: = bones[i];
+			bone = bones[i];
 			boneTimelineName = bone.name;
 			if (containsBoneMask(boneTimelineName))
 			{
@@ -443,9 +442,9 @@ import dragonBones.objects.SlotTimelineData;
 				slotTimelineData = _animationData.getSlotTimeline(slotTimelineName);
 				if (slotTimelineData != null) 
 				{
-					if (slotTimelineStates[slotTimelineName] != null) // Remove slot timeline from map.
+					if (slotTimelineStates.exists(slotTimelineName)) // Remove slot timeline from map.
 					{
-						delete slotTimelineStates[slotTimelineName];
+						slotTimelineStates.remove(slotTimelineName);
 					}
 					else  // Create new slot timeline.
 					{
@@ -562,7 +561,7 @@ import dragonBones.objects.SlotTimelineData;
 			if (isCacheEnabled) 
 			{
 				var cacheFrameIndex:Int = Math.floor(_timeline._currentTime * cacheFrameRate); // uint
-				if (_armature.animation._cacheFrameIndex === cacheFrameIndex) // Same cache.
+				if (_armature.animation._cacheFrameIndex == cacheFrameIndex) // Same cache.
 				{
 					isUpdatesTimeline = false;
 					isUpdatesBoneTimeline = false;
@@ -609,7 +608,7 @@ import dragonBones.objects.SlotTimelineData;
 			}
 		}
 		
-		if (_fadeState === 0) 
+		if (_fadeState == 0) 
 		{
 			if (_subFadeState > 0) 
 			{
@@ -687,7 +686,7 @@ import dragonBones.objects.SlotTimelineData;
 	 */
 	public function fadeOut(fadeOutTime:Float, pausePlayhead:Bool = true):Void
 	{
-		if (fadeOutTime < 0.0 || fadeOutTime !== fadeOutTime) 
+		if (fadeOutTime < 0.0 || fadeOutTime != fadeOutTime) 
 		{
 			fadeOutTime = 0.0;
 		}
@@ -745,7 +744,7 @@ import dragonBones.objects.SlotTimelineData;
 	 */
 	public function containsBoneMask(name:String):Bool
 	{
-		return _boneMask.length === 0 || _boneMask.indexOf(name) >= 0;
+		return _boneMask.length == 0 || _boneMask.indexOf(name) >= 0;
 	}
 	/**
 	 * @language zh_CN
@@ -959,7 +958,7 @@ import dragonBones.objects.SlotTimelineData;
 		
 		var currentPlayTimes:UInt = _timeline._currentPlayTimes - (_timeline._playState > 0? 1: 0);
 		value = (value % _duration) + currentPlayTimes * _duration;
-		if (_time === value) 
+		if (_time == value) 
 		{
 			return value;
 		}

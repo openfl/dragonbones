@@ -1,5 +1,7 @@
 ﻿package dragonBones.openfl;
 
+import haxe.Constraints;
+
 import openfl.display.Shape;
 import openfl.display.Sprite;
 import openfl.Vector;
@@ -9,8 +11,7 @@ import dragonBones.Bone;
 import dragonBones.Slot;
 import dragonBones.animation.Animation;
 import dragonBones.core.IArmatureDisplay;
-import dragonBones.core.dragonBones_internal;
-import dragonBones.enum.BoundingBoxType;
+import dragonBones.enums.BoundingBoxType;
 import dragonBones.events.EventObject;
 import dragonBones.objects.BoundingBoxData;
 
@@ -29,11 +30,11 @@ class OpenFLArmatureDisplay extends Sprite implements IArmatureDisplay
 	/**
 	 * @private
 	 */
-	private function new() {}
+	@:allow("dragonBones") private function new() {}
 	/**
 	 * @private
 	 */
-	public function _onClear():Void
+	@:allow("dragonBones") private function _onClear():Void
 	{
 		_armature = null;
 		_debugDrawer = null;
@@ -41,7 +42,7 @@ class OpenFLArmatureDisplay extends Sprite implements IArmatureDisplay
 	/**
 	 * @private
 	 */
-	public function _dispatchEvent(type:String, eventObject:EventObject):Void
+	@:allow("dragonBones") private function _dispatchEvent(type:String, eventObject:EventObject):Void
 	{
 		var event:FlashEvent = new FlashEvent(type, eventObject);
 		dispatchEvent(event);
@@ -49,7 +50,7 @@ class OpenFLArmatureDisplay extends Sprite implements IArmatureDisplay
 	/**
 	 * @private
 	 */
-	public function _debugDraw(isEnabled:Bool):Void
+	@:allow("dragonBones") private function _debugDraw(isEnabled:Bool):Void
 	{
 		if (isEnabled)
 		{
@@ -214,5 +215,4 @@ class OpenFLArmatureDisplay extends Sprite implements IArmatureDisplay
 			_armature.clock = null;
 		}
 	}
-}
 }

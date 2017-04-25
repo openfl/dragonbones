@@ -12,7 +12,7 @@ import dragonBones.textures.TextureData;
 	/**
 	 * @private
 	 */
-	private function new() {}
+	@:allow("dragonBones") private function new() {}
 	/**
 	 * @private
 	 */

@@ -3,7 +3,6 @@ package dragonBones.animation;
 import openfl.Vector;
 	
 import dragonBones.core.DragonBones;
-import dragonBones.core.dragonBones_internal;
 import dragonBones.objects.TweenFrameData;
 
 
@@ -99,13 +98,13 @@ class TweenTimelineState extends TimelineState
 		if (
 			_keyFrameCount > 1 &&
 			(
-				_currentFrame.next !== _timelineData.frames[0] ||
-				_animationState.playTimes === 0 ||
+				_currentFrame.next != _timelineData.frames[0] ||
+				_animationState.playTimes == 0 ||
 				_animationState.currentPlayTimes < _animationState.playTimes - 1
 			)
 		) 
 		{
-			var currentFrame:TweenFrameData = _currentFrame as TweenFrameData;
+			var currentFrame:TweenFrameData = cast(_currentFrame, TweenFrameData);
 			_tweenEasing = currentFrame.tweenEasing;
 			_curve = currentFrame.curve;
 		}

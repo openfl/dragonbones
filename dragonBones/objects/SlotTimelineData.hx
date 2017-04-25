@@ -7,7 +7,10 @@ package dragonBones.objects;
 {
 	public var slot:SlotData;
 	
-	private function new() {}
+	@:allow("dragonBones") private function new()
+	{
+		super();
+	}
 	
 	override private function _onClear():Void
 	{

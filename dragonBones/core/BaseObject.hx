@@ -1,5 +1,6 @@
 ﻿package dragonBones.core;
 
+import openfl.errors.Error;
 import openfl.utils.Dictionary;
 import openfl.Vector;
 
@@ -12,12 +13,12 @@ class BaseObject
 {
 	private static var _hashCode:UInt = 0;
 	private static var _defaultMaxCount:UInt = 5000;
-	private static inline var _maxCountMap:Dictionary<Class<Dynamic>> = new Dictionary();
-	private static inline var _poolsMap:Dictionary<Class<Dynamic>> = new Dictionary();
+	private static var _maxCountMap:Dictionary<Class<Dynamic>, UInt> = new Dictionary();
+	private static var _poolsMap:Dictionary<Class<Dynamic>, Vector<BaseObject>> = new Dictionary();
 	
 	private static function _returnObject(object:BaseObject):Void
 	{
-		//inline var objectConstructor:Class = getDefinitionByName(getQualifiedClassName(object));
+		//var objectConstructor:Class<Dynamic> = getDefinitionByName(getQualifiedClassName(object));
 		var objectConstructor:Class<Dynamic> = Type.getClass(object);
 		var maxCount:UInt = _maxCountMap.exists(objectConstructor) ? _maxCountMap[objectConstructor] : _defaultMaxCount;
 		var pool:Vector<BaseObject>;
@@ -57,10 +58,13 @@ class BaseObject
 		{
 			_maxCountMap[objectConstructor] = maxCount;
 			
-			var pool:Vector<BaseObject> = _poolsMap[objectConstructor];
-			if (pool != null && pool.length > maxCount)
+			if (_poolsMap.exists(objectConstructor))
 			{
-				pool.length = maxCount;
+				var pool:Vector<BaseObject> = _poolsMap[objectConstructor];
+				if (pool.length > maxCount)
+				{
+					pool.length = maxCount;
+				}
 			}
 		}
 		else
@@ -69,7 +73,7 @@ class BaseObject
 			
 			for (classType in _poolsMap)
 			{
-				if (_maxCountMap[classType] == null)
+				if (!_maxCountMap.exists(classType))
 				{
 					continue;
 				}
@@ -92,10 +96,13 @@ class BaseObject
 	{
 		if (objectConstructor != null)
 		{
-			var pool:Vector<BaseObject> = _poolsMap[objectConstructor];
-			if (pool != null && pool.length)
+			if (_poolsMap.exists(objectConstructor))
 			{
-				pool.length = 0;
+				var pool:Vector<BaseObject> = _poolsMap[objectConstructor];
+				if (pool.length > 0)
+				{
+					pool.length = 0;
+				}
 			}
 		}
 		else
@@ -113,7 +120,7 @@ class BaseObject
 	 */
 	public static function borrowObject(objectConstructor:Class<Dynamic>):BaseObject
 	{
-		var pool:Vector<BaseObject> = _poolsMap[objectConstructor];
+		var pool:Vector<BaseObject> = _poolsMap.exists(objectConstructor) ? _poolsMap[objectConstructor] : null;
 		if (pool != null && pool.length > 0)
 		{
 			return pool.pop();
@@ -130,15 +137,15 @@ class BaseObject
 	 * 对象的唯一标识。
 	 * @version DragonBones 4.5
 	 */
-	public inline var hashCode:UInt = _hashCode++;
+	public var hashCode:UInt = _hashCode++;
 	/**
 	 * @private
 	 */
-	private function new() {}
+	@:allow("dragonBones") private function new() {}
 	/**
 	 * @private
 	 */
-	private function _onClear():Void {}
+	@:allow("dragonBones") private function _onClear():Void {}
 	/**
 	 * @language zh_CN
 	 * 清除数据并返还对象池。

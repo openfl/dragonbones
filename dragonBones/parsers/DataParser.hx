@@ -1,5 +1,5 @@
-﻿package dragonBones.parsers
-{
+﻿package dragonBones.parsers;
+
 import openfl.geom.Matrix;
 import openfl.geom.Point;
 import openfl.Vector;
@@ -7,12 +7,11 @@ import openfl.Vector;
 import dragonBones.animation.TweenTimelineState;
 import dragonBones.core.BaseObject;
 import dragonBones.core.DragonBones;
-import dragonBones.core.dragonBones_internal;
-import dragonBones.enum.ActionType;
-import dragonBones.enum.ArmatureType;
-import dragonBones.enum.BlendMode;
-import dragonBones.enum.BoundingBoxType;
-import dragonBones.enum.DisplayType;
+import dragonBones.enums.ActionType;
+import dragonBones.enums.ArmatureType;
+import dragonBones.enums.BlendMode;
+import dragonBones.enums.BoundingBoxType;
+import dragonBones.enums.DisplayType;
 import dragonBones.geom.Transform;
 import dragonBones.objects.ActionData;
 import dragonBones.objects.AnimationData;
@@ -317,7 +316,7 @@ class DataParser
 		var frameIndex:UInt = Std.int(position * animation.frameCount / animation.duration);
 		if (timeline.frames.length == 1 || frameIndex >= timeline.frames.length) 
 		{
-			transform.copyFrom((timeline.frames[0] as BoneFrameData).transform);
+			transform.copyFrom((timeline.frames[0]).transform);
 		} 
 		else 
 		{

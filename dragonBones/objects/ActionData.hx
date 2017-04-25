@@ -1,7 +1,7 @@
 package dragonBones.objects;
 
 import dragonBones.core.BaseObject;
-import dragonBones.enum.ActionType;
+import dragonBones.enums.ActionType;
 
 /**
  * @private
@@ -13,13 +13,16 @@ import dragonBones.enum.ActionType;
 	public var slot:SlotData;
 	public var animationConfig:AnimationConfig;
 	
-	private function new() {}
+	@:allow("dragonBones") private function new()
+	{
+		super();
+	}
 	
 	override private function _onClear():Void
 	{
 		if (animationConfig != null)
 		{
-			animationConfig..returnToPool();
+			animationConfig.returnToPool();
 		}
 		
 		type = ActionType.None;
@@ -27,5 +30,4 @@ import dragonBones.enum.ActionType;
 		slot = null;
 		animationConfig = null;
 	}
-}
 }

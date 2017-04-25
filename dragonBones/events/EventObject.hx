@@ -86,7 +86,7 @@ class EventObject extends BaseObject
 	/**
 	 * @private
 	 */
-	public var frame: AnimationFrameData;
+	@:allow("dragonBones") private var frame: AnimationFrameData;
 	/**
 	 * @language zh_CN
 	 * 扩展数据。
@@ -120,7 +120,7 @@ class EventObject extends BaseObject
 	/**
 	 * @private
 	 */
-	private function new() {}
+	@:allow("dragonBones") private function new() {}
 	/**
 	 * @private
 	 */

@@ -17,7 +17,10 @@ import openfl.geom.ColorTransform;
 	public var displayIndex:Int;
 	public var color:ColorTransform;
 	
-	private function new() {}
+	@:allow("dragonBones") private function new()
+	{
+		super();
+	}
 	
 	override private function _onClear():Void
 	{

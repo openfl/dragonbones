@@ -7,8 +7,7 @@ import dragonBones.Armature;
 import dragonBones.Slot;
 import dragonBones.animation.WorldClock;
 import dragonBones.core.BaseObject;
-import dragonBones.core.dragonBones_internal;
-import dragonBones.enum.DisplayType;
+import dragonBones.enums.DisplayType;
 import dragonBones.factories.BaseFactory;
 import dragonBones.factories.BuildArmaturePackage;
 import dragonBones.objects.ActionData;
@@ -41,7 +40,7 @@ import starling.rendering.VertexData;
 	/**
 	 * @private
 	 */
-	private static var _eventManager:StarlingArmatureDisplay = new StarlingArmatureDisplay();
+	@:allow("dragonBones") private static var _eventManager:StarlingArmatureDisplay = new StarlingArmatureDisplay();
 	/**
 	 * @private
 	 */
@@ -55,7 +54,7 @@ import starling.rendering.VertexData;
 	/**
 	 * @private
 	 */
-	private static function _clockHandler(event:EnterFrameEvent):Void 
+	@:allow("dragonBones") private static function _clockHandler(event:EnterFrameEvent):Void 
 	{
 		_clock.advanceTime(event.passedTime);
 	}
@@ -78,7 +77,7 @@ import starling.rendering.VertexData;
 	{
 		if (textureAtlasData != null)
 		{
-			var starlingTextureAtlasData:StarlingTextureAtlasData = textureAtlasData as StarlingTextureAtlasData;
+			var starlingTextureAtlasData:StarlingTextureAtlasData = cast textureAtlasData;
 			
 			if (Std.is(textureAtlas, BitmapData))
 			{
@@ -131,9 +130,9 @@ import starling.rendering.VertexData;
 	 */
 	override private function _generateSlot(dataPackage:BuildArmaturePackage, skinSlotData:SkinSlotData, armature:Armature):Slot
 	{
-		inline var slot:StarlingSlot = cast BaseObject.borrowObject(StarlingSlot);
-		inline var slotData:SlotData = skinSlotData.slot;
-		inline var displayList:Vector<Dynamic> = new Vector<Dynamic>(skinSlotData.displays.length, true);
+		var slot:StarlingSlot = cast BaseObject.borrowObject(StarlingSlot);
+		var slotData:SlotData = skinSlotData.slot;
+		var displayList:Vector<Dynamic> = new Vector<Dynamic>(skinSlotData.displays.length, true);
 		
 		#if (starling >= "2.0")
 		slot._indexData = new IndexData();

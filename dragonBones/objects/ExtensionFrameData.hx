@@ -7,9 +7,12 @@ import openfl.Vector;
  */
 @:final class ExtensionFrameData extends TweenFrameData
 {
-	public inline var tweens:Vector<Float> = new Vector<Float>();
+	public var tweens:Vector<Float> = new Vector<Float>();
 	
-	private function new() {}
+	@:allow("dragonBones") private function new()
+	{
+		super();
+	}
 	
 	override private function _onClear():Void
 	{

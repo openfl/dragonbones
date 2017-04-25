@@ -1,4 +1,4 @@
-package dragonBones.enum;
+package dragonBones.enums;
 
 /**
  * @language zh_CN

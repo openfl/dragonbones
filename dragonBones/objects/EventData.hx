@@ -1,7 +1,7 @@
 package dragonBones.objects;
 
 import dragonBones.core.BaseObject;
-import dragonBones.enum.EventType;
+import dragonBones.enums.EventType;
 
 /**
  * @private
@@ -14,7 +14,10 @@ import dragonBones.enum.EventType;
 	public var slot:SlotData;
 	public var data:CustomData;
 	
-	private function new() {}
+	@:allow("dragonBones") private function new()
+	{
+		super();
+	}
 	
 	override private function _onClear():Void
 	{

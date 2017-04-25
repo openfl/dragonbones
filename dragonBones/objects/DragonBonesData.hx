@@ -1,5 +1,6 @@
 package dragonBones.objects;
 
+import openfl.errors.ArgumentError;
 import openfl.Vector;
 	
 import dragonBones.core.BaseObject;
@@ -38,21 +39,24 @@ class DragonBonesData extends BaseObject
 	 * @see dragonBones.objects.ArmatureData
 	 * @version DragonBones 3.0
 	 */
-	public inline var armatures:Map<String, ArmatureData> = {};
+	public var armatures:Map<String, ArmatureData> = new Map<String, ArmatureData>();
 	/**
 	 * @private
 	 */
-	public inline var cachedFrames: Vector<Float> = new Vector<Float>();
+	@:allow("dragonBones") private var cachedFrames: Vector<Float> = new Vector<Float>();
 	/**
 	 * @private
 	 */
-	public var userData: CustomData;
+	@:allow("dragonBones") private var userData: CustomData;
 	
-	private inline var _armatureNames:Vector<String> = new Vector<String>();
+	private var _armatureNames:Vector<String> = new Vector<String>();
 	/**
 	 * @private
 	 */
-	private function new() {}
+	@:allow("dragonBones") private function new()
+	{
+		super();
+	}
 	/**
 	 * @private
 	 */
@@ -81,7 +85,7 @@ class DragonBonesData extends BaseObject
 	/**
 	 * @private
 	 */
-	public function addArmature(value:ArmatureData):Void
+	@:allow("dragonBones") private function addArmature(value:ArmatureData):Void
 	{
 		if (value != null && value.name != null && !armatures.exists(value.name))
 		{
@@ -117,5 +121,4 @@ class DragonBonesData extends BaseObject
 	{
 		return _armatureNames;
 	}
-}
 }

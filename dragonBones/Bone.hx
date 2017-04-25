@@ -4,7 +4,6 @@ import openfl.geom.Matrix;
 import openfl.Vector;
 
 import dragonBones.core.TransformObject;
-import dragonBones.core.dragonBones_internal;
 import dragonBones.geom.Transform;
 import dragonBones.objects.BoneData;
 
@@ -41,7 +40,7 @@ import dragonBones.objects.BoneData;
 	/**
 	 * @private
 	 */
-	public var ikBendPositive:Bool;
+	@:allow("dragonBones") private var ikBendPositive:Bool;
 	/**
 	 * @language zh_CN
 	 * 骨骼长度。
@@ -51,7 +50,7 @@ import dragonBones.objects.BoneData;
 	/**
 	 * @private
 	 */
-	public var ikWeight:Float;
+	@:allow("dragonBones") private var ikWeight:Float;
 	/**
 	 * @private [2: update self, 1: update children, ik children, mesh, ..., 0: stop update]
 	 */
@@ -91,7 +90,7 @@ import dragonBones.objects.BoneData;
 	/**
 	 * @private
 	 */
-	private function new() {}
+	@:allow("dragonBones") private function new() {}
 	/**
 	 * @private
 	 */
@@ -125,7 +124,7 @@ import dragonBones.objects.BoneData;
 	/**
 	 * @private
 	 */
-	private function _updateGlobalTransformMatrix():Void
+	@:allow("dragonBones") private function _updateGlobalTransformMatrix():Void
 	{
 		global.x = origin.x + offset.x + _animationPose.x;
 		global.y = origin.y + offset.y + _animationPose.y;
@@ -197,7 +196,7 @@ import dragonBones.objects.BoneData;
 	/**
 	 * @private
 	 */
-	private function _computeIKA():Void
+	@:allow("dragonBones") private function _computeIKA():Void
 	{
 		var ikGlobal:Transform = _ik.global;
 		var x:Float = globalTransformMatrix.a * length;
@@ -218,7 +217,7 @@ import dragonBones.objects.BoneData;
 	/**
 	 * @private
 	 */
-	private function _computeIKB():Void
+	@:allow("dragonBones") private function _computeIKB():Void
 	{
 		// TODO IK
 		var parentGlobal:Transform = _parent.global;
@@ -393,7 +392,7 @@ import dragonBones.objects.BoneData;
 		if (cacheFrameIndex >= 0 && _cachedFrameIndices != null) 
 		{
 			var cachedFrameIndex:Int = _cachedFrameIndices[cacheFrameIndex];
-			if (cachedFrameIndex >= 0 && _cachedFrameIndex === cachedFrameIndex) // Same cache.
+			if (cachedFrameIndex >= 0 && _cachedFrameIndex == cachedFrameIndex) // Same cache.
 			{
 				_transformDirty = 0;
 			}
@@ -403,9 +402,9 @@ import dragonBones.objects.BoneData;
 				_cachedFrameIndex = cachedFrameIndex;
 			}
 			else if (
-				_transformDirty === 2 ||
-				(_parent != null && _parent._transformDirty !== 0) ||
-				(_ik != null && ikWeight > 0 && _ik._transformDirty !== 0)
+				_transformDirty == 2 ||
+				(_parent != null && _parent._transformDirty != 0) ||
+				(_ik != null && ikWeight > 0 && _ik._transformDirty != 0)
 			) // Dirty.
 			{
 				_transformDirty = 2;
@@ -423,9 +422,9 @@ import dragonBones.objects.BoneData;
 			}
 		}
 		else if (
-			_transformDirty === 2 ||
-			(_parent != null && _parent._transformDirty !== 0) ||
-			(_ik != null && ikWeight > 0 && _ik._transformDirty !== 0)
+			_transformDirty == 2 ||
+			(_parent != null && _parent._transformDirty != 0) ||
+			(_ik != null && ikWeight > 0 && _ik._transformDirty != 0)
 		) // Dirty.
 		{
 			cacheFrameIndex = -1;
@@ -433,9 +432,9 @@ import dragonBones.objects.BoneData;
 			_cachedFrameIndex = -1;
 		}
 		
-		if (_transformDirty !== 0) 
+		if (_transformDirty != 0) 
 		{
-			if (_transformDirty === 2) 
+			if (_transformDirty == 2) 
 			{
 				_transformDirty = 1;
 				
@@ -546,7 +545,7 @@ import dragonBones.objects.BoneData;
 	/**
 	 * @private
 	 */
-	private var boneData(get, never):BoneData;
+	@:allow("dragonBones") private var boneData(get, never):BoneData;
 	private function get_boneData():BoneData
 	{
 		return _boneData;
@@ -572,11 +571,12 @@ import dragonBones.objects.BoneData;
 		
 		_visible = value;
 		
-		inline var slots:Vector<Slot> = _armature.getSlots();
+		var slots:Vector<Slot> = _armature.getSlots();
 		var l:UInt = slots.length;
+		var slot:Slot;
 		for (i in 0...l)
 		{
-			inline var slot:Slot = slots[i];
+			slot = slots[i];
 			if (slot._parent == this)
 			{
 				slot._updateVisible();
@@ -610,5 +610,4 @@ import dragonBones.objects.BoneData;
 	{
 		return _ik;
 	}
-}
 }

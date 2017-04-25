@@ -10,7 +10,10 @@ import dragonBones.core.BaseObject;
 	public var name:String;
 	public var slots:Map<String, SkinSlotData> = new Map<String, SkinSlotData>();
 	
-	private function new() {}
+	@:allow("dragonBones") private function new()
+	{
+		super();
+	}
 	
 	override private function _onClear():Void
 	{
@@ -40,5 +43,4 @@ import dragonBones.core.BaseObject;
 	{
 		return slots[name];
 	}
-}
 }

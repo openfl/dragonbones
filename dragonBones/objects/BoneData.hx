@@ -14,35 +14,35 @@ class BoneData extends BaseObject
 	/**
 	 * @private
 	 */
-	public var inheritTranslation:Bool;
+	@:allow("dragonBones") private var inheritTranslation:Bool;
 	/**
 	 * @private
 	 */
-	public var inheritRotation:Bool;
+	@:allow("dragonBones") private var inheritRotation:Bool;
 	/**
 	 * @private
 	 */
-	public var inheritScale:Bool;
+	@:allow("dragonBones") private var inheritScale:Bool;
 	/**
 	 * @private
 	 */
-	public var bendPositive:Bool;
+	@:allow("dragonBones") private var bendPositive:Bool;
 	/**
 	 * @private
 	 */
-	public var chain:UInt;
+	@:allow("dragonBones") private var chain:UInt;
 	/**
 	 * @private
 	 */
-	public var chainIndex:UInt;
+	@:allow("dragonBones") private var chainIndex:UInt;
 	/**
 	 * @private
 	 */
-	public var weight:Float;
+	@:allow("dragonBones") private var weight:Float;
 	/**
 	 * @private
 	 */
-	public var length:Float;
+	@:allow("dragonBones") private var length:Float;
 	/**
 	 * @language zh_CN
 	 * 数据名称。
@@ -52,7 +52,7 @@ class BoneData extends BaseObject
 	/**
 	 * @private
 	 */
-	public inline var transform:Transform = new Transform();
+	@:allow("dragonBones") private var transform:Transform = new Transform();
 	/**
 	 * @language zh_CN
 	 * 所属的父骨骼数据。
@@ -62,15 +62,18 @@ class BoneData extends BaseObject
 	/**
 	 * @private
 	 */
-	public var ik:BoneData;
+	@:allow("dragonBones") private var ik:BoneData;
 	/**
 	 * @private
 	 */
-	public var userData: CustomData;
+	@:allow("dragonBones") private var userData: CustomData;
 	/**
 	 * @private
 	 */
-	private function new() {}
+	@:allow("dragonBones") @:allow("dragonBones") private function new()
+	{
+		super();
+	}
 	/**
 	 * @private
 	 */
@@ -99,7 +102,7 @@ class BoneData extends BaseObject
 	/**
 	 * @private
 	 */
-	public function toString():String
+	@:allow("dragonBones") private function toString():String
 	{
 		return name;
 	}

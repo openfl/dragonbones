@@ -158,11 +158,14 @@ import dragonBones.core.BaseObject;
 	 * 骨骼遮罩。
 	 * @version DragonBones 5.0
 	 */
-	public inline var boneMask: Vector<String> = new Vector<String>();
+	public var boneMask: Vector<String> = new Vector<String>();
 	/**
 	 * @private
 	 */
-	private function new() {}
+	@:allow("dragonBones") @:allow("dragonBones") private function new()
+	{
+		super();
+	}
 	/**
 	 * @private
 	 */

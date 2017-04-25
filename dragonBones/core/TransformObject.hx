@@ -68,7 +68,7 @@ class TransformObject extends BaseObject
 	/**
 	 * @private
 	 */
-	private function new() {}
+	@:allow("dragonBones") private function new() {}
 	/**
 	 * @private
 	 */

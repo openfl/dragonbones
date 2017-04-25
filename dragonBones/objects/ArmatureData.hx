@@ -5,7 +5,7 @@ import openfl.geom.Rectangle;
 import openfl.Vector;
 
 import dragonBones.core.BaseObject;
-import dragonBones.enum.ArmatureType;
+import dragonBones.enums.ArmatureType;
 import dragonBones.geom.Transform;
 
 /**
@@ -29,15 +29,15 @@ class ArmatureData extends BaseObject
 	/**
 	 * @private
 	 */
-	public var type:Int;
+	@:allow("dragonBones") private var type:Int;
 	/**
 	 * @private
 	 */
-	public var cacheFrameRate:UInt;
+	@:allow("dragonBones") private var cacheFrameRate:UInt;
 	/**
 	 * @private
 	 */
-	public var scale:Float;
+	@:allow("dragonBones") private var scale:Float;
 	/**
 	 * @language zh_CN
 	 * 数据名称。
@@ -47,39 +47,39 @@ class ArmatureData extends BaseObject
 	/**
 	 * @private
 	 */
-	public var aabb:Rectangle = new Rectangle();
+	@:allow("dragonBones") private var aabb:Rectangle = new Rectangle();
 	/**
 	 * @language zh_CN
 	 * 所有骨骼数据。
 	 * @see dragonBones.objects.BoneData
 	 * @version DragonBones 3.0
 	 */
-	public inline var bones:Map<String, BoneData> = new Map<String, BoneData>();
+	public var bones:Map<String, BoneData> = new Map<String, BoneData>();
 	/**
 	 * @language zh_CN
 	 * 所有插槽数据。
 	 * @see dragonBones.objects.SlotData
 	 * @version DragonBones 3.0
 	 */
-	public inline var slots:Map<String, SlotData> = new Map<String, SlotData>();
+	public var slots:Map<String, SlotData> = new Map<String, SlotData>();
 	/**
 	 * @language zh_CN
 	 * 所有皮肤数据。
 	 * @see dragonBones.objects.SkinData
 	 * @version DragonBones 3.0
 	 */
-	public inline var skins:Map<String, SkinData> = new Map<String, SkinData>();
+	public var skins:Map<String, SkinData> = new Map<String, SkinData>();
 	/**
 	 * @language zh_CN
 	 * 所有动画数据。
 	 * @see dragonBones.objects.AnimationData
 	 * @version DragonBones 3.0
 	 */
-	public inline var animations:Map<String, AnimationData> = new Map<String, AnimationData>();
+	public var animations:Map<String, AnimationData> = new Map<String, AnimationData>();
 	/**
 	 * @private
 	 */
-	public inline var actions: Vector<ActionData> = new Vector<ActionData>();
+	@:allow("dragonBones") private var actions: Vector<ActionData> = new Vector<ActionData>();
 	/**
 	 * @language zh_CN
 	 * 所属的龙骨数据。
@@ -90,20 +90,23 @@ class ArmatureData extends BaseObject
 	/**
 	 * @private
 	 */
-	public var userData: CustomData;
+	@:allow("dragonBones") private var userData: CustomData;
 	
 	private var _boneDirty:Bool;
 	private var _slotDirty:Bool;
-	private inline var _animationNames:Vector<String> = new Vector<String>();
-	private inline var _sortedBones:Vector<BoneData> = new Vector<BoneData>();
-	private inline var _sortedSlots:Vector<SlotData> = new Vector<SlotData>();
-	private inline var _bonesChildren:Map<String, Vector<BoneData>> = new Map<String, Vector<BoneData>>();
+	private var _animationNames:Vector<String> = new Vector<String>();
+	private var _sortedBones:Vector<BoneData> = new Vector<BoneData>();
+	private var _sortedSlots:Vector<SlotData> = new Vector<SlotData>();
+	private var _bonesChildren:Map<String, Vector<BoneData>> = new Map<String, Vector<BoneData>>();
 	private var _defaultSkin:SkinData;
 	private var _defaultAnimation:AnimationData;
 	/**
 	 * @private
 	 */
-	private function new() {}
+	@:allow("dragonBones") @:allow("dragonBones") private function new()
+	{
+		super();
+	}
 	/**
 	 * @private
 	 */
@@ -231,7 +234,7 @@ class ArmatureData extends BaseObject
 	/**
 	 * @private
 	 */
-	public function cacheFrames(value:UInt):Void
+	@:allow("dragonBones") private function cacheFrames(value:UInt):Void
 	{
 		if (cacheFrameRate > 0) 
 		{
@@ -248,7 +251,7 @@ class ArmatureData extends BaseObject
 	/**
 	 * @private
 	 */
-	public function setCacheFrame(globalTransformMatrix: Matrix, transform: Transform):Float {
+	@:allow("dragonBones") private function setCacheFrame(globalTransformMatrix: Matrix, transform: Transform):Float {
 		var dataArray:Vector<Float> = parent.cachedFrames;
 		var arrayOffset:UInt = dataArray.length;
 		
@@ -269,7 +272,7 @@ class ArmatureData extends BaseObject
 	/**
 	 * @private
 	 */
-	public function getCacheFrame(globalTransformMatrix: Matrix, transform: Transform, arrayOffset:Float):Void {
+	@:allow("dragonBones") private function getCacheFrame(globalTransformMatrix: Matrix, transform: Transform, arrayOffset:Float):Void {
 		var dataArray:Vector<Float> = parent.cachedFrames;
 		
 		globalTransformMatrix.a = dataArray[arrayOffset];
@@ -286,7 +289,7 @@ class ArmatureData extends BaseObject
 	/**
 	 * @private
 	 */
-	public function addBone(value:BoneData, parentName:String):Void
+	@:allow("dragonBones") private function addBone(value:BoneData, parentName:String):Void
 	{
 		if (value != null && value.name != null && !bones[value.name])
 		{
@@ -312,7 +315,7 @@ class ArmatureData extends BaseObject
 					children[i].parent = value;
 				}
 				
-				delete _bonesChildren[value.name];
+				_bonesChildren.remove(value.name);
 			}
 			
 			bones[value.name] = value;
@@ -328,7 +331,7 @@ class ArmatureData extends BaseObject
 	/**
 	 * @private
 	 */
-	public function addSlot(value:SlotData):Void
+	@:allow("dragonBones") private function addSlot(value:SlotData):Void
 	{
 		if (value != null && value.name != null && slots[value.name] == null)
 		{
@@ -345,7 +348,7 @@ class ArmatureData extends BaseObject
 	/**
 	 * @private
 	 */
-	public function addSkin(value:SkinData):Void
+	@:allow("dragonBones") private function addSkin(value:SkinData):Void
 	{
 		if (value != null && value.name != null && skins[value.name] == null)
 		{
@@ -364,7 +367,7 @@ class ArmatureData extends BaseObject
 	/**
 	 * @private
 	 */
-	public function addAnimation(value:AnimationData):Void
+	@:allow("dragonBones") private function addAnimation(value:AnimationData):Void
 	{
 		if (value != null && value.name != null && animations[value.name] == null)
 		{
@@ -390,7 +393,7 @@ class ArmatureData extends BaseObject
 	 */
 	public function getBone(name:String):BoneData
 	{
-		return bones[name] as BoneData;
+		return bones[name];
 	}
 	/**
 	 * @language zh_CN
@@ -401,14 +404,14 @@ class ArmatureData extends BaseObject
 	 */
 	public function getSlot(name:String):SlotData
 	{
-		return slots[name] as SlotData;
+		return slots[name];
 	}
 	/**
 	 * @private
 	 */
-	public function getSkin(name:String):SkinData
+	@:allow("dragonBones") private function getSkin(name:String):SkinData
 	{
-		return name? (skins[name] as SkinData): _defaultSkin;
+		return name? skins[name]: _defaultSkin;
 	}
 	/**
 	 * @language zh_CN
@@ -419,7 +422,7 @@ class ArmatureData extends BaseObject
 	 */
 	public function getAnimation(name:String):AnimationData
 	{
-		return name? (animations[name] as AnimationData): _defaultAnimation;
+		return name? animations[name]: _defaultAnimation;
 	}
 	/**
 	 * @language zh_CN
@@ -427,14 +430,16 @@ class ArmatureData extends BaseObject
 	 * @see #armatures
 	 * @version DragonBones 3.0
 	 */
-	public function get animationNames(): Vector<String> 
+	public var animationNames(get, never):Vector<String>;
+	private function get_animationNames(): Vector<String> 
 	{
 		return _animationNames;
 	}
 	/**
 	 * @private
 	 */
-	public function get sortedBones():Vector<BoneData>
+	@:allow("dragonBones") private var sortedBones(get, never):Vector<BoneData>;
+	private function get_sortedBones():Vector<BoneData>
 	{
 		if (_boneDirty)
 		{
@@ -447,7 +452,8 @@ class ArmatureData extends BaseObject
 	/**
 	 * @private
 	 */
-	public function get sortedSlots():Vector<SlotData>
+	@:allow("dragonBones") private var sortedSlots(get, never):Vector<SlotData>;
+	private function get_sortedSlots():Vector<SlotData>
 	{
 		if (_slotDirty)
 		{
@@ -460,7 +466,8 @@ class ArmatureData extends BaseObject
 	/**
 	 * @private
 	 */
-	public function get defaultSkin():SkinData
+	@:allow("dragonBones") private var defaultSkin(get, never):SkinData;
+	private function get_defaultSkin():SkinData
 	{
 		return _defaultSkin;
 	}
@@ -470,7 +477,8 @@ class ArmatureData extends BaseObject
 	 * @see dragonBones.objects.AnimationData
 	 * @version DragonBones 4.5
 	 */
-	public function get defaultAnimation():AnimationData
+	public var defaultAnimation(get, never):AnimationData;
+	private function get_defaultAnimation():AnimationData
 	{
 		return _defaultAnimation;
 	}

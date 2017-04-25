@@ -28,11 +28,11 @@ class TextureAtlasData extends BaseObject
 	/**
 	 * @private
 	 */
-	public var width:Float;
+	@:allow("dragonBones") private var width:Float;
 	/**
 	 * @private
 	 */
-	public var height:Float;
+	@:allow("dragonBones") private var height:Float;
 	/**
 	 * @language zh_CN
 	 * 贴图集名称。
@@ -52,11 +52,11 @@ class TextureAtlasData extends BaseObject
 	/**
 	 * @private
 	 */
-	public var textures:Map<String, TextureData> = new Map<String, TextureData>();
+	@:allow("dragonBones") private var textures:Map<String, TextureData> = new Map<String, TextureData>();
 	/**
 	 * @private
 	 */
-	private function new() {}
+	@:allow("dragonBones") private function new() {}
 	/**
 	 * @private
 	 */
@@ -85,7 +85,7 @@ class TextureAtlasData extends BaseObject
 	/**
 	 * @private
 	 */
-	public function generateTexture():TextureData
+	@:allow("dragonBones") private function generateTexture():TextureData
 	{
 		throw new Error(DragonBones.ABSTRACT_METHOD_ERROR);
 		return null;
@@ -93,7 +93,7 @@ class TextureAtlasData extends BaseObject
 	/**
 	 * @private
 	 */
-	public function addTexture(value:TextureData):Void
+	@:allow("dragonBones") private function addTexture(value:TextureData):Void
 	{
 		if (value != null && value.name != null && !textures.exists(value.name))
 		{
@@ -108,14 +108,14 @@ class TextureAtlasData extends BaseObject
 	/**
 	 * @private
 	 */
-	public function getTexture(name:String):TextureData
+	@:allow("dragonBones") private function getTexture(name:String):TextureData
 	{
 		return textures[name];
 	}
 	/**
 	 * @private
 	 */
-	public function copyFrom(value: TextureAtlasData):Void 
+	@:allow("dragonBones") private function copyFrom(value: TextureAtlasData):Void 
 	{
 		autoSearch = value.autoSearch;
 		scale = value.scale;

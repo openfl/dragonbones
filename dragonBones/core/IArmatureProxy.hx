@@ -14,11 +14,11 @@ interface IArmatureProxy extends IEventDispatcher
 	/**
 	 * @private
 	 */
-	private function _onClear():Void;
+	@:allow("dragonBones") private function _onClear():Void;
 	/**
 	 * @private
 	 */
-	private function _debugDraw(isEnabled:Bool):Void;
+	@:allow("dragonBones") private function _debugDraw(isEnabled:Bool):Void;
 	/**
 	 * @language zh_CN
 	 * 释放代理和骨架。 (骨架会回收到对象池)

@@ -39,13 +39,13 @@ class TimelineState extends BaseObject
 		_timelineData = null;
 		
 		_frameRate = 0;
-		_keyFrameCount =0;
+		_keyFrameCount = 0;
 		_frameCount = 0;
 		_position = 0.0;
-		_duration = 0.0
-		_animationDutation = 0.0
-		_timeScale = 1.0
-		_timeOffset = 0.0
+		_duration = 0.0;
+		_animationDutation = 0.0;
+		_timeScale = 1.0;
+		_timeOffset = 0.0;
 		_currentFrame = null;
 		_armature = null;
 		_animationState = null;
@@ -61,26 +61,26 @@ class TimelineState extends BaseObject
 		var currentPlayTimes:UInt = 0;
 		var currentTime:Float = 0.0;
 		
-		if (_mainTimeline != null && _keyFrameCount === 1) 
+		if (_mainTimeline != null && _keyFrameCount == 1) 
 		{
 			_playState = _animationState._timeline._playState >= 0 ? 1 : -1;
 			currentPlayTimes = 1;
 			currentTime = _mainTimeline._currentTime;
 		}
-		else if (_mainTimeline == null || _timeScale !== 1.0 || _timeOffset !== 0.0)  // Scale and offset.
+		else if (_mainTimeline == null || _timeScale != 1.0 || _timeOffset != 0.0)  // Scale and offset.
 		{
 			var playTimes:UInt = _animationState.playTimes;
 			var totalTime:Float = playTimes * _duration;
 			
 			passedTime *= _timeScale;
-			if (_timeOffset !== 0.0) 
+			if (_timeOffset != 0.0) 
 			{
 				passedTime += _timeOffset * _animationDutation;
 			}
 			
 			if (playTimes > 0 && (passedTime >= totalTime || passedTime <= -totalTime)) 
 			{
-				if (_playState <= 0 && _animationState._playheadState === 3) 
+				if (_playState <= 0 && _animationState._playheadState == 3) 
 				{
 					_playState = 1;
 				}
@@ -98,7 +98,7 @@ class TimelineState extends BaseObject
 			}
 			else 
 			{
-				if (_playState !== 0 && _animationState._playheadState === 3) 
+				if (_playState != 0 && _animationState._playheadState == 3) 
 				{
 					_playState = 0;
 				}
@@ -125,15 +125,15 @@ class TimelineState extends BaseObject
 		
 		currentTime += _position;
 		
-		if (_currentPlayTimes === currentPlayTimes && _currentTime === currentTime) 
+		if (_currentPlayTimes == currentPlayTimes && _currentTime == currentTime) 
 		{
 			return false;
 		}
 		
 		// Clear frame flag when timeline start or loopComplete.
 		if (
-			(prevState < 0 && _playState !== prevState) ||
-			(_playState <= 0 && _currentPlayTimes !== currentPlayTimes)
+			(prevState < 0 && _playState != prevState) ||
+			(_playState <= 0 && _currentPlayTimes != currentPlayTimes)
 		) 
 		{
 			_currentFrame = null;

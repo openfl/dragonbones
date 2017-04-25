@@ -33,13 +33,13 @@ import starling.textures.TextureAtlas;
 	/**
 	 * @private
 	 */
-	public var disposeTexture:Bool;
+	@:allow("dragonBones") private var disposeTexture:Bool;
 	
 	public var texture:Texture;
 	/**
 	 * @private
 	 */
-	private function new() {}
+	@:allow("dragonBones") private function new() {}
 	/**
 	 * @private
 	 */

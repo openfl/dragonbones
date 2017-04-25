@@ -7,9 +7,12 @@ import openfl.Vector;
  */
 @:final class ZOrderFrameData extends FrameData
 {
-	public inline var zOrder:Vector<Int> = new Vector<Int>();
+	public var zOrder:Vector<Int> = new Vector<Int>();
 	
-	private function new() {}
+	@:allow("dragonBones") private function new()
+	{
+		super();
+	}
 	
 	override private function _onClear():Void 
 	{

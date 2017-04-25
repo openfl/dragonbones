@@ -6,7 +6,6 @@ import dragonBones.Armature;
 import dragonBones.Bone;
 import dragonBones.Slot;
 import dragonBones.core.BaseObject;
-import dragonBones.core.dragonBones_internal;
 import dragonBones.objects.AnimationConfig;
 import dragonBones.objects.AnimationData;
 
@@ -41,16 +40,16 @@ class Animation extends BaseObject
 	 * @private
 	 */
 	@:allow("dragonBones") private var _cacheFrameIndex:Float;
-	private inline var _animationNames:Vector<String> = new Vector<String>();
-	private inline var _animations:Map<String, AnimationData> = new Map<String, AnimationData>();
-	private inline var _animationStates:Vector<AnimationState> = new Vector<AnimationState>();
+	private var _animationNames:Vector<String> = new Vector<String>();
+	private var _animations:Map<String, AnimationData> = new Map<String, AnimationData>();
+	private var _animationStates:Vector<AnimationState> = new Vector<AnimationState>();
 	private var _armature:Armature;
 	private var _lastAnimationState:AnimationState;
 	private var _animationConfig:AnimationConfig;
 	/**
 	 * @private
 	 */
-	private function new() {}
+	@:allow("dragonBones") private function new() {}
 	/**
 	 * @private
 	 */
@@ -86,7 +85,7 @@ class Animation extends BaseObject
 	private function _fadeOut(animationConfig:AnimationConfig):Void
 	{
 		var l:UInt = _animationStates.length;
-		var animationState:AnimationState = null
+		var animationState:AnimationState = null;
 		
 		switch (animationConfig.fadeOutMode)
 		{
@@ -137,7 +136,7 @@ class Animation extends BaseObject
 	/**
 	 * @private
 	 */
-	public function _init(armature:Armature):Void 
+	@:allow("dragonBones") private function _init(armature:Armature):Void 
 	{
 		if (_armature != null) 
 		{
@@ -167,7 +166,7 @@ class Animation extends BaseObject
 			passedTime *= _armature._parent._armature.animation.timeScale;
 		}
 		
-		if (timeScale !== 1.0) 
+		if (timeScale != 1.0) 
 		{
 			passedTime *= timeScale;
 		}
@@ -356,7 +355,7 @@ class Animation extends BaseObject
 			animationConfig.playTimes = animationData.playTimes;
 		}
 		
-		if (animationConfig.fadeInTime < 0.0 || animationConfig.fadeInTime !== animationConfig.fadeInTime) 
+		if (animationConfig.fadeInTime < 0.0 || animationConfig.fadeInTime != animationConfig.fadeInTime) 
 		{
 			if (_lastAnimationState) 
 			{
@@ -368,19 +367,19 @@ class Animation extends BaseObject
 			}
 		}
 		
-		if (animationConfig.fadeOutTime < 0.0 || animationConfig.fadeOutTime !== animationConfig.fadeOutTime) 
+		if (animationConfig.fadeOutTime < 0.0 || animationConfig.fadeOutTime != animationConfig.fadeOutTime) 
 		{
 			animationConfig.fadeOutTime = animationConfig.fadeInTime;
 		}
 		
-		if (animationConfig.timeScale <= -100.0 || animationConfig.timeScale !== animationConfig.timeScale) //
+		if (animationConfig.timeScale <= -100.0 || animationConfig.timeScale != animationConfig.timeScale) //
 		{
 			animationConfig.timeScale = 1.0 / animationData.scale;
 		}
 		
 		if (animationData.duration > 0.0) 
 		{
-			if (animationConfig.position !== animationConfig.position) 
+			if (animationConfig.position != animationConfig.position) 
 			{
 				animationConfig.position = 0.0;
 			}
@@ -389,7 +388,7 @@ class Animation extends BaseObject
 				animationConfig.position %= animationData.duration;
 				animationConfig.position = animationData.duration - animationConfig.position;
 			}
-			else if (animationConfig.position === animationData.duration) 
+			else if (animationConfig.position == animationData.duration) 
 			{
 				animationConfig.position -= 0.001;
 			}

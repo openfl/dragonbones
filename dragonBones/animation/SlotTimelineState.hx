@@ -5,7 +5,6 @@ import openfl.geom.ColorTransform;
 import dragonBones.Armature;
 import dragonBones.Slot;
 import dragonBones.core.DragonBones;
-import dragonBones.core.dragonBones_internal;
 import dragonBones.objects.SlotFrameData;
 import dragonBones.objects.TimelineData;
 
@@ -64,9 +63,9 @@ import dragonBones.objects.TimelineData;
 			return;
 		}
 		
-		var currentFrame:SlotFrameData = _currentFrame as SlotFrameData;
+		var currentFrame:SlotFrameData = cast(_currentFrame, SlotFrameData);
 		var displayIndex:Int = currentFrame.displayIndex;
-		if (_playState >= 0 && slot.displayIndex !== displayIndex) 
+		if (_playState >= 0 && slot.displayIndex != displayIndex) 
 		{
 			slot._setDisplayIndex(displayIndex);
 		}
@@ -77,11 +76,11 @@ import dragonBones.objects.TimelineData;
 			
 			var currentColor:ColorTransform = currentFrame.color;
 			
-			if (_tweenEasing !== DragonBones.NO_TWEEN || _curve)
+			if (_tweenEasing != DragonBones.NO_TWEEN || _curve)
 			{
-				var nextFrame:SlotFrameData = currentFrame.next as SlotFrameData;
+				var nextFrame:SlotFrameData = cast currentFrame.next;
 				var nextColor:ColorTransform = nextFrame.color;
-				if (currentColor !== nextColor)
+				if (currentColor != nextColor)
 				{
 					_durationColor.alphaMultiplier = nextColor.alphaMultiplier - currentColor.alphaMultiplier;
 					_durationColor.redMultiplier = nextColor.redMultiplier - currentColor.redMultiplier;
@@ -108,7 +107,7 @@ import dragonBones.objects.TimelineData;
 				}
 			}
 			
-			if (_tweenColor === TWEEN_TYPE_NONE)
+			if (_tweenColor == TWEEN_TYPE_NONE)
 			{
 				if (
 					_slotColor.alphaMultiplier != currentColor.alphaMultiplier ||
@@ -137,13 +136,13 @@ import dragonBones.objects.TimelineData;
 	{
 		super._onUpdateFrame();
 		
-		var currentFrame:SlotFrameData = _currentFrame as SlotFrameData;
+		var currentFrame:SlotFrameData = cast _currentFrame;
 		
 		var tweenProgress:Float = 0.0;
 		
-		if (_tweenColor !== TWEEN_TYPE_NONE && slot.parent._blendLayer >= _animationState._layer)
+		if (_tweenColor != TWEEN_TYPE_NONE && slot.parent._blendLayer >= _animationState._layer)
 		{
-			if (_tweenColor === TWEEN_TYPE_ONCE)
+			if (_tweenColor == TWEEN_TYPE_ONCE)
 			{
 				_tweenColor = TWEEN_TYPE_NONE;
 				tweenProgress = 0;
@@ -186,7 +185,7 @@ import dragonBones.objects.TimelineData;
 		// Fade animation.
 		if (_tweenColor != TWEEN_TYPE_NONE || _colorDirty)
 		{
-			if (_animationState._fadeState != 0 || _animationState._subFadeState !== 0)
+			if (_animationState._fadeState != 0 || _animationState._subFadeState != 0)
 			{
 				var fadeProgress:Float = _animationState._fadeProgress;
 				

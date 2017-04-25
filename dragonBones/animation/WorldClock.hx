@@ -81,7 +81,7 @@ import dragonBones.core.DragonBones;
 		if (passedTime) 
 		{
 			var i:UInt = 0, r:UInt = 0, l:UInt = _animatebles.length;
-			var animateble:IAnimateble
+			var animateble:IAnimateble;
 			for (i in 0...l) 
 			{
 				animateble = _animatebles[i];
@@ -181,7 +181,7 @@ import dragonBones.core.DragonBones;
 	/**
 	 * @inheritDoc
 	 */
-	private var clock(get, set):WorldClock;
+	/*private var clock(get, set):WorldClock;
 	private function get_clock(): WorldClock 
 	{
 		return _clock;
@@ -192,16 +192,16 @@ import dragonBones.core.DragonBones;
 			return value;
 		}
 		
-		inline var prevClock:WorldClock = _clock;
+		var prevClock:WorldClock = _clock;
 		_clock = value;
 		
-		if (prevClock) {
+		if (prevClock != null) {
 			prevClock.remove(this);
 		}
 		
-		if (_clock) {
+		if (_clock != null) {
 			_clock.add(this);
 		}
 		return value;
-	}
+	}*/
 }

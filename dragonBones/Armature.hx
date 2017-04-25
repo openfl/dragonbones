@@ -1,5 +1,7 @@
 package dragonBones;
 
+import haxe.Constraints;
+
 import openfl.geom.Point;
 import openfl.Vector;
 
@@ -9,8 +11,7 @@ import dragonBones.animation.WorldClock;
 import dragonBones.core.BaseObject;
 import dragonBones.core.DragonBones;
 import dragonBones.core.IArmatureProxy;
-import dragonBones.core.dragonBones_internal;
-import dragonBones.enum.ActionType;
+import dragonBones.enums.ActionType;
 import dragonBones.events.EventObject;
 import dragonBones.events.IEventDispatcher;
 import dragonBones.objects.ActionData;
@@ -45,7 +46,7 @@ import dragonBones.textures.TextureAtlasData;
 	/**
 	 * @private
 	 */
-	public var debugDraw:Bool;
+	@:allow("dragonBones") private var debugDraw:Bool;
 	/**
 	 * @language zh_CN
 	 * 用于存储临时数据。
@@ -62,10 +63,10 @@ import dragonBones.textures.TextureAtlasData;
 	@:allow("dragonBones") private var _bonesDirty:Bool;
 	private var _slotsDirty:Bool;
 	private var _zOrderDirty:Bool;
-	private inline var _bones:Vector<Bone> = new Vector<Bone>();
-	private inline var _slots:Vector<Slot> = new Vector<Slot>();
-	private inline var _actions:Vector<ActionData> = new Vector<ActionData>();
-	private inline var _events:Vector<EventObject> = new Vector<EventObject>();
+	private var _bones:Vector<Bone> = new Vector<Bone>();
+	private var _slots:Vector<Slot> = new Vector<Slot>();
+	private var _actions:Vector<ActionData> = new Vector<ActionData>();
+	private var _events:Vector<EventObject> = new Vector<EventObject>();
 	/**
 	 * @private
 	 */
@@ -91,7 +92,7 @@ import dragonBones.textures.TextureAtlasData;
 	/**
 	 * @private
 	 */
-	private function new() {}
+	@:allow("dragonBones") private function new() {}
 	/**
 	 * @private
 	 */
@@ -202,7 +203,7 @@ import dragonBones.textures.TextureAtlasData;
 				continue;
 			}
 			
-			if (bone.ik != null && bone.ikChain > 0 && bone.ikChainIndex === bone.ikChain)
+			if (bone.ik != null && bone.ikChain > 0 && bone.ikChainIndex == bone.ikChain)
 			{
 				_bones.splice(_bones.indexOf(bone.parent) + 1, 0, bone); // ik, parent, bone, children
 			}
@@ -233,7 +234,7 @@ import dragonBones.textures.TextureAtlasData;
 	/**
 	 * @private
 	 */
-	public function _init(
+	@:allow("dragonBones") private function _init(
 		armatureData: ArmatureData, skinData: SkinData,
 		display:Dynamic, proxy: IArmatureProxy, eventManager: IEventDispatcher
 	):Void 
@@ -245,7 +246,7 @@ import dragonBones.textures.TextureAtlasData;
 		
 		_armatureData = armatureData;
 		_skinData = skinData;
-		_animation = BaseObject.borrowObject(Animation) as Animation;
+		_animation = cast BaseObject.borrowObject(Animation);
 		_proxy = proxy;
 		_display = display;
 		_eventManager = eventManager;
@@ -420,7 +421,7 @@ import dragonBones.textures.TextureAtlasData;
 		var l:UInt = 0;
 		
 		// Update bones and slots.
-		if (currentCacheFrameIndex < 0 || currentCacheFrameIndex !== prevCacheFrameIndex) 
+		if (currentCacheFrameIndex < 0 || currentCacheFrameIndex != prevCacheFrameIndex) 
 		{
 			l = _bones.length;
 			for (i in 0...l)
@@ -457,7 +458,7 @@ import dragonBones.textures.TextureAtlasData;
 					eventObject = _events[i];
 					_proxy._dispatchEvent(eventObject.type, eventObject);
 					
-					if (eventObject.type === EventObject.SOUND_EVENT)
+					if (eventObject.type == EventObject.SOUND_EVENT)
 					{
 						_eventManager._dispatchEvent(eventObject.type, eventObject);
 					}
@@ -542,7 +543,7 @@ import dragonBones.textures.TextureAtlasData;
 					for (i in 0...l)
 					{
 						slot = _slots[i];
-						if (slot.parent === bone)
+						if (slot.parent == bone)
 						{
 							slot.invalidUpdate();
 						}
@@ -723,7 +724,7 @@ import dragonBones.textures.TextureAtlasData;
 		for (i in 0...l)
 		{
 			bone = _bones[i];
-			if (bone.name === name) 
+			if (bone.name == name) 
 			{
 				return bone;
 			}
@@ -760,7 +761,7 @@ import dragonBones.textures.TextureAtlasData;
 		for (i in 0...l)
 		{
 			slot = _slots[i];
-			if (slot.name === name) 
+			if (slot.name == name) 
 			{
 				return slot;
 			}
@@ -956,7 +957,7 @@ import dragonBones.textures.TextureAtlasData;
 	}
 	private function set_clock(value:WorldClock):WorldClock
 	{
-		if (_clock === value) 
+		if (_clock == value) 
 		{
 			return;
 		}
@@ -1048,5 +1049,4 @@ import dragonBones.textures.TextureAtlasData;
 	{
 		_display.removeEvent(type, listener);
 	}
-}
 }

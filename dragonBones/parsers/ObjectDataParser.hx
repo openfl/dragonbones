@@ -1,17 +1,19 @@
 ﻿package dragonBones.parsers;
 
+import haxe.Constraints;
+
 import openfl.geom.ColorTransform;
 import openfl.geom.Matrix;
 import openfl.Vector;
 
 import dragonBones.core.BaseObject;
 import dragonBones.core.DragonBones;
-import dragonBones.enum.ActionType;
-import dragonBones.enum.ArmatureType;
-import dragonBones.enum.BlendMode;
-import dragonBones.enum.BoundingBoxType;
-import dragonBones.enum.DisplayType;
-import dragonBones.enum.EventType;
+import dragonBones.enums.ActionType;
+import dragonBones.enums.ArmatureType;
+import dragonBones.enums.BlendMode;
+import dragonBones.enums.BoundingBoxType;
+import dragonBones.enums.DisplayType;
+import dragonBones.enums.EventType;
 import dragonBones.geom.Transform;
 import dragonBones.objects.ActionData;
 import dragonBones.objects.AnimationConfig;
@@ -50,7 +52,7 @@ class ObjectDataParser extends DataParser
 	/**
 	 * @private
 	 */
-	private static #if !js inline #end function _getBoolean(rawData:Dynamic, key:String, defaultValue:Bool):Bool
+	@:allow("dragonBones") private static #if !js inline #end function _getBoolean(rawData:Dynamic, key:String, defaultValue:Bool):Bool
 	{
 		if (Reflect.hasField(rawData, key))
 		{
@@ -86,7 +88,7 @@ class ObjectDataParser extends DataParser
 	/**
 	 * @private
 	 */
-	private static #if !js inline #end function _getNumber(rawData:Dynamic, key:String, defaultValue:Float):Float
+	@:allow("dragonBones") private static #if !js inline #end function _getNumber(rawData:Dynamic, key:String, defaultValue:Float):Float
 	{
 		if (Reflect.hasField(rawData, key))
 		{
@@ -104,7 +106,7 @@ class ObjectDataParser extends DataParser
 	/**
 	 * @private
 	 */
-	private static #if !js inline #end function _getString(rawData:Dynamic, key:String, defaultValue:String):String
+	@:allow("dragonBones") private static #if !js inline #end function _getString(rawData:Dynamic, key:String, defaultValue:String):String
 	{
 		if (Reflect.hasField(key, rawData))
 		{
@@ -116,74 +118,74 @@ class ObjectDataParser extends DataParser
 	/**
 	 * @private
 	 */
-	private function new() {}
+	@:allow("dragonBones") private function new() {}
 	/**
 	 * @private
 	 */
-	private function _parseArmature(rawData:Dynamic, scale:Float):ArmatureData
+	@:allow("dragonBones") private function _parseArmature(rawData:Dynamic, scale:Float):ArmatureData
 	{
 		var armature:ArmatureData = cast BaseObject.borrowObject(ArmatureData);
-		armature.name = _getString(rawData, NAME, null);
-		armature.frameRate = _getNumber(rawData, FRAME_RATE, _data.frameRate) || _data.frameRate;
+		armature.name = _getString(rawData, DataParser.NAME, null);
+		armature.frameRate = _getNumber(rawData, DataParser.FRAME_RATE, _data.frameRate) || _data.frameRate;
 		armature.scale = scale;
 		
-		if (Reflect.hasField(rawData, TYPE) && Std.is(Reflect.field(rawData, TYPE), String)) 
+		if (Reflect.hasField(rawData, DataParser.TYPE) && Std.is(Reflect.field(rawData, DataParser.TYPE), String)) 
 		{
-			armature.type = _getArmatureType(Reflect.field(rawData, TYPE));
+			armature.type = _getArmatureType(Reflect.field(rawData, DataParser.TYPE));
 		} 
 		else 
 		{
-			armature.type = _getNumber(rawData, TYPE, ArmatureType.Armature);
+			armature.type = _getNumber(rawData, DataParser.TYPE, ArmatureType.Armature);
 		}
 		
 		_armature = armature;
 		_rawBones.length = 0;
 		
-		if (Reflect.hasField (rawData, BONE))
+		if (Reflect.hasField (rawData, DataParser.BONE))
 		{
 			var bone:BoneData;
-			for (boneObject in cast(Reflect.field(rawData, BONE), Array<Dynamic>))
+			for (boneObject in cast(Reflect.field(rawData, DataParser.BONE), Array<Dynamic>))
 			{
 				bone = _parseBone(boneObject);
-				armature.addBone(bone, _getString(boneObject, PARENT, null));
+				armature.addBone(bone, _getString(boneObject, DataParser.PARENT, null));
 				_rawBones.push(bone);
 			}
 		}
 		
-		if (Reflect.hasField(rawData, IK))
+		if (Reflect.hasField(rawData, DataParser.IK))
 		{
-			for (ikObject in cast(Reflect.field(rawData, IK), Array<Dynamic>))
+			for (ikObject in cast(Reflect.field(rawData, DataParser.IK), Array<Dynamic>))
 			{
 				_parseIK(ikObject);
 			}
 		}
 		
-		if (Reflect.hasField(rawData, SLOT))
+		if (Reflect.hasField(rawData, DataParser.SLOT))
 		{
 			var zOrder:Int = 0;
-			for (slotObject in cast(Reflect.field(rawData, SLOT), Array<Dynamic>))
+			for (slotObject in cast(Reflect.field(rawData, DataParser.SLOT), Array<Dynamic>))
 			{
 				armature.addSlot(_parseSlot(slotObject, zOrder++));
 			}
 		}
 		
-		if (Reflect.hasField(rawData, SKIN))
+		if (Reflect.hasField(rawData, DataParser.SKIN))
 		{
-			for (skinObject in cast(Reflect.field(rawData, SKIN), Array<Dynamic>))
+			for (skinObject in cast(Reflect.field(rawData, DataParser.SKIN), Array<Dynamic>))
 			{
 				armature.addSkin(_parseSkin(skinObject));
 			}
 		}
 		
-		if (Reflect.hasField(rawData, ANIMATION))
+		if (Reflect.hasField(rawData, DataParser.ANIMATION))
 		{
-			for (animationObject in cast(Reflect.field(rawData, ANIMATION), Array<Dynamic>))
+			for (animationObject in cast(Reflect.field(rawData, DataParser.ANIMATION), Array<Dynamic>))
 			{
 				armature.addAnimation(_parseAnimation(animationObject));
 			}
 		}
 		
-		if (Reflect.hasField(rawData, ACTIONS) || Reflect.hasField(rawData, DEFAULT_ACTIONS))
+		if (Reflect.hasField(rawData, DataParser.ACTIONS) || Reflect.hasField(rawData, DataParser.DEFAULT_ACTIONS))
 		{
 			_parseActionData(rawData, armature.actions, null, null);
 		}
@@ -202,18 +204,18 @@ class ObjectDataParser extends DataParser
 	/**
 	 * @private
 	 */
-	private function _parseBone(rawData:Dynamic):BoneData
+	@:allow("dragonBones") private function _parseBone(rawData:Dynamic):BoneData
 	{
 		var bone:BoneData = cast BaseObject.borrowObject(BoneData);
-		bone.name = _getString(rawData, NAME, null);
-		bone.inheritTranslation = _getBoolean(rawData, INHERIT_TRANSLATION, true);
-		bone.inheritRotation = _getBoolean(rawData, INHERIT_ROTATION, true);
-		bone.inheritScale = _getBoolean(rawData, INHERIT_SCALE, true);
-		bone.length = _getNumber(rawData, LENGTH, 0) * _armature.scale;
+		bone.name = _getString(rawData, DataParser.NAME, null);
+		bone.inheritTranslation = _getBoolean(rawData, DataParser.INHERIT_TRANSLATION, true);
+		bone.inheritRotation = _getBoolean(rawData, DataParser.INHERIT_ROTATION, true);
+		bone.inheritScale = _getBoolean(rawData, DataParser.INHERIT_SCALE, true);
+		bone.length = _getNumber(rawData, DataParser.LENGTH, 0) * _armature.scale;
 		
-		if (Reflect.hasField(rawData, TRANSFORM))
+		if (Reflect.hasField(rawData, DataParser.TRANSFORM))
 		{
-			_parseTransform(Reflect.field(rawData, TRANSFORM), bone.transform);
+			_parseTransform(Reflect.field(rawData, DataParser.TRANSFORM), bone.transform);
 		}
 		
 		if (_isOldData) // Support 2.x ~ 3.x data.
@@ -227,15 +229,15 @@ class ObjectDataParser extends DataParser
 	/**
 	 * @private
 	 */
-	private function _parseIK(rawData:Dynamic):Void
+	@:allow("dragonBones") private function _parseIK(rawData:Dynamic):Void
 	{
-		var bone:BoneData = _armature.getBone(_getString(rawData, Reflect.hasField(rawData, BONE)? BONE: NAME, null));
+		var bone:BoneData = _armature.getBone(_getString(rawData, Reflect.hasField(rawData, DataParser.BONE)? DataParser.BONE: DataParser.NAME, null));
 		if (bone != null)
 		{
-			bone.ik = _armature.getBone(_getString(rawData, TARGET, null));
-			bone.bendPositive = _getBoolean(rawData, BEND_POSITIVE, true);
-			bone.chain = _getNumber(rawData, CHAIN, 0);
-			bone.weight = _getNumber(rawData, WEIGHT, 1);
+			bone.ik = _armature.getBone(_getString(rawData, DataParser.TARGET, null));
+			bone.bendPositive = _getBoolean(rawData, DataParser.BEND_POSITIVE, true);
+			bone.chain = _getNumber(rawData, DataParser.CHAIN, 0);
+			bone.weight = _getNumber(rawData, DataParser.WEIGHT, 1);
 			
 			if (bone.chain > 0 && bone.parent != null && bone.parent.ik == null)
 			{
@@ -255,45 +257,45 @@ class ObjectDataParser extends DataParser
 	/**
 	 * @private
 	 */
-	private function _parseSlot(rawData:Dynamic, zOrder:Int):SlotData
+	@:allow("dragonBones") private function _parseSlot(rawData:Dynamic, zOrder:Int):SlotData
 	{
-		inline var slot:SlotData = cast BaseObject.borrowObject(SlotData);
-		slot.name = _getString(rawData, NAME, null);
-		slot.parent = _armature.getBone(_getString(rawData, PARENT, null));
-		slot.displayIndex = _getNumber(rawData, DISPLAY_INDEX, 0);
-		slot.zOrder = _getNumber(rawData, Z, zOrder); // Support 2.x ~ 3.x data.
+		var slot:SlotData = cast BaseObject.borrowObject(SlotData);
+		slot.name = _getString(rawData, DataParser.NAME, null);
+		slot.parent = _armature.getBone(_getString(rawData, DataParser.PARENT, null));
+		slot.displayIndex = _getNumber(rawData, DataParser.DISPLAY_INDEX, 0);
+		slot.zOrder = _getNumber(rawData, DataParser.Z, zOrder); // Support 2.x ~ 3.x data.
 		
-		if (Reflect.hasField(rawData, COLOR))
+		if (Reflect.hasField(rawData, DataParser.COLOR))
 		{
 			slot.color = SlotData.generateColor();
-			_parseColorTransform(Reflect.field(rawData, COLOR), slot.color);
+			_parseColorTransform(Reflect.field(rawData, DataParser.COLOR), slot.color);
 		}
 		else
 		{
 			slot.color = SlotData.DEFAULT_COLOR;
 		}
 		
-		if (Reflect.hasField(rawData, BLEND_MODE) && Std.is(Reflect.field(rawData, BLEND_MODE), String))
+		if (Reflect.hasField(rawData, DataParser.BLEND_MODE) && Std.is(Reflect.field(rawData, DataParser.BLEND_MODE), String))
 		{
 			
-			slot.blendMode = _getBlendMode(Reflect.field(rawData, BLEND_MODE));
+			slot.blendMode = _getBlendMode(Reflect.field(rawData, DataParser.BLEND_MODE));
 		}
 		else
 		{
-			slot.blendMode = _getNumber(rawData, BLEND_MODE, BlendMode.Normal);
+			slot.blendMode = _getNumber(rawData, DataParser.BLEND_MODE, BlendMode.Normal);
 		}
 		
-		if (Reflect.hasField(rawData, ACTIONS) || Reflect.hasField(rawData, DEFAULT_ACTIONS))
+		if (Reflect.hasField(rawData, DataParser.ACTIONS) || Reflect.hasField(rawData, DataParser.DEFAULT_ACTIONS))
 		{
 			_parseActionData(rawData, slot.actions, null, null);
 		}
 		
 		if (_isOldData) // Support 2.x ~ 3.x data.
 		{
-			if (Reflect.hasField(rawData, COLOR_TRANSFORM)) 
+			if (Reflect.hasField(rawData, DataParser.COLOR_TRANSFORM)) 
 			{
 				slot.color = SlotData.generateColor();
-				_parseColorTransform(Reflect.field(rawData, COLOR_TRANSFORM), slot.color);
+				_parseColorTransform(Reflect.field(rawData, DataParser.COLOR_TRANSFORM), slot.color);
 			} 
 			else 
 			{
@@ -307,17 +309,17 @@ class ObjectDataParser extends DataParser
 	/**
 	 * @private
 	 */
-	private function _parseSkin(rawData:Dynamic):SkinData
+	@:allow("dragonBones") private function _parseSkin(rawData:Dynamic):SkinData
 	{
-		inline var skin:SkinData = cast BaseObject.borrowObject(SkinData);
-		skin.name = _getString(rawData, NAME, DEFAULT_NAME);
-		if (skin.name == null) skin.name = DEFAULT_NAME;
+		var skin:SkinData = cast BaseObject.borrowObject(SkinData);
+		skin.name = _getString(rawData, DataParser.NAME, DataParser.DEFAULT_NAME);
+		if (skin.name == null) skin.name = DataParser.DEFAULT_NAME;
 		
-		if (Reflect.hasField(rawData, SLOT))
+		if (Reflect.hasField(rawData, DataParser.SLOT))
 		{
 			_skin = skin;
 			var zOrder:Int = 0;
-			for (slotObject in cast(Reflect.field(rawData, SLOT), Array<Dynamic>))
+			for (slotObject in cast(Reflect.field(rawData, DataParser.SLOT), Array<Dynamic>))
 			{
 				if (_isOldData != null) // Support 2.x ~ 3.x data.
 				{
@@ -336,14 +338,14 @@ class ObjectDataParser extends DataParser
 	/**
 	 * @private
 	 */
-	private function _parseSlotDisplaySet(rawData:Dynamic):SkinSlotData
+	@:allow("dragonBones") private function _parseSlotDisplaySet(rawData:Dynamic):SkinSlotData
 	{
 		var slotDisplayDataSet:SkinSlotData = cast BaseObject.borrowObject(SkinSlotData);
-		slotDisplayDataSet.slot = _armature.getSlot(_getString(rawData, NAME, null));
+		slotDisplayDataSet.slot = _armature.getSlot(_getString(rawData, DataParser.NAME, null));
 		
-		if (Reflect.hasField(rawData, DISPLAY))
+		if (Reflect.hasField(rawData, DataParser.DISPLAY))
 		{
-			var displayObjectSet:Array<Dynamic> = Reflect.field(rawData, DISPLAY);
+			var displayObjectSet:Array<Dynamic> = Reflect.field(rawData, DataParser.DISPLAY);
 			var displayDataSet:Vector<DisplayData> = slotDisplayDataSet.displays;
 			
 			_skinSlotData = slotDisplayDataSet;
@@ -363,36 +365,36 @@ class ObjectDataParser extends DataParser
 	/**
 	 * @private
 	 */
-	private function _parseDisplay(rawData:Dynamic):DisplayData
+	@:allow("dragonBones") private function _parseDisplay(rawData:Dynamic):DisplayData
 	{
 		var display:DisplayData = cast BaseObject.borrowObject(DisplayData);
-		display.name = _getString(rawData, NAME, null);
-		display.path = _getString(rawData, PATH, display.name);
+		display.name = _getString(rawData, DataParser.NAME, null);
+		display.path = _getString(rawData, DataParser.PATH, display.name);
 		
-		if (Reflect.hasField(rawData, TYPE) && Std.is(Reflect.field(rawData, TYPE), String))
+		if (Reflect.hasField(rawData, DataParser.TYPE) && Std.is(Reflect.field(rawData, DataParser.TYPE), String))
 		{
 			
-			display.type = _getDisplayType(Reflect.field(rawData, TYPE));
+			display.type = _getDisplayType(Reflect.field(rawData, DataParser.TYPE));
 		}
 		else
 		{
-			display.type = _getNumber(rawData, TYPE, DisplayType.Image);
+			display.type = _getNumber(rawData, DataParser.TYPE, DisplayType.Image);
 		}
 		
 		display.isRelativePivot = true;
 		
-		if (Reflect.hasField(rawData, PIVOT))
+		if (Reflect.hasField(rawData, DataParser.PIVOT))
 		{
-			var rawPivot:Dynamic = Reflect.field(rawData, PIVOT);
-			display.pivot.x = _getNumber(rawPivot, X, 0);
-			display.pivot.y = _getNumber(rawPivot, Y, 0);
+			var rawPivot:Dynamic = Reflect.field(rawData, DataParser.PIVOT);
+			display.pivot.x = _getNumber(rawPivot, DataParser.X, 0);
+			display.pivot.y = _getNumber(rawPivot, DataParser.Y, 0);
 		}
 		else if (_isOldData) // Support 2.x ~ 3.x data.
 		{
-			var rawTransform:Dynamic = Reflect.field(rawData, TRANSFORM);
+			var rawTransform:Dynamic = Reflect.field(rawData, DataParser.TRANSFORM);
 			display.isRelativePivot = false;
-			display.pivot.x = _getNumber(rawTransform, PIVOT_X, 0) * _armature.scale;
-			display.pivot.y = _getNumber(rawTransform, PIVOT_Y, 0) * _armature.scale;
+			display.pivot.x = _getNumber(rawTransform, DataParser.PIVOT_X, 0) * _armature.scale;
+			display.pivot.y = _getNumber(rawTransform, DataParser.PIVOT_Y, 0) * _armature.scale;
 		}
 		else
 		{
@@ -400,9 +402,9 @@ class ObjectDataParser extends DataParser
 			display.pivot.y = 0.5;
 		}
 		
-		if (Reflect.hasField(rawData, TRANSFORM))
+		if (Reflect.hasField(rawData, DataParser.TRANSFORM))
 		{
-			_parseTransform(Reflect.field(rawData, TRANSFORM), display.transform);
+			_parseTransform(Reflect.field(rawData, DataParser.TRANSFORM), display.transform);
 		}
 		
 		switch (display.type)
@@ -412,7 +414,7 @@ class ObjectDataParser extends DataParser
 			case DisplayType.Armature:
 			
 			case DisplayType.Mesh:
-				display.share = _getString(rawData, SHARE, null);
+				display.share = _getString(rawData, DataParser.SHARE, null);
 				if (!display.share) 
 				{
 					display.mesh = _parseMesh(rawData);
@@ -428,30 +430,30 @@ class ObjectDataParser extends DataParser
 	/**
 	 * @private
 	 */
-	private function _parseBoundingBox(rawData:Dynamic): BoundingBoxData 
+	@:allow("dragonBones") private function _parseBoundingBox(rawData:Dynamic): BoundingBoxData 
 	{
 		var boundingBox:BoundingBoxData = cast BaseObject.borrowObject(BoundingBoxData);
 		
-		if (Reflect.hasField (rawData, SUB_TYPE) && Std.is(Reflect.field(rawData, SUB_TYPE), String)) {
-			boundingBox.type = _getBoundingBoxType(Reflect.field(rawData, SUB_TYPE));
+		if (Reflect.hasField (rawData, DataParser.SUB_TYPE) && Std.is(Reflect.field(rawData, DataParser.SUB_TYPE), String)) {
+			boundingBox.type = _getBoundingBoxType(Reflect.field(rawData, DataParser.SUB_TYPE));
 		}
 		else 
 		{
-			boundingBox.type = _getNumber(rawData, SUB_TYPE, BoundingBoxType.Rectangle);
+			boundingBox.type = _getNumber(rawData, DataParser.SUB_TYPE, BoundingBoxType.Rectangle);
 		}
 		
-		boundingBox.color = _getNumber(rawData, COLOR, 0x000000);
+		boundingBox.color = _getNumber(rawData, DataParser.COLOR, 0x000000);
 		
 		switch (boundingBox.type) 
 		{
 			case BoundingBoxType.Rectangle, BoundingBoxType.Ellipse:
-				boundingBox.width = _getNumber(rawData, WIDTH, 0.0);
-				boundingBox.height = _getNumber(rawData, HEIGHT, 0.0);
+				boundingBox.width = _getNumber(rawData, DataParser.WIDTH, 0.0);
+				boundingBox.height = _getNumber(rawData, DataParser.HEIGHT, 0.0);
 			
 			case BoundingBoxType.Polygon:
-				if (Reflect.hasField(rawData, VERTICES)) 
+				if (Reflect.hasField(rawData, DataParser.VERTICES)) 
 				{
-					var rawVertices:Array<Dynamic> = Reflect.field(rawData, VERTICES);
+					var rawVertices:Array<Dynamic> = Reflect.field(rawData, DataParser.VERTICES);
 					boundingBox.vertices.length = rawVertices.length;
 					boundingBox.vertices.fixed = true;
 					
@@ -505,20 +507,20 @@ class ObjectDataParser extends DataParser
 	/**
 	 * @private
 	 */
-	private function _parseMesh(rawData:Dynamic):MeshData
+	@:allow("dragonBones") private function _parseMesh(rawData:Dynamic):MeshData
 	{
 		var mesh:MeshData = cast BaseObject.borrowObject(MeshData);
 		
-		var rawVertices:Array<Dynamic> = Reflect.field(rawData, VERTICES);
-		var rawUVs:Array<Dynamic> = Reflect.field(rawData, UVS);
-		var rawTriangles:Array<Dynamic> = Reflect.field(rawData, TRIANGLES);
+		var rawVertices:Array<Dynamic> = Reflect.field(rawData, DataParser.VERTICES);
+		var rawUVs:Array<Dynamic> = Reflect.field(rawData, DataParser.UVS);
+		var rawTriangles:Array<Dynamic> = Reflect.field(rawData, DataParser.TRIANGLES);
 		
 		var numVertices:UInt = Std.int(rawVertices.length / 2);
 		var numTriangles:UInt = Std.int(rawTriangles.length / 3);
 		
 		var inverseBindPose:Vector<Matrix> = new Vector<Matrix>(_armature.sortedBones.length, true);
 		
-		mesh.skinned = Reflect.hasField(rawData, WEIGHTS)&& cast(Reflect.field(rawData, WEIGHTS), Array<Dynamic>).length > 0;
+		mesh.skinned = Reflect.hasField(rawData, DataParser.WEIGHTS)&& cast(Reflect.field(rawData, DataParser.WEIGHTS), Array<Dynamic>).length > 0;
 		mesh.name = _getString(rawData, NAME, null);
 		mesh.uvs.length = numVertices * 2;
 		mesh.uvs.fixed = true;
@@ -539,9 +541,9 @@ class ObjectDataParser extends DataParser
 			mesh.boneVertices.length = numVertices;
 			mesh.boneVertices.fixed = true;
 			
-			if (Reflect.hasField(rawData, SLOT_POSE))
+			if (Reflect.hasField(rawData, DataParser.SLOT_POSE))
 			{
-				var rawSlotPose:Array<Dynamic> = Reflect.field(rawData, SLOT_POSE);
+				var rawSlotPose:Array<Dynamic> = Reflect.field(rawData, DataParser.SLOT_POSE);
 				mesh.slotPose.a = rawSlotPose[0];
 				mesh.slotPose.b = rawSlotPose[1];
 				mesh.slotPose.c = rawSlotPose[2];
@@ -550,15 +552,15 @@ class ObjectDataParser extends DataParser
 				mesh.slotPose.ty = rawSlotPose[5] * _armature.scale;
 			}
 			
-			if (Reflect.hasField(rawData, BONE_POSE))
+			if (Reflect.hasField(rawData, DataParser.BONE_POSE))
 			{
-				var rawBonePose:Array<Dynamic> = Reflect.field(rawData, BONE_POSE);
+				var rawBonePose:Array<Dynamic> = Reflect.field(rawData, DataParser.BONE_POSE);
 				i = 0;
 				l = rawBonePose.length;
 				var boneMatrix:Matrix;
 				while (i < l)
 				{
-					//inline var rawBoneIndex:UInt = rawBonePose[i];
+					//var rawBoneIndex:UInt = rawBonePose[i];
 					boneMatrix = inverseBindPose[rawBonePose[i]] = new Matrix();
 					boneMatrix.a = rawBonePose[i + 1];
 					boneMatrix.b = rawBonePose[i + 2];
@@ -591,7 +593,7 @@ class ObjectDataParser extends DataParser
 			
 			if (mesh.skinned)
 			{
-				rawWeights = Reflect.field(rawData, WEIGHTS);
+				rawWeights = Reflect.field(rawData, DataParser.WEIGHTS);
 				numBones = rawWeights[iW];
 				indices = mesh.boneIndices[vertexIndex] = new Vector<UInt>(numBones, true);
 				weights = mesh.weights[vertexIndex] = new Vector<Float>(numBones, true);
@@ -647,46 +649,46 @@ class ObjectDataParser extends DataParser
 	/**
 	 * @private
 	 */
-	private function _parseAnimation(rawData:Dynamic):AnimationData
+	@:allow("dragonBones") private function _parseAnimation(rawData:Dynamic):AnimationData
 	{
 		var animation:AnimationData = cast BaseObject.borrowObject(AnimationData);
-		animation.name = _getString(rawData, NAME, DEFAULT_NAME);
-		if (animation.name == null) animation.name = DEFAULT_NAME;
-		animation.frameCount = Math.max(_getNumber(rawData, DURATION, 1), 1);
+		animation.name = _getString(rawData, DataParser.NAME, DataParser.DEFAULT_NAME);
+		if (animation.name == null) animation.name = DataParser.DEFAULT_NAME;
+		animation.frameCount = Math.max(_getNumber(rawData, DataParser.DURATION, 1), 1);
 		animation.duration = animation.frameCount / _armature.frameRate;
-		animation.playTimes = _getNumber(rawData, PLAY_TIMES, 1);
-		animation.fadeInTime = _getNumber(rawData, FADE_IN_TIME, 0);
+		animation.playTimes = _getNumber(rawData, DataParser.PLAY_TIMES, 1);
+		animation.fadeInTime = _getNumber(rawData, DataParser.FADE_IN_TIME, 0);
 		
 		_animation = animation;
 		
 		_parseTimeline(rawData, animation, _parseAnimationFrame);
 		
-		if (Reflect.hasField(rawData, Z_ORDER)) 
+		if (Reflect.hasField(rawData, DataParser.Z_ORDER)) 
 		{
 			animation.zOrderTimeline = cast BaseObject.borrowObject(ZOrderTimelineData);
-			_parseTimeline(Reflect.field(rawData, Z_ORDER), animation.zOrderTimeline, _parseZOrderFrame);
+			_parseTimeline(Reflect.field(rawData, DataParser.Z_ORDER), animation.zOrderTimeline, _parseZOrderFrame);
 		}
 		
-		if (Reflect.hasField(rawData, BONE))
+		if (Reflect.hasField(rawData, DataParser.BONE))
 		{
-			for (rawBoneTimeline in cast(Reflect.field(rawData, BONE), Array<Dynamic>))
+			for (rawBoneTimeline in cast(Reflect.field(rawData, DataParser.BONE), Array<Dynamic>))
 			{
 				animation.addBoneTimeline(_parseBoneTimeline(rawBoneTimeline));
 			}
 		}
 		
-		if (Reflect.hasField(rawData, SLOT))
+		if (Reflect.hasField(rawData, DataParser.SLOT))
 		{
-			for (rawSlotTimeline in cast(Reflect.field(rawData, SLOT), Array<Dynamic>))
+			for (rawSlotTimeline in cast(Reflect.field(rawData, DataParser.SLOT), Array<Dynamic>))
 			{
 				animation.addSlotTimeline(_parseSlotTimeline(rawSlotTimeline));
 			}
 			
 		}
 		
-		if (Reflect.hasField(rawData, FFD))
+		if (Reflect.hasField(rawData, DataParser.FFD))
 		{
-			for (rawFFDTimeline in cast(Reflect.field(rawData, FFD), Array<Dynamic>))
+			for (rawFFDTimeline in cast(Reflect.field(rawData, DataParser.FFD), Array<Dynamic>))
 			{
 				animation.addFFDTimeline(_parseFFDTimeline(rawFFDTimeline));
 			}
@@ -694,13 +696,13 @@ class ObjectDataParser extends DataParser
 		
 		if (_isOldData) // Support 2.x ~ 3.x data.
 		{
-			_isAutoTween = _getBoolean(rawData, AUTO_TWEEN, true);
-			_animationTweenEasing = _getNumber(rawData, TWEEN_EASING, 0) || 0;
-			animation.playTimes = _getNumber(rawData, LOOP, 1);
+			_isAutoTween = _getBoolean(rawData, DataParser.AUTO_TWEEN, true);
+			_animationTweenEasing = _getNumber(rawData, DataParser.TWEEN_EASING, 0) || 0;
+			animation.playTimes = _getNumber(rawData, DataParser.LOOP, 1);
 			
-			if (Reflect.hasField(rawData, TIMELINE)) 
+			if (Reflect.hasField(rawData, DataParser.TIMELINE)) 
 			{
-				var rawTimelines:Array<Dynamic> = Reflect.field(rawData, TIMELINE);
+				var rawTimelines:Array<Dynamic> = Reflect.field(rawData, DataParser.TIMELINE);
 				var l:UInt = rawTimelines.length;
 				for (i in 0...l) {
 					animation.addBoneTimeline(_parseBoneTimeline(rawTimelines[i]));
@@ -779,10 +781,10 @@ class ObjectDataParser extends DataParser
 	/**
 	 * @private
 	 */
-	private function _parseBoneTimeline(rawData:Dynamic):BoneTimelineData
+	@:allow("dragonBones") private function _parseBoneTimeline(rawData:Dynamic):BoneTimelineData
 	{
 		var timeline:BoneTimelineData = cast BaseObject.borrowObject(BoneTimelineData);
-		timeline.bone = _armature.getBone(_getString(rawData, NAME, null));
+		timeline.bone = _armature.getBone(_getString(rawData, DataParser.NAME, null));
 		
 		_parseTimeline(rawData, timeline, _parseBoneFrame);
 		
@@ -816,10 +818,10 @@ class ObjectDataParser extends DataParser
 			prevFrame = frame;
 		}
 		
-		if (_isOldData && (Reflect.hasField(rawData, PIVOT_X) || Reflect.hasField(rawData, PIVOT_Y)))  // Support 2.x ~ 3.x data.
+		if (_isOldData && (Reflect.hasField(rawData, DataParser.PIVOT_X) || Reflect.hasField(rawData, DataParser.PIVOT_Y)))  // Support 2.x ~ 3.x data.
 		{
-			_timelinePivot.x = _getNumber(rawData, PIVOT_X, 0.0) * _armature.scale;
-			_timelinePivot.y = _getNumber(rawData, PIVOT_Y, 0.0) * _armature.scale;
+			_timelinePivot.x = _getNumber(rawData, DataParser.PIVOT_X, 0.0) * _armature.scale;
+			_timelinePivot.y = _getNumber(rawData, DataParser.PIVOT_Y, 0.0) * _armature.scale;
 		} 
 		else 
 		{
@@ -833,10 +835,10 @@ class ObjectDataParser extends DataParser
 	/**
 	 * @private
 	 */
-	private function _parseSlotTimeline(rawData:Dynamic):SlotTimelineData
+	@:allow("dragonBones") private function _parseSlotTimeline(rawData:Dynamic):SlotTimelineData
 	{
 		var timeline:SlotTimelineData = cast BaseObject.borrowObject(SlotTimelineData);
-		timeline.slot = _armature.getSlot(_getString(rawData, NAME, null));
+		timeline.slot = _armature.getSlot(_getString(rawData, DataParser.NAME, null));
 		
 		_parseTimeline(rawData, timeline, _parseSlotFrame);
 		
@@ -846,13 +848,13 @@ class ObjectDataParser extends DataParser
 	/**
 	 * @private
 	 */
-	private function _parseFFDTimeline(rawData:Dynamic):FFDTimelineData
+	@:allow("dragonBones") private function _parseFFDTimeline(rawData:Dynamic):FFDTimelineData
 	{
 		var timeline:FFDTimelineData = cast BaseObject.borrowObject(FFDTimelineData);
-		timeline.skin = _armature.getSkin(_getString(rawData, SKIN, null));
-		timeline.slot = timeline.skin.getSlot(_getString(rawData, SLOT, null)); // NAME;
+		timeline.skin = _armature.getSkin(_getString(rawData, DataParser.SKIN, null));
+		timeline.slot = timeline.skin.getSlot(_getString(rawData, DataParser.SLOT, null)); // NAME;
 		
-		var meshName:String = _getString(rawData, NAME, null);
+		var meshName:String = _getString(rawData, DataParser.NAME, null);
 		var l:UInt = timeline.slot.displays.length;
 		var display:DisplayData;
 		for (i in 0...l)
@@ -873,18 +875,18 @@ class ObjectDataParser extends DataParser
 	/**
 	 * @private
 	 */
-	private function _parseAnimationFrame(rawData:Dynamic, frameStart:UInt, frameCount:UInt):AnimationFrameData
+	@:allow("dragonBones") private function _parseAnimationFrame(rawData:Dynamic, frameStart:UInt, frameCount:UInt):AnimationFrameData
 	{
 		var frame:AnimationFrameData = cast BaseObject.borrowObject(AnimationFrameData);
 		
 		_parseFrame(rawData, frame, frameStart, frameCount);
 		
-		if (Reflect.hasField(rawData, ACTION) || Reflect.hasField(rawData, ACTIONS)) 
+		if (Reflect.hasField(rawData, DataParser.ACTION) || Reflect.hasField(rawData, DataParser.ACTIONS)) 
 		{
 			_parseActionData(rawData, frame.actions, null, null);
 		}
 		
-		if (Reflect.hasField(rawData, EVENTS) || Reflect.hasField(rawData, EVENT) || Reflect.hasField(rawData, SOUND))
+		if (Reflect.hasField(rawData, DataParser.EVENTS) || Reflect.hasField(rawData, DataParser.EVENT) || Reflect.hasField(rawData, DataParser.SOUND))
 		{
 			_parseEventData(rawData, frame.events, null, null);
 		}
@@ -895,13 +897,13 @@ class ObjectDataParser extends DataParser
 	/**
 	 * @private
 	 */
-	private function _parseZOrderFrame(rawData:Dynamic, frameStart:UInt, frameCount:UInt):ZOrderFrameData 
+	@:allow("dragonBones") private function _parseZOrderFrame(rawData:Dynamic, frameStart:UInt, frameCount:UInt):ZOrderFrameData 
 	{
 		var frame:ZOrderFrameData = cast BaseObject.borrowObject(ZOrderFrameData);
 		
 		_parseFrame(rawData, frame, frameStart, frameCount);
 		
-		var zOrder:Array<Dynamic> = cast(Reflect.field(rawData, Z_ORDER), Array<Dynamic>);
+		var zOrder:Array<Dynamic> = cast(Reflect.field(rawData, DataParser.Z_ORDER), Array<Dynamic>);
 		if (zOrder != null && zOrder.length > 0) {
 			var slotCount:UInt = _armature.sortedSlots.length;
 			var unchanged:Vector<Int> = new Vector<Int>(slotCount - zOrder.length / 2);
@@ -928,7 +930,7 @@ class ObjectDataParser extends DataParser
 				}
 				
 				frame.zOrder[originalIndex + offset] = originalIndex++;
-				i += 2
+				i += 2;
 			}
 			
 			while (originalIndex < slotCount) 
@@ -952,23 +954,23 @@ class ObjectDataParser extends DataParser
 	/**
 	 * @private
 	 */
-	private function _parseBoneFrame(rawData:Dynamic, frameStart:UInt, frameCount:UInt):BoneFrameData
+	@:allow("dragonBones") private function _parseBoneFrame(rawData:Dynamic, frameStart:UInt, frameCount:UInt):BoneFrameData
 	{
 		var frame:BoneFrameData = cast BaseObject.borrowObject(BoneFrameData);
-		frame.tweenRotate = _getNumber(rawData, TWEEN_ROTATE, 0.0);
-		frame.tweenScale = _getBoolean(rawData, TWEEN_SCALE, true);
+		frame.tweenRotate = _getNumber(rawData, DataParser.TWEEN_ROTATE, 0.0);
+		frame.tweenScale = _getBoolean(rawData, DataParser.TWEEN_SCALE, true);
 		
 		_parseTweenFrame(rawData, frame, frameStart, frameCount);
 		
-		if (Reflect.hasField(rawData, TRANSFORM))
+		if (Reflect.hasField(rawData, DataParser.TRANSFORM))
 		{
-			var transformObject:Dynamic = Reflect.field(rawData, TRANSFORM);
-			_parseTransform(Reflect.field(rawData, TRANSFORM), frame.transform);
+			var transformObject:Dynamic = Reflect.field(rawData, DataParser.TRANSFORM);
+			_parseTransform(Reflect.field(rawData, DataParser.TRANSFORM), frame.transform);
 			
 			if (_isOldData) // Support 2.x ~ 3.x data.
 			{
-				_helpPoint.x = _timelinePivot.x + _getNumber(transformObject, PIVOT_X, 0.0) * _armature.scale;
-				_helpPoint.y = _timelinePivot.y + _getNumber(transformObject, PIVOT_Y, 0.0) * _armature.scale;
+				_helpPoint.x = _timelinePivot.x + _getNumber(transformObject, DataParser.PIVOT_X, 0.0) * _armature.scale;
+				_helpPoint.y = _timelinePivot.y + _getNumber(transformObject, DataParser.PIVOT_Y, 0.0) * _armature.scale;
 				frame.transform.toMatrix(_helpMatrix);
 				Transform.transformPoint(_helpMatrix, _helpPoint.x, _helpPoint.y, _helpPoint, true);
 				frame.transform.x += _helpPoint.x;
@@ -980,13 +982,13 @@ class ObjectDataParser extends DataParser
 		var actions:Vector<ActionData> = new Vector<ActionData>();
 		var events:Vector<EventData> = new Vector<EventData>();
 		
-		if (Reflect.hasField(rawData, ACTION) || Reflect.hasField(rawData, ACTIONS))
+		if (Reflect.hasField(rawData, DataParser.ACTION) || Reflect.hasField(rawData, DataParser.ACTIONS))
 		{
 			var slot:SlotData = _armature.getSlot(bone.name);
 			_parseActionData(rawData, actions, bone, slot);
 		}
 		
-		if (Reflect.hasField(rawData, EVENT) || Reflect.hasField(rawData, SOUND))
+		if (Reflect.hasField(rawData, DataParser.EVENT) || Reflect.hasField(rawData, DataParser.SOUND))
 		{
 			_parseEventData(rawData, events, bone, null);
 		}
@@ -1002,17 +1004,17 @@ class ObjectDataParser extends DataParser
 	/**
 	 * @private
 	 */
-	private function _parseSlotFrame(rawData:Dynamic, frameStart:UInt, frameCount:UInt):SlotFrameData
+	@:allow("dragonBones") private function _parseSlotFrame(rawData:Dynamic, frameStart:UInt, frameCount:UInt):SlotFrameData
 	{
 		var frame:SlotFrameData = cast BaseObject.borrowObject(SlotFrameData);
-		frame.displayIndex = _getNumber(rawData, DISPLAY_INDEX, 0);
+		frame.displayIndex = _getNumber(rawData, DataParser.DISPLAY_INDEX, 0);
 		
 		_parseTweenFrame(rawData, frame, frameStart, frameCount);
 		
-		if (Reflect.hasField(rawData, COLOR) || Reflect.hasField(rawData, COLOR_TRANSFORM)) // Support 2.x ~ 3.x data. (colorTransform key)
+		if (Reflect.hasField(rawData, DataParser.COLOR) || Reflect.hasField(rawData, DataParser.COLOR_TRANSFORM)) // Support 2.x ~ 3.x data. (colorTransform key)
 		{
 			frame.color = SlotFrameData.generateColor();
-			_parseColorTransform(Reflect.field(rawData, COLOR) || Reflect.field(rawData, COLOR_TRANSFORM), frame.color);
+			_parseColorTransform(Reflect.field(rawData, DataParser.COLOR) || Reflect.field(rawData, DataParser.COLOR_TRANSFORM), frame.color);
 		}
 		else
 		{
@@ -1021,12 +1023,12 @@ class ObjectDataParser extends DataParser
 		
 		if (_isOldData) // Support 2.x ~ 3.x data.
 		{
-			if (_getBoolean(rawData, HIDE, false)) 
+			if (_getBoolean(rawData, DataParser.HIDE, false)) 
 			{
 				frame.displayIndex = -1;
 			}
 		} 
-		else if (Reflect.hasField(rawData, ACTION) || Reflect.hasField(rawData, ACTIONS))
+		else if (Reflect.hasField(rawData, DataParser.ACTION) || Reflect.hasField(rawData, DataParser.ACTIONS))
 		{
 			var slot:SlotData = cast(_timeline, SlotTimelineData).slot;
 			var actions:Vector<ActionData> = new Vector<ActionData>();
@@ -1040,7 +1042,7 @@ class ObjectDataParser extends DataParser
 	/**
 	 * @private
 	 */
-	private function _parseFFDFrame(rawData:Dynamic, frameStart:UInt, frameCount:UInt):ExtensionFrameData
+	@:allow("dragonBones") private function _parseFFDFrame(rawData:Dynamic, frameStart:UInt, frameCount:UInt):ExtensionFrameData
 	{
 		var ffdTimeline:FFDTimelineData = cast(_timeline, FFDTimelineData);
 		var mesh:MeshData = ffdTimeline.display.mesh;
@@ -1048,8 +1050,8 @@ class ObjectDataParser extends DataParser
 		
 		_parseTweenFrame(rawData, frame, frameStart, frameCount);
 		
-		var rawVertices:Array<Dynamic> = Reflect.field(rawData, VERTICES);
-		var offset:UInt = _getNumber(rawData, OFFSET, 0);
+		var rawVertices:Array<Dynamic> = Reflect.field(rawData, DataParser.VERTICES);
+		var offset:UInt = _getNumber(rawData, DataParser.OFFSET, 0);
 		var x:Float = 0.0;
 		var y:Float = 0.0;
 		var i:UInt = 0;
@@ -1074,7 +1076,7 @@ class ObjectDataParser extends DataParser
 				x = _helpPoint.x;
 				y = _helpPoint.y;
 				
-				boneIndices> = mesh.boneIndices[i / 2];
+				boneIndices = mesh.boneIndices[Std.int(i / 2)];
 				lB = boneIndices.length;
 				for (iB in 0...lB)
 				{
@@ -1097,15 +1099,15 @@ class ObjectDataParser extends DataParser
 	/**
 	 * @private
 	 */
-	private function _parseTweenFrame(rawData:Dynamic, frame:TweenFrameData, frameStart:UInt, frameCount:UInt):Void
+	@:allow("dragonBones") private function _parseTweenFrame(rawData:Dynamic, frame:TweenFrameData, frameStart:UInt, frameCount:UInt):Void
 	{
 		_parseFrame(rawData, frame, frameStart, frameCount);
 		
 		if (frame.duration > 0)
 		{
-			if (Reflect.hasField(rawData, TWEEN_EASING))
+			if (Reflect.hasField(rawData, DataParser.TWEEN_EASING))
 			{
-				frame.tweenEasing = _getNumber(rawData, TWEEN_EASING, DragonBones.NO_TWEEN);
+				frame.tweenEasing = _getNumber(rawData, DataParser.TWEEN_EASING, DragonBones.NO_TWEEN);
 			}
 			else if (_isOldData) // Support 2.x ~ 3.x data.
 			{
@@ -1121,10 +1123,10 @@ class ObjectDataParser extends DataParser
 				frame.tweenEasing = DragonBones.NO_TWEEN;
 			}
 			
-			if (Reflect.hasField(rawData, CURVE))
+			if (Reflect.hasField(rawData, DataParser.CURVE))
 			{
 				frame.curve = new Vector<Float>(frameCount * 2 - 1, true);
-				TweenFrameData.samplingEasingCurve(Reflect.field(rawData, CURVE), frame.curve);
+				TweenFrameData.samplingEasingCurve(Reflect.field(rawData, DataParser.CURVE), frame.curve);
 			}
 		}
 		else
@@ -1136,7 +1138,7 @@ class ObjectDataParser extends DataParser
 	/**
 	 * @private
 	 */
-	private function _parseFrame(rawData:Dynamic, frame:FrameData, frameStart:UInt, frameCount:UInt):Void
+	@:allow("dragonBones") private function _parseFrame(rawData:Dynamic, frame:FrameData, frameStart:UInt, frameCount:UInt):Void
 	{
 		frame.position = frameStart / _armature.frameRate;
 		frame.duration = frameCount / _armature.frameRate;
@@ -1144,20 +1146,20 @@ class ObjectDataParser extends DataParser
 	/**
 	 * @private
 	 */
-	private function _parseTimeline(rawData:Dynamic, timeline:TimelineData, frameParser:Function):Void
+	@:allow("dragonBones") private function _parseTimeline(rawData:Dynamic, timeline:TimelineData, frameParser:Function):Void
 	{
-		timeline.scale = _getNumber(rawData, SCALE, 1);
-		timeline.offset = _getNumber(rawData, OFFSET, 0);
+		timeline.scale = _getNumber(rawData, DataParser.SCALE, 1);
+		timeline.offset = _getNumber(rawData, DataParser.OFFSET, 0);
 		
 		_timeline = timeline;
 		
-		if (Reflect.hasField(rawData, FRAME))
+		if (Reflect.hasField(rawData, DataParser.FRAME))
 		{
-			var rawFrames:Array<Dynamic> = Reflect.field(rawData, FRAME);
-			if (rawFrames.length === 1)
+			var rawFrames:Array<Dynamic> = Reflect.field(rawData, DataParser.FRAME);
+			if (rawFrames.length == 1)
 			{
 				timeline.frames.length = 1;
-				timeline.frames[0] = frameParser(rawFrames[0], 0, _getNumber(rawFrames[0], DURATION, 1));
+				timeline.frames[0] = frameParser(rawFrames[0], 0, _getNumber(rawFrames[0], DataParser.DURATION, 1));
 			}
 			else if (rawFrames.length > 1)
 			{
@@ -1177,7 +1179,7 @@ class ObjectDataParser extends DataParser
 					{
 						rawFrame = rawFrames[iW++];
 						frameStart = i;
-						frameCount = _getNumber(rawFrame, DURATION, 1);
+						frameCount = _getNumber(rawFrame, DataParser.DURATION, 1);
 						frame = frameParser(rawFrame, frameStart, frameCount);
 						
 						if (prevFrame != null)
@@ -1187,7 +1189,7 @@ class ObjectDataParser extends DataParser
 							
 							if (_isOldData) // Support 2.x ~ 3.x data.
 							{
-								if (Std.is(prevFrame, TweenFrameData) && rawFrame[DISPLAY_INDEX] == -1) 
+								if (Std.is(prevFrame, TweenFrameData) && rawFrame[DataParser.DISPLAY_INDEX] == -1) 
 								{
 									cast(prevFrame, TweenFrameData).tweenEasing = DragonBones.NO_TWEEN;
 								}
@@ -1208,7 +1210,7 @@ class ObjectDataParser extends DataParser
 				
 				if (_isOldData) // Support 2.x ~ 3.x data.
 				{
-					if (Std.is(prevFrame, TweenFrameData) && rawFrames[0][DISPLAY_INDEX] == -1) 
+					if (Std.is(prevFrame, TweenFrameData) && rawFrames[0][DataParser.DISPLAY_INDEX] == -1) 
 					{
 						cast(prevFrame, TweenFrameData).tweenEasing = DragonBones.NO_TWEEN;
 					}
@@ -1223,9 +1225,13 @@ class ObjectDataParser extends DataParser
 	/**
 	 * @private
 	 */
-	private function _parseActionData(rawData:Dynamic, actions:Vector<ActionData>, bone:BoneData, slot:SlotData):Void
+	@:allow("dragonBones") private function _parseActionData(rawData:Dynamic, actions:Vector<ActionData>, bone:BoneData, slot:SlotData):Void
 	{
-		var rawActions:Dynamic = Reflect.field(rawData, ACTION) || Reflect.field(rawData, ACTIONS) || Reflect.field(rawData, DEFAULT_ACTIONS);
+		var rawActions:Dynamic =
+		if (Reflect.hasField(rawData, DataParser.ACTION)) Reflect.field(rawData, DataParser.ACTION)
+		else if (Reflect.hasField(rawData, DataParser.ACTIONS)) Reflect.field(rawData, DataParser.ACTIONS)
+		else if (Reflect.hasField(rawData, DataParser.DEFAULT_ACTIONS)) Reflect.field(rawData, DataParser.DEFAULT_ACTIONS)
+		else null;
 		
 		if (Std.is(rawActions, String))
 		{
@@ -1234,10 +1240,10 @@ class ObjectDataParser extends DataParser
 			actionData.bone = bone;
 			actionData.slot = slot;
 			actionData.animationConfig = cast BaseObject.borrowObject(AnimationConfig);
-			actionData.animationConfig.animationName = rawActions as String;
+			actionData.animationConfig.animationName = cast rawActions;
 			actions.push(actionData);
 		}
-		else if (Std.is(rawActions, Array<Dynamic>)
+		else if (Std.is(rawActions, Array))
 		{
 			var l:UInt = rawActions.length;
 			var actionObject:Dynamic, isArray:Bool, animationName:String, actionType:Dynamic;
@@ -1283,77 +1289,77 @@ class ObjectDataParser extends DataParser
 	/**
 	 * @private
 	 */
-	private function _parseEventData(rawData:Dynamic, events:Vector<EventData>, bone:BoneData, slot:SlotData):Void
+	@:allow("dragonBones") private function _parseEventData(rawData:Dynamic, events:Vector<EventData>, bone:BoneData, slot:SlotData):Void
 	{
-		if (Reflect.hasField(rawData, SOUND))
+		if (Reflect.hasField(rawData, DataParser.SOUND))
 		{
 			var soundEventData:EventData = cast BaseObject.borrowObject(EventData);
 			soundEventData.type = EventType.Sound;
-			soundEventData.name = _getString(rawData, SOUND, null);
+			soundEventData.name = _getString(rawData, DataParser.SOUND, null);
 			soundEventData.bone = bone;
 			soundEventData.slot = slot;
 			events.push(soundEventData);
 		}
 		
-		if (Reflect.hasField(rawData, EVENT))
+		if (Reflect.hasField(rawData, DataParser.EVENT))
 		{
 			var eventData:EventData = cast BaseObject.borrowObject(EventData);
 			eventData.type = EventType.Frame;
-			eventData.name = _getString(rawData, EVENT, null);
+			eventData.name = _getString(rawData, DataParser.EVENT, null);
 			eventData.bone = bone;
 			eventData.slot = slot;
 			
 			events.push(eventData);
 		}
 		
-		if (Reflect.hasField(rawData, EVENTS)) 
+		if (Reflect.hasField(rawData, DataParser.EVENTS)) 
 		{
 			var boneName:String, slotName:String;
-			for (rawEvent in cast(Reflect.field(rawData, EVENTS), Array<Dynamic>)) 
+			for (rawEvent in cast(Reflect.field(rawData, DataParser.EVENTS), Array<Dynamic>)) 
 			{
-				boneName = _getString(rawEvent, BONE, null);
-				slotName = _getString(rawEvent, SLOT, null);
+				boneName = _getString(rawEvent, DataParser.BONE, null);
+				slotName = _getString(rawEvent, DataParser.SLOT, null);
 				eventData = cast BaseObject.borrowObject(EventData);
 				
 				eventData.type = EventType.Frame;
-				eventData.name = _getString(rawEvent, NAME, null);
+				eventData.name = _getString(rawEvent, DataParser.NAME, null);
 				eventData.bone = _armature.getBone(boneName);
 				eventData.slot = _armature.getSlot(slotName);
 				
-				if (Reflect.hasField(rawEvent, INTS)) 
+				if (Reflect.hasField(rawEvent, DataParser.INTS)) 
 				{
 					if (eventData.data == null) 
 					{
 						eventData.data = cast BaseObject.borrowObject(CustomData);
 					}
 					
-					for (valueInt in cast(Reflect.field(rawEvent, INTS), Array<Dynamic>)) 
+					for (valueInt in cast(Reflect.field(rawEvent, DataParser.INTS), Array<Dynamic>)) 
 					{
 						eventData.data.ints.push(valueInt);
 					}
 				}
 				
-				if (Reflect.hasField(rawEvent, FLOATS)) 
+				if (Reflect.hasField(rawEvent, DataParser.FLOATS)) 
 				{
 					if (eventData.data == null) 
 					{
 						eventData.data = cast BaseObject.borrowObject(CustomData);
 					}
 					
-					for (valueFloat in cast(Reflect.field(rawEvent, FLOATS), Array<Dynamic>)) 
+					for (valueFloat in cast(Reflect.field(rawEvent, DataParser.FLOATS), Array<Dynamic>)) 
 					{
 						eventData.data.floats.push(valueFloat);
 					}
 				}
 				
-				if (Reflect.hasField(rawEvent, STRINGS)) 
+				if (Reflect.hasField(rawEvent, DataParser.STRINGS)) 
 				{
 					if (eventData.data == null) 
 					{
 						eventData.data = cast BaseObject.borrowObject(CustomData);
 					}
 					
-					for (valueString in cast(Reflect.field(rawEvent, STRINGS), Array<Dynamic>)) 
+					for (valueString in cast(Reflect.field(rawEvent, DataParser.STRINGS), Array<Dynamic>)) 
 					{
 						eventData.data.strings.push(valueString);
 					}
@@ -1367,29 +1373,29 @@ class ObjectDataParser extends DataParser
 	/**
 	 * @private
 	 */
-	private function _parseTransform(rawData:Dynamic, transform:Transform):Void
+	@:allow("dragonBones") private function _parseTransform(rawData:Dynamic, transform:Transform):Void
 	{
-		transform.x = _getNumber(rawData, X, 0.0) * _armature.scale;
-		transform.y = _getNumber(rawData, Y, 0.0) * _armature.scale;
-		transform.skewX = _getNumber(rawData, SKEW_X, 0.0) * DragonBones.ANGLE_TO_RADIAN;
-		transform.skewY = _getNumber(rawData, SKEW_Y, 0.0) * DragonBones.ANGLE_TO_RADIAN;
-		transform.scaleX = _getNumber(rawData, SCALE_X, 1.0);
-		transform.scaleY = _getNumber(rawData, SCALE_Y, 1.0);
+		transform.x = _getNumber(rawData, DataParser.X, 0.0) * _armature.scale;
+		transform.y = _getNumber(rawData, DataParser.Y, 0.0) * _armature.scale;
+		transform.skewX = _getNumber(rawData, DataParser.SKEW_X, 0.0) * DragonBones.ANGLE_TO_RADIAN;
+		transform.skewY = _getNumber(rawData, DataParser.SKEW_Y, 0.0) * DragonBones.ANGLE_TO_RADIAN;
+		transform.scaleX = _getNumber(rawData, DataParser.SCALE_X, 1.0);
+		transform.scaleY = _getNumber(rawData, DataParser.SCALE_Y, 1.0);
 	}
 	
 	/**
 	 * @private
 	 */
-	private function _parseColorTransform(rawData:Dynamic, color:ColorTransform):Void
+	@:allow("dragonBones") private function _parseColorTransform(rawData:Dynamic, color:ColorTransform):Void
 	{
-		color.alphaMultiplier = _getNumber(rawData, ALPHA_MULTIPLIER, 100) * 0.01;
-		color.redMultiplier = _getNumber(rawData, RED_MULTIPLIER, 100) * 0.01;
-		color.greenMultiplier = _getNumber(rawData, GREEN_MULTIPLIER, 100) * 0.01;
-		color.blueMultiplier = _getNumber(rawData, BLUE_MULTIPLIER, 100) * 0.01;
-		color.alphaOffset = _getNumber(rawData, ALPHA_OFFSET, 0);
-		color.redOffset = _getNumber(rawData, RED_OFFSET, 0);
-		color.greenOffset = _getNumber(rawData, GREEN_OFFSET, 0);
-		color.blueOffset = _getNumber(rawData, BLUE_OFFSET, 0);
+		color.alphaMultiplier = _getNumber(rawData, DataParser.ALPHA_MULTIPLIER, 100) * 0.01;
+		color.redMultiplier = _getNumber(rawData, DataParser.RED_MULTIPLIER, 100) * 0.01;
+		color.greenMultiplier = _getNumber(rawData, DataParser.GREEN_MULTIPLIER, 100) * 0.01;
+		color.blueMultiplier = _getNumber(rawData, DataParser.BLUE_MULTIPLIER, 100) * 0.01;
+		color.alphaOffset = _getNumber(rawData, DataParser.ALPHA_OFFSET, 0);
+		color.redOffset = _getNumber(rawData, DataParser.RED_OFFSET, 0);
+		color.greenOffset = _getNumber(rawData, DataParser.GREEN_OFFSET, 0);
+		color.blueOffset = _getNumber(rawData, DataParser.BLUE_OFFSET, 0);
 	}
 	/**
 	 * @inheritDoc
@@ -1398,9 +1404,9 @@ class ObjectDataParser extends DataParser
 	{
 		if (rawData)
 		{
-			var version:String = _getString(rawData, VERSION, null);
-			var compatibleVersion:String = _getString(rawData, VERSION, null);
-			_isOldData = version == DATA_VERSION_2_3 || version == DATA_VERSION_3_0;
+			var version:String = _getString(rawData, DataParser.VERSION, null);
+			var compatibleVersion:String = _getString(rawData, DataParser.VERSION, null);
+			_isOldData = version == DataParser.DATA_VERSION_2_3 || version == DataParser.DATA_VERSION_3_0;
 			
 			if (_isOldData) 
 			{
@@ -1412,27 +1418,27 @@ class ObjectDataParser extends DataParser
 			}
 			
 			if (
-				version == DATA_VERSION || 
-				version == DATA_VERSION_4_5 || 
-				version == DATA_VERSION_4_0 || 
-				version == DATA_VERSION_3_0 || 
-				version == DATA_VERSION_2_3 ||
-				compatibleVersion == DATA_VERSION_4_0
+				version == DataParser.DATA_VERSION || 
+				version == DataParser.DATA_VERSION_4_5 || 
+				version == DataParser.DATA_VERSION_4_0 || 
+				version == DataParser.DATA_VERSION_3_0 || 
+				version == DataParser.DATA_VERSION_2_3 ||
+				compatibleVersion == DataParser.DATA_VERSION_4_0
 			)
 			{
 				var data:DragonBonesData = cast BaseObject.borrowObject(DragonBonesData);
-				data.name = _getString(rawData, NAME, null);
-				data.frameRate = _getNumber(rawData, FRAME_RATE, 24);
-				if (data.frameRate === 0) 
+				data.name = _getString(rawData, DataParser.NAME, null);
+				data.frameRate = _getNumber(rawData, DataParser.FRAME_RATE, 24);
+				if (data.frameRate == 0) 
 				{
 					data.frameRate = 24;
 				}
 				
-				if (Reflect.hasField(rawData, ARMATURE))
+				if (Reflect.hasField(rawData, DataParser.ARMATURE))
 				{
 					_data = data;
 					
-					for (rawArmature in cast(Reflect.field(rawData, ARMATURE), Array<Dynamic>))
+					for (rawArmature in cast(Reflect.field(rawData, DataParser.ARMATURE), Array<Dynamic>))
 					{
 						data.addArmature(_parseArmature(rawArmature, scale));
 					}
@@ -1461,10 +1467,10 @@ class ObjectDataParser extends DataParser
 	{
 		if (rawData != null)
 		{
-			textureAtlasData.name = _getString(rawData, NAME, null);
-			textureAtlasData.imagePath = _getString(rawData, IMAGE_PATH, null);
-			textureAtlasData.width = _getNumber(rawData, WIDTH, 0.0);
-			textureAtlasData.height = _getNumber(rawData, HEIGHT, 0.0);
+			textureAtlasData.name = _getString(rawData, DataParser.NAME, null);
+			textureAtlasData.imagePath = _getString(rawData, DataParser.IMAGE_PATH, null);
+			textureAtlasData.width = _getNumber(rawData, DataParser.WIDTH, 0.0);
+			textureAtlasData.height = _getNumber(rawData, DataParser.HEIGHT, 0.0);
 			
 			// Texture format.
 			
@@ -1474,31 +1480,31 @@ class ObjectDataParser extends DataParser
 			}
 			else
 			{
-				scale = textureAtlasData.scale = _getNumber(rawData, SCALE, textureAtlasData.scale);
+				scale = textureAtlasData.scale = _getNumber(rawData, DataParser.SCALE, textureAtlasData.scale);
 			}
 			
 			scale = 1.0 / (rawScale > 0.0 ? rawScale : scale);
 			
-			if (Reflect.hasField(rawData, SUB_TEXTURE))
+			if (Reflect.hasField(rawData, DataParser.SUB_TEXTURE))
 			{
 				var textureData:TextureData, frameWidth:Float, frameHeight:Float;
-				for (rawTexture in cast(Reflect.field(rawData, SUB_TEXTURE), Array<Dynamic>))
+				for (rawTexture in cast(Reflect.field(rawData, DataParser.SUB_TEXTURE), Array<Dynamic>))
 				{
 						textureData = textureAtlasData.generateTexture();
-						textureData.name = _getString(rawTexture, NAME, null);
-					textureData.rotated = _getBoolean(rawTexture, ROTATED, false);
-					textureData.region.x = _getNumber(rawTexture, X, 0.0) * scale;
-					textureData.region.y = _getNumber(rawTexture, Y, 0.0) * scale;
-					textureData.region.width = _getNumber(rawTexture, WIDTH, 0.0) * scale;
-					textureData.region.height = _getNumber(rawTexture, HEIGHT, 0.0) * scale;
+						textureData.name = _getString(rawTexture, DataParser.NAME, null);
+					textureData.rotated = _getBoolean(rawTexture, DataParser.ROTATED, false);
+					textureData.region.x = _getNumber(rawTexture, DataParser.X, 0.0) * scale;
+					textureData.region.y = _getNumber(rawTexture, DataParser.Y, 0.0) * scale;
+					textureData.region.width = _getNumber(rawTexture, DataParser.WIDTH, 0.0) * scale;
+					textureData.region.height = _getNumber(rawTexture, DataParser.HEIGHT, 0.0) * scale;
 					
-					frameWidth = _getNumber(rawTexture, FRAME_WIDTH, -1.0);
-					frameHeight = _getNumber(rawTexture, FRAME_HEIGHT, -1.0);
+					frameWidth = _getNumber(rawTexture, DataParser.FRAME_WIDTH, -1.0);
+					frameHeight = _getNumber(rawTexture, DataParser.FRAME_HEIGHT, -1.0);
 					if (frameWidth > 0.0 && frameHeight > 0.0)
 					{
 						textureData.frame = TextureData.generateRectangle();
-						textureData.frame.x = _getNumber(rawTexture, FRAME_X, 0.0) * scale;
-						textureData.frame.y = _getNumber(rawTexture, FRAME_Y, 0.0) * scale;
+						textureData.frame.x = _getNumber(rawTexture, DataParser.FRAME_X, 0.0) * scale;
+						textureData.frame.y = _getNumber(rawTexture, DataParser.FRAME_Y, 0.0) * scale;
 						textureData.frame.width = frameWidth * scale;
 						textureData.frame.height = frameHeight * scale;
 					}
@@ -1515,13 +1521,13 @@ class ObjectDataParser extends DataParser
 	/**
 	 * @private
 	 */
-	private static var _instance:DynamicDataParser = null;
+	@:allow("dragonBones") private static var _instance:ObjectDataParser = null;
 	/**
 	 * @deprecated
 	 * @see dragonBones.factories.BaseFactory#parseTextureAtlasData()
 	 * @see dragonBones.factories.BaseFactory#parseDragonBonesData()
 	 */
-	public static function getInstance():DynamicDataParser
+	public static function getInstance():ObjectDataParser
 	{
 		if (_instance == null)
 		{

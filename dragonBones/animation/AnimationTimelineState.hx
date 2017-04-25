@@ -1,10 +1,9 @@
-﻿package dragonBones.animation
+﻿package dragonBones.animation;
 
 import openfl.Vector;
 
 import dragonBones.core.BaseObject;
-import dragonBones.core.dragonBones_internal;
-import dragonBones.enum.EventType;
+import dragonBones.enums.EventType;
 import dragonBones.events.EventObject;
 import dragonBones.events.IEventDispatcher;
 import dragonBones.objects.ActionData;
@@ -24,8 +23,8 @@ import dragonBones.objects.FrameData;
 	{
 		if (_animationState.actionEnabled)
 		{
-			var actions:Vector<ActionData> = (frame as AnimationFrameData).actions;
-			l:UInt = actions.length;
+			var actions:Vector<ActionData> = cast(frame, AnimationFrameData).actions;
+			var l:UInt = actions.length;
 			for (i in 0...l)
 			{
 				_armature._bufferAction(actions[i]);
@@ -33,7 +32,7 @@ import dragonBones.objects.FrameData;
 		}
 		
 		var eventDispatcher:IEventDispatcher = _armature.eventDispatcher;
-		var events:Vector<EventData> = (frame as AnimationFrameData).events;
+		var events:Vector<EventData> = cast(frame, AnimationFrameData).events;
 		var l = events.length;
 		var eventData:EventData, eventType:String, eventObject:EventObject;
 		for (i in 0...l)
@@ -54,7 +53,7 @@ import dragonBones.objects.FrameData;
 			{
 				eventObject = cast BaseObject.borrowObject(EventObject);
 				eventObject.name = eventData.name;
-				eventObject.frame = frame as AnimationFrameData;
+				eventObject.frame = cast(frame, AnimationFrameData);
 				eventObject.data = eventData.data;
 				eventObject.animationState = _animationState;
 				
@@ -106,17 +105,17 @@ import dragonBones.objects.FrameData;
 			if (_keyFrameCount > 1) 
 			{
 				var currentFrameIndex:UInt = Math.floor(_currentTime * _frameRate);
-				var currentFrame:AnimationFrameData = _timelineData.frames[currentFrameIndex] as AnimationFrameData;
-				if (_currentFrame !== currentFrame) 
+				var currentFrame:AnimationFrameData = _timelineData.frames[currentFrameIndex];
+				if (_currentFrame != currentFrame) 
 				{
 					var isReverse:Bool = _currentPlayTimes == prevPlayTimes && prevTime > _currentTime;
-					var crossedFrame:AnimationFrameData = _currentFrame as AnimationFrameData;
+					var crossedFrame:AnimationFrameData = cast _currentFrame;
 					_currentFrame = currentFrame;
 					
 					if (crossedFrame == null) 
 					{
 						var prevFrameIndex:UInt = Math.floor(prevTime * _frameRate);
-						crossedFrame = _timelineData.frames[prevFrameIndex] as AnimationFrameData;
+						crossedFrame = _timelineData.frames[prevFrameIndex];
 						
 						if (isReverse) 
 						{
@@ -125,27 +124,27 @@ import dragonBones.objects.FrameData;
 						{
 							if (
 								prevTime <= crossedFrame.position
-								// || prevPlayTimes !== _currentPlayTimes ?
+								// || prevPlayTimes != _currentPlayTimes ?
 							) 
 							{
-								crossedFrame = crossedFrame.prev as AnimationFrameData;
+								crossedFrame = cast crossedFrame.prev;
 							}
 						}
 					}
 					
 					if (isReverse) 
 					{
-						while (crossedFrame !== currentFrame) 
+						while (crossedFrame != currentFrame) 
 						{
 							_onCrossFrame(crossedFrame);
-							crossedFrame = crossedFrame.prev as AnimationFrameData;
+							crossedFrame = cast crossedFrame.prev;
 						}
 					}
 					else 
 					{
-						while (crossedFrame !== currentFrame) 
+						while (crossedFrame != currentFrame) 
 						{
-							crossedFrame = crossedFrame.next as AnimationFrameData;
+							crossedFrame = cast crossedFrame.next;
 							_onCrossFrame(crossedFrame);
 						}
 					}
@@ -157,7 +156,7 @@ import dragonBones.objects.FrameData;
 				_onCrossFrame(_currentFrame);
 			}
 			
-			if (_currentPlayTimes !== prevPlayTimes) 
+			if (_currentPlayTimes != prevPlayTimes) 
 			{
 				if (eventDispatcher.hasEvent(EventObject.LOOP_COMPLETE)) 
 				{

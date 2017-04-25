@@ -8,8 +8,7 @@ import openfl.Vector;
 
 import dragonBones.core.DragonBones;
 import dragonBones.core.TransformObject;
-import dragonBones.core.dragonBones_internal;
-import dragonBones.enum.BlendMode;
+import dragonBones.enums.BlendMode;
 import dragonBones.geom.Transform;
 import dragonBones.objects.ActionData;
 import dragonBones.objects.BoundingBoxData;
@@ -36,11 +35,11 @@ class Slot extends TransformObject
 	/**
 	 * @private
 	 */
-	private static var _helpPoint:Point = new Point();
+	@:allow("dragonBones") private static var _helpPoint:Point = new Point();
 	/**
 	 * @private
 	 */
-	private static var _helpMatrix:Matrix = new Matrix();
+	@:allow("dragonBones") private static var _helpMatrix:Matrix = new Matrix();
 	/**
 	 * @language zh_CN
      * 显示对象受到控制的动画状态或混合组名称，设置为 null 则表示受所有的动画状态控制。
@@ -54,15 +53,15 @@ class Slot extends TransformObject
 	/**
 	 * @private
 	 */
-	private var _displayDirty:Bool;
+	@:allow("dragonBones") private var _displayDirty:Bool;
 	/**
 	 * @private
 	 */
-	private var _zOrderDirty:Bool;
+	@:allow("dragonBones") private var _zOrderDirty:Bool;
 	/**
 	 * @private
 	 */
-	private var _blendModeDirty:Bool;
+	@:allow("dragonBones") private var _blendModeDirty:Bool;
 	/**
 	 * @private
 	 */
@@ -74,23 +73,23 @@ class Slot extends TransformObject
 	/**
 	 * @private
 	 */
-	private var _originalDirty:Bool;
+	@:allow("dragonBones") private var _originalDirty:Bool;
 	/**
 	 * @private
 	 */
-	private var _transformDirty:Bool;
+	@:allow("dragonBones") private var _transformDirty:Bool;
 	/**
 	 * @private
 	 */
-	private var _updateState:Int;
+	@:allow("dragonBones") private var _updateState:Int;
 	/**
 	 * @private
 	 */
-	private var _blendMode:Int;
+	@:allow("dragonBones") private var _blendMode:Int;
 	/**
 	 * @private
 	 */
-	private var _displayIndex:Int;
+	@:allow("dragonBones") private var _displayIndex:Int;
 	/**
 	 * @private
 	 */
@@ -98,7 +97,7 @@ class Slot extends TransformObject
 	/**
 	 * @private
 	 */
-	private var _cachedFrameIndex:Int;
+	@:allow("dragonBones") private var _cachedFrameIndex:Int;
 	/**
 	 * @private
 	 */
@@ -110,7 +109,7 @@ class Slot extends TransformObject
 	/**
 	 * @private
 	 */
-	private inline var _localMatrix:Matrix = new Matrix();
+	@:allow("dragonBones") private var _localMatrix:Matrix = new Matrix();
 	/**
 	 * @private
 	 */
@@ -122,7 +121,7 @@ class Slot extends TransformObject
 	/**
 	 * @private
 	 */
-	private inline var _displayList:Vector<Dynamic> = new Vector<Dynamic>();
+	@:allow("dragonBones") private var _displayList:Vector<Dynamic> = new Vector<Dynamic>();
 	/**
 	 * @private
 	 */
@@ -134,23 +133,23 @@ class Slot extends TransformObject
 	/**
 	 * @private
 	 */
-	private inline var _meshBones:Vector<Bone> = new Vector<Bone>();
+	@:allow("dragonBones") private var _meshBones:Vector<Bone> = new Vector<Bone>();
 	/**
 	 * @private
 	 */
-	private var _skinSlotData:SkinSlotData;
+	@:allow("dragonBones") private var _skinSlotData:SkinSlotData;
 	/**
 	 * @private
 	 */
-	private var _displayData:DisplayData;
+	@:allow("dragonBones") private var _displayData:DisplayData;
 	/**
 	 * @private
 	 */
-	private var _replacedDisplayData:DisplayData;
+	@:allow("dragonBones") private var _replacedDisplayData:DisplayData;
 	/**
 	 * @private
 	 */
-	private var _textureData:TextureData;
+	@:allow("dragonBones") private var _textureData:TextureData;
 	/**
 	 * @private
 	 */
@@ -158,19 +157,19 @@ class Slot extends TransformObject
 	/**
 	 * @private
 	 */
-	private var _boundingBoxData:BoundingBoxData;
+	@:allow("dragonBones") private var _boundingBoxData:BoundingBoxData;
 	/**
 	 * @private
 	 */
-	private var _rawDisplay:Dynamic;
+	@:allow("dragonBones") private var _rawDisplay:Dynamic;
 	/**
 	 * @private
 	 */
-	private var _meshDisplay:Dynamic;
+	@:allow("dragonBones") private var _meshDisplay:Dynamic;
 	/**
 	 * @private
 	 */
-	private var _display:Dynamic;
+	@:allow("dragonBones") private var _display:Dynamic;
 	/**
 	 * @private
 	 */
@@ -182,7 +181,7 @@ class Slot extends TransformObject
 	/**
 	 * @private
 	 */
-	private function new() {}
+	@:allow("dragonBones") private function new() {}
 	/**
 	 * @private
 	 */
@@ -273,49 +272,49 @@ class Slot extends TransformObject
 	/**
 	 * @private
 	 */
-	private function _initDisplay(value:Dynamic):Void
+	@:allow("dragonBones") private function _initDisplay(value:Dynamic):Void
 	{
 		throw new Error(DragonBones.ABSTRACT_METHOD_ERROR);
 	}
 	/**
 	 * @private
 	 */
-	private function _disposeDisplay(value:Dynamic):Void
+	@:allow("dragonBones") private function _disposeDisplay(value:Dynamic):Void
 	{
 		throw new Error(DragonBones.ABSTRACT_METHOD_ERROR);
 	}
 	/**
 	 * @private
 	 */
-	private function _onUpdateDisplay():Void
+	@:allow("dragonBones") private function _onUpdateDisplay():Void
 	{
 		throw new Error(DragonBones.ABSTRACT_METHOD_ERROR);
 	}
 	/**
 	 * @private
 	 */
-	private function _addDisplay():Void
+	@:allow("dragonBones") private function _addDisplay():Void
 	{
 		throw new Error(DragonBones.ABSTRACT_METHOD_ERROR);
 	}
 	/**
 	 * @private
 	 */
-	private function _replaceDisplay(value:Dynamic):Void
+	@:allow("dragonBones") private function _replaceDisplay(value:Dynamic):Void
 	{
 		throw new Error(DragonBones.ABSTRACT_METHOD_ERROR);
 	}
 	/**
 	 * @private
 	 */
-	private function _removeDisplay():Void
+	@:allow("dragonBones") private function _removeDisplay():Void
 	{
 		throw new Error(DragonBones.ABSTRACT_METHOD_ERROR);
 	}
 	/**
 	 * @private
 	 */
-	private function _updateZOrder():Void
+	@:allow("dragonBones") private function _updateZOrder():Void
 	{
 		throw new Error(DragonBones.ABSTRACT_METHOD_ERROR);
 	}
@@ -329,49 +328,49 @@ class Slot extends TransformObject
 	/**
 	 * @private
 	 */
-	private function _updateBlendMode():Void
+	@:allow("dragonBones") private function _updateBlendMode():Void
 	{
 		throw new Error(DragonBones.ABSTRACT_METHOD_ERROR);
 	}
 	/**
 	 * @private
 	 */
-	private function _updateColor():Void
+	@:allow("dragonBones") private function _updateColor():Void
 	{
 		throw new Error(DragonBones.ABSTRACT_METHOD_ERROR);
 	}
 	/**
 	 * @private
 	 */
-	private function _updateFilters():Void
+	@:allow("dragonBones") private function _updateFilters():Void
 	{
 		throw new Error(DragonBones.ABSTRACT_METHOD_ERROR);
 	}
 	/**
 	 * @private
 	 */
-	private function _updateFrame():Void
+	@:allow("dragonBones") private function _updateFrame():Void
 	{
 		throw new Error(DragonBones.ABSTRACT_METHOD_ERROR);
 	}
 	/**
 	 * @private
 	 */
-	private function _updateMesh():Void
+	@:allow("dragonBones") private function _updateMesh():Void
 	{
 		throw new Error(DragonBones.ABSTRACT_METHOD_ERROR);
 	}
 	/**
 	 * @private
 	 */
-	private function _updateTransform(isSkinnedMesh:Bool):Void
+	@:allow("dragonBones") private function _updateTransform(isSkinnedMesh:Bool):Void
 	{
 		throw new Error(DragonBones.ABSTRACT_METHOD_ERROR);
 	}
 	/**
 	 * @private
 	 */
-	private function _isMeshBonesUpdate():Bool
+	@:allow("dragonBones") private function _isMeshBonesUpdate():Bool
 	{
 		var l:UInt = _meshBones.length;
 		for (i in 0...l)
@@ -387,7 +386,7 @@ class Slot extends TransformObject
 	/**
 	 * @private
 	 */
-	private function _updateDisplayData():Void 
+	@:allow("dragonBones") private function _updateDisplayData():Void 
 	{
 		var prevDisplayData:DisplayData = _displayData;
 		var prevReplaceDisplayData:DisplayData = _replacedDisplayData;
@@ -416,7 +415,7 @@ class Slot extends TransformObject
 		if (_displayData != prevDisplayData || _replacedDisplayData != prevReplaceDisplayData || _display != currentDisplay) 
 		{
 			var currentDisplayData:DisplayData = _replacedDisplayData ? _replacedDisplayData : _displayData;
-			if (currentDisplayData && (currentDisplay === _rawDisplay || currentDisplay === _meshDisplay)) 
+			if (currentDisplayData && (currentDisplay == _rawDisplay || currentDisplay == _meshDisplay)) 
 			{
 				if (_replacedDisplayData != null)
 				{
@@ -593,9 +592,9 @@ class Slot extends TransformObject
 	/**
 	 * @private
 	 */
-	private function _updateDisplay():Void
+	@:allow("dragonBones") private function _updateDisplay():Void
 	{	
-		var prevDisplay:Dynamic = _display != null ? _display ? _rawDisplay;
+		var prevDisplay:Dynamic = _display != null ? _display : _rawDisplay;
 		var prevChildArmature:Armature = _childArmature;
 		
 		if (_displayIndex >= 0 && _displayIndex < _displayList.length)
@@ -688,7 +687,7 @@ class Slot extends TransformObject
 	/**
 	 * @private
 	 */
-	private function _updateLocalTransformMatrix():Void
+	@:allow("dragonBones") private function _updateLocalTransformMatrix():Void
 	{
 		if (origin != null) 
 		{
@@ -702,7 +701,7 @@ class Slot extends TransformObject
 	/**
 	 * @private
 	 */
-	private function _updateGlobalTransformMatrix():Void
+	@:allow("dragonBones") private function _updateGlobalTransformMatrix():Void
 	{
 		globalTransformMatrix.copyFrom(_localMatrix);
 		globalTransformMatrix.concat(_parent.globalTransformMatrix);
@@ -815,7 +814,7 @@ class Slot extends TransformObject
 		if (cacheFrameIndex >= 0 && _cachedFrameIndices) 
 		{
 			var cachedFrameIndex:Int = _cachedFrameIndices[cacheFrameIndex];
-			if (cachedFrameIndex >= 0 && _cachedFrameIndex === cachedFrameIndex) // Same cache.
+			if (cachedFrameIndex >= 0 && _cachedFrameIndex == cachedFrameIndex) // Same cache.
 			{
 				_transformDirty = false;
 			}
@@ -824,7 +823,7 @@ class Slot extends TransformObject
 				_transformDirty = true;
 				_cachedFrameIndex = cachedFrameIndex;
 			}
-			else if (_transformDirty || _parent._transformDirty !== 0) // Dirty.
+			else if (_transformDirty || _parent._transformDirty != 0) // Dirty.
 			{
 				_transformDirty = true;
 				_cachedFrameIndex = -1;
@@ -840,7 +839,7 @@ class Slot extends TransformObject
 				_cachedFrameIndex = -1;
 			}
 		}
-		else if (_transformDirty || _parent._transformDirty !== 0) // Dirty.
+		else if (_transformDirty || _parent._transformDirty != 0) // Dirty.
 		{
 			cacheFrameIndex = -1;
 			_transformDirty = true;
@@ -916,11 +915,12 @@ class Slot extends TransformObject
 			}
 			
 			var l:UInt = value.length;
+			var eachDisplay:Dynamic;
 			for (i in 0...l)
 			{
-				inline var eachDisplay:Dynamic = value[i];
+				eachDisplay = value[i];
 				if (eachDisplay != null && eachDisplay != _rawDisplay && eachDisplay != _meshDisplay && 
-					!(eachDisplay is Armature) && _displayList.indexOf(eachDisplay) < 0)
+					!Std.is(eachDisplay, Armature) && _displayList.indexOf(eachDisplay) < 0)
 				{
 					_initDisplay(eachDisplay);
 				}
@@ -968,7 +968,7 @@ class Slot extends TransformObject
 	 */
 	@:allow("dragonBones") private function _setZorder(value:Float):Bool 
 	{
-		if (_zOrder === value) 
+		if (_zOrder == value) 
 		{
 			//return false;
 		}
@@ -1110,7 +1110,7 @@ class Slot extends TransformObject
 	/**
 	 * @private
 	 */
-	public var skinSlotData(get, never):SkinSlotData;
+	@:allow("dragonBones") private var skinSlotData(get, never):SkinSlotData;
 	private function get_skinSlotData(): SkinSlotData 
 	{
 		return _skinSlotData;
@@ -1128,7 +1128,7 @@ class Slot extends TransformObject
 	/**
 	 * @private
 	 */
-	public var rawDisplay(get, never):Dynamic;
+	@:allow("dragonBones") private var rawDisplay(get, never):Dynamic;
 	private function get_rawDisplay():Dynamic
 	{
 		return _rawDisplay;
@@ -1136,7 +1136,7 @@ class Slot extends TransformObject
 	/**
 	 * @private
 	 */
-	public var meshDisplay(get, never):Dynamic;
+	@:allow("dragonBones") private var meshDisplay(get, never):Dynamic;
 	private function get_meshDisplay():Dynamic
 	{
 		return _meshDisplay;
@@ -1224,8 +1224,8 @@ class Slot extends TransformObject
 			return value;
 		}
 		
-		inline var displayListLength:UInt = _displayList.length;
-		if (_displayIndex < 0 && displayListLength === 0)  // Emprty
+		var displayListLength:UInt = _displayList.length;
+		if (_displayIndex < 0 && displayListLength == 0)  // Emprty
 		{
 			_displayIndex = 0;
 		}
@@ -1236,7 +1236,7 @@ class Slot extends TransformObject
 		}
 		else
 		{
-			inline var replaceDisplayList:Vector<Dynamic> = displayList; // copy
+			var replaceDisplayList:Vector<Dynamic> = displayList; // copy
 			if (displayListLength <= _displayIndex)
 			{
 				replaceDisplayList.length = _displayIndex + 1;
@@ -1260,7 +1260,7 @@ class Slot extends TransformObject
 	}
 	private function set_childArmature(value:Armature):Armature
 	{
-		if (_childArmature === value)
+		if (_childArmature == value)
 		{
 			return value;
 		}

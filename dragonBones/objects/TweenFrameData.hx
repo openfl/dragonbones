@@ -24,7 +24,7 @@ class TweenFrameData extends FrameData
 		result.y = kA * y1 + kB * y2 + kC * y3 + kD * y4;
 	}
 	
-	public static function samplingEasingCurve(curve:Array, samples:Vector<Float>):Void
+	public static function samplingEasingCurve(curve:Array<Float>, samples:Vector<Float>):Void
 	{
 		var curveCount:UInt = curve.length;
 		var result:Point = new Point();
@@ -74,7 +74,10 @@ class TweenFrameData extends FrameData
 	public var tweenEasing:Float;
 	public var curve:Vector<Float>;
 	
-	private function new() {}
+	@:allow("dragonBones") private function new()
+	{
+		super();
+	}
 	
 	override private function _onClear():Void
 	{

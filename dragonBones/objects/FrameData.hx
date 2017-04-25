@@ -13,7 +13,10 @@ class FrameData extends BaseObject
 	public var prev:FrameData;
 	public var next:FrameData;
 	
-	private function new() {}
+	@:allow("dragonBones") private function new()
+	{
+		super();
+	}
 	
 	override private function _onClear():Void
 	{

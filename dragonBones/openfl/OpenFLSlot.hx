@@ -11,8 +11,7 @@ import openfl.Vector;
 import dragonBones.Bone;
 import dragonBones.Slot;
 import dragonBones.core.BaseObject;
-import dragonBones.core.dragonBones_internal;
-import dragonBones.enum.BlendMode;
+import dragonBones.enums.BlendMode;
 
 
 /**
@@ -28,7 +27,7 @@ class OpenFLSlot extends Slot
 	/**
 	 * @private
 	 */
-	private function new() {}
+	@:allow("dragonBones") private function new() {}
 	/**
 	 * @private
 	 */
@@ -57,7 +56,7 @@ class OpenFLSlot extends Slot
 	 */
 	override private function _onUpdateDisplay():Void
 	{
-		_renderDisplay = (_display? _display : _rawDisplay) as DisplayObject;
+		_renderDisplay = cast((_display? _display : _rawDisplay), DisplayObject);
 	}
 	/**
 	 * @private
@@ -90,8 +89,8 @@ class OpenFLSlot extends Slot
 	 */
 	override private function _updateZOrder():Void
 	{
-		inline var container:OpenFLArmatureDisplay = cast(_armature.display, OpenFLArmatureDisplay);
-		inline var index:Int = container.getChildIndex(_renderDisplay);
+		var container:OpenFLArmatureDisplay = cast(_armature.display, OpenFLArmatureDisplay);
+		var index:Int = container.getChildIndex(_renderDisplay);
 		if (index == _zOrder) 
 		{
 			return;
@@ -113,46 +112,46 @@ class OpenFLSlot extends Slot
 	{
 		switch (_blendMode) 
 		{
-			case dragonBones.enum.BlendMode.Normal:
+			case dragonBones.enums.BlendMode.Normal:
 				_renderDisplay.blendMode = openfl.display.BlendMode.NORMAL;
 			
-			case dragonBones.enum.BlendMode.Add:
+			case dragonBones.enums.BlendMode.Add:
 				_renderDisplay.blendMode = openfl.display.BlendMode.ADD;
 			
-			case dragonBones.enum.BlendMode.Alpha:
+			case dragonBones.enums.BlendMode.Alpha:
 				_renderDisplay.blendMode = openfl.display.BlendMode.ALPHA;
 			
-			case dragonBones.enum.BlendMode.Darken:
+			case dragonBones.enums.BlendMode.Darken:
 				_renderDisplay.blendMode = openfl.display.BlendMode.DARKEN;
 			
-			case dragonBones.enum.BlendMode.Difference:
+			case dragonBones.enums.BlendMode.Difference:
 				_renderDisplay.blendMode = openfl.display.BlendMode.DIFFERENCE;
 			
-			case dragonBones.enum.BlendMode.Erase:
+			case dragonBones.enums.BlendMode.Erase:
 				_renderDisplay.blendMode = openfl.display.BlendMode.ERASE;
 			
-			case dragonBones.enum.BlendMode.HardLight:
+			case dragonBones.enums.BlendMode.HardLight:
 				_renderDisplay.blendMode = openfl.display.BlendMode.HARDLIGHT;
 			
-			case dragonBones.enum.BlendMode.Invert:
+			case dragonBones.enums.BlendMode.Invert:
 				_renderDisplay.blendMode = openfl.display.BlendMode.INVERT;
 			
-			case dragonBones.enum.BlendMode.Layer:
+			case dragonBones.enums.BlendMode.Layer:
 				_renderDisplay.blendMode = openfl.display.BlendMode.LAYER;
 			
-			case dragonBones.enum.BlendMode.Lighten:
+			case dragonBones.enums.BlendMode.Lighten:
 				_renderDisplay.blendMode = openfl.display.BlendMode.LIGHTEN;
 			
-			case dragonBones.enum.BlendMode.Multiply:
+			case dragonBones.enums.BlendMode.Multiply:
 				_renderDisplay.blendMode = openfl.display.BlendMode.MULTIPLY;
 			
-			case dragonBones.enum.BlendMode.Overlay:
+			case dragonBones.enums.BlendMode.Overlay:
 				_renderDisplay.blendMode = openfl.display.BlendMode.OVERLAY;
 			
-			case dragonBones.enum.BlendMode.Screen:
+			case dragonBones.enums.BlendMode.Screen:
 				_renderDisplay.blendMode = openfl.display.BlendMode.SCREEN;
 			
-			case dragonBones.enum.BlendMode.Subtract:
+			case dragonBones.enums.BlendMode.Subtract:
 				_renderDisplay.blendMode = openfl.display.BlendMode.SUBTRACT;
 			
 			default:
@@ -171,7 +170,7 @@ class OpenFLSlot extends Slot
 	override private function _updateFrame():Void
 	{
 		var isMeshDisplay:Bool = _meshData != null && _renderDisplay == _meshDisplay;
-		var currentTextureData:OpenFLTextureData = _textureData as OpenFLTextureData;
+		var currentTextureData:OpenFLTextureData = cast(_textureData, OpenFLTextureData);
 		
 		if (_displayIndex >= 0 && _display != null && currentTextureData != null)
 		{
@@ -185,7 +184,7 @@ class OpenFLSlot extends Slot
 				{
 					currentTextureAtlasData = cast BaseObject.borrowObject(OpenFLTextureAtlasData);
 					currentTextureAtlasData.copyFrom(_textureData.parent);
-					currentTextureAtlasData.texture = _armature.replacedTexture as BitmapData;
+					currentTextureAtlasData.texture = cast(_armature.replacedTexture, BitmapData);
 					_armature._replaceTextureAtlasData = currentTextureAtlasData;
 				}
 				
@@ -200,7 +199,7 @@ class OpenFLSlot extends Slot
 				
 				if (isMeshDisplay != null) // Mesh.
 				{
-					var meshDisplay:Shape = _renderDisplay as Shape;
+					var meshDisplay:Shape = cast(_renderDisplay, Shape);
 					
 					if (_path != null)
 					{
@@ -297,7 +296,7 @@ class OpenFLSlot extends Slot
 						_helpMatrix.ty = -_pivotY - currentTextureData.region.y;
 					}
 					
-					var normalDisplay:Shape = _renderDisplay as Shape;
+					var normalDisplay:Shape = cast(_renderDisplay, Shape);
 					
 					normalDisplay.graphics.clear();
 					
@@ -316,7 +315,7 @@ class OpenFLSlot extends Slot
 		
 		if (isMeshDisplay)
 		{
-			meshDisplay = _renderDisplay as Shape;
+			meshDisplay = cast _renderDisplay;
 			meshDisplay.graphics.clear();
 			meshDisplay.visible = false;
 			meshDisplay.x = 0.0;
@@ -324,7 +323,7 @@ class OpenFLSlot extends Slot
 		}
 		else
 		{
-			normalDisplay = _renderDisplay as Shape;
+			normalDisplay = cast _renderDisplay;
 			normalDisplay.graphics.clear();
 			normalDisplay.visible = false;
 			normalDisplay.x = 0.0;
