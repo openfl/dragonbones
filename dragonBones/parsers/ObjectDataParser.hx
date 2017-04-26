@@ -100,7 +100,7 @@ import dragonBones.textures.TextureData;
 				return defaultValue;
 			}
 			
-			return Std.parseFloat(value); // Number(value);
+			return value; // Number(value);
 		}
 		
 		return defaultValue;
@@ -118,7 +118,7 @@ import dragonBones.textures.TextureData;
 				return defaultValue;
 			}
 			
-			return Std.parseInt(value); // Number(value);
+			return value; // Number(value);
 		}
 		
 		return defaultValue;
@@ -128,7 +128,7 @@ import dragonBones.textures.TextureData;
 	 */
 	private static function _getString(rawData:Dynamic, key:String, defaultValue:String):String
 	{
-		if (Reflect.hasField(key, rawData))
+		if (Reflect.hasField(rawData, key))
 		{
 			return Std.string(Reflect.field(rawData, key)); // String(rawData[key]);
 		}
@@ -164,7 +164,7 @@ import dragonBones.textures.TextureData;
 		_armature = armature;
 		_rawBones.length = 0;
 		
-		if (Reflect.hasField (rawData, DataParser.BONE))
+		if (Reflect.hasField(rawData, DataParser.BONE))
 		{
 			var bone:BoneData;
 			for (boneObject in cast(Reflect.field(rawData, DataParser.BONE), Array<Dynamic>))
@@ -1433,7 +1433,7 @@ import dragonBones.textures.TextureData;
 	 */
 	override public function parseDragonBonesData(rawData:Dynamic, scale:Float = 1):DragonBonesData
 	{
-		if (rawData)
+		if (rawData != null)
 		{
 			var version:String = _getString(rawData, DataParser.VERSION, null);
 			var compatibleVersion:String = _getString(rawData, DataParser.VERSION, null);
