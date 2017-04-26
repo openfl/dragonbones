@@ -1,5 +1,6 @@
 ﻿package dragonBones.animation;
 
+import openfl.errors.ArgumentError;
 import openfl.Vector;
 
 import dragonBones.Armature;
@@ -16,7 +17,7 @@ import dragonBones.objects.AnimationData;
  * @see dragonBones.animation.AnimationState
  * @version DragonBones 3.0
  */
-class Animation extends BaseObject
+@:allow(dragonBones) class Animation extends BaseObject
 {
 	private static function _sortAnimationState(a:AnimationState, b:AnimationState):Int
 	{
@@ -35,11 +36,11 @@ class Animation extends BaseObject
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones") private var _timelineStateDirty:Bool;
+	private var _timelineStateDirty:Bool;
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones") private var _cacheFrameIndex:Float;
+	private var _cacheFrameIndex:Int;
 	private var _animationNames:Vector<String> = new Vector<String>();
 	private var _animations:Map<String, AnimationData> = new Map<String, AnimationData>();
 	private var _animationStates:Vector<AnimationState> = new Vector<AnimationState>();
@@ -49,7 +50,10 @@ class Animation extends BaseObject
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones") private function new() {}
+	private function new()
+	{
+		super();
+	}
 	/**
 	 * @private
 	 */
@@ -61,7 +65,7 @@ class Animation extends BaseObject
 			_animationStates[i].returnToPool();
 		}
 		
-		if (_animationConfig) 
+		if (_animationConfig != null) 
 		{
 			_animationConfig.returnToPool();
 		}
@@ -136,7 +140,7 @@ class Animation extends BaseObject
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones") private function _init(armature:Armature):Void 
+	private function _init(armature:Armature):Void 
 	{
 		if (_armature != null) 
 		{
@@ -149,7 +153,7 @@ class Animation extends BaseObject
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones") private function _advanceTime(passedTime:Float):Void
+	private function _advanceTime(passedTime:Float):Void
 	{
 		if (!_isPlaying)
 		{
@@ -256,7 +260,7 @@ class Animation extends BaseObject
 				{
 					_animationStates.length -= r;
 					
-					if (!_lastAnimationState && _animationStates.length > 0) 
+					if (_lastAnimationState == null && _animationStates.length > 0) 
 					{
 						_lastAnimationState = _animationStates[_animationStates.length - 1];
 					}
@@ -334,7 +338,7 @@ class Animation extends BaseObject
 			return null;
 		}
 		
-		var animationName:String = animationConfig.animationName ? animationConfig.animationName : animationConfig.name;
+		var animationName:String = animationConfig.animationName != null ? animationConfig.animationName : animationConfig.name;
 		var animationData:AnimationData = _animations[animationName];
 		if (animationData == null) 
 		{
@@ -357,7 +361,7 @@ class Animation extends BaseObject
 		
 		if (animationConfig.fadeInTime < 0.0 || animationConfig.fadeInTime != animationConfig.fadeInTime) 
 		{
-			if (_lastAnimationState) 
+			if (_lastAnimationState != null) 
 			{
 				animationConfig.fadeInTime = animationData.fadeInTime;
 			}
@@ -439,7 +443,7 @@ class Animation extends BaseObject
 			if (
 				childArmature != null && childArmature.inheritAnimation &&
 				childArmature.animation.hasAnimation(animationName) &&
-				!childArmature.animation.getState(animationName)
+				childArmature.animation.getState(animationName) == null
 			) 
 			{
 				childArmature.animation.fadeIn(animationName); //
@@ -717,7 +721,7 @@ class Animation extends BaseObject
 	public var isCompleted(get, never):Bool;
 	private function get_isCompleted():Bool
 	{
-		if (_lastAnimationState)
+		if (_lastAnimationState != null)
 		{
 			if (!_lastAnimationState.isCompleted)
 			{
@@ -747,7 +751,7 @@ class Animation extends BaseObject
 	public var lastAnimationName(get, never):String;
 	private function get_lastAnimationName():String
 	{
-		return _lastAnimationState? _lastAnimationState.name: null; 
+		return _lastAnimationState != null? _lastAnimationState.name: null; 
 	}
 	/**
 	 * @language zh_CN
@@ -789,12 +793,12 @@ class Animation extends BaseObject
 	 * @see dragonBones.objects.AnimationData
 	 * @version DragonBones 4.5
 	 */
-	public var animations(get, set):Dynamic;
-	private function get_animations():Dynamic
+	public var animations(get, set):Map<String, AnimationData>;
+	private function get_animations():Map<String, AnimationData>
 	{
 		return _animations;
 	}
-	public function set_animations(value:Dynamic):Dynamic
+	public function set_animations(value:Map<String, AnimationData>):Map<String, AnimationData>
 	{
 		if (_animations == value)
 		{
@@ -806,7 +810,7 @@ class Animation extends BaseObject
 		
 		if (value != null)
 		{
-			for (k in value)
+			for (k in value.keys())
 			{
 				_animations[k] = value[k];
 				_animationNames.push(k);

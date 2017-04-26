@@ -13,7 +13,7 @@ import dragonBones.core.BaseObject;
  * 动画配置，描述播放一个动画所需要的全部信息。
  * @version DragonBones 5.0
  */
-@:final class AnimationConfig extends BaseObject
+@:allow(dragonBones) @:final class AnimationConfig extends BaseObject
 {
 	/**
 	 * @language zh_CN
@@ -162,7 +162,7 @@ import dragonBones.core.BaseObject;
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones") @:allow("dragonBones") private function new()
+	private function new()
 	{
 		super();
 	}

@@ -13,28 +13,31 @@ import starling.display.Sprite;
 /**
  * @inheritDoc
  */
-@:final class StarlingArmatureDisplay extends Sprite implements IArmatureDisplay
+@:allow(dragonBones) @:final class StarlingArmatureDisplay extends Sprite implements IArmatureDisplay
 {
 	public static var useDefaultStarlingEvent:Bool = false;
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones") private var _armature:Armature;
+	private var _armature:Armature;
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones") private function new() {}
+	private function new()
+	{
+		super();
+	}
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones") private function _onClear():Void
+	private function _onClear():Void
 	{
 		_armature = null;
 	}
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones") private function _dispatchEvent(type:String, eventObject:EventObject):Void
+	private function _dispatchEvent(type:String, eventObject:EventObject):Void
 	{
 		if (useDefaultStarlingEvent)
 		{
@@ -49,7 +52,7 @@ import starling.display.Sprite;
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones") private function _debugDraw(isEnabled:Bool):Void
+	private function _debugDraw(isEnabled:Bool):Void
 	{
 	}
 	/**
@@ -57,7 +60,7 @@ import starling.display.Sprite;
 	 */
 	override public function dispose():Void
 	{
-		if (_armature)
+		if (_armature != null)
 		{
 			_armature.dispose();
 			_armature = null;

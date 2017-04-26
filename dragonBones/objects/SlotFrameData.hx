@@ -5,7 +5,7 @@ import openfl.geom.ColorTransform;
 /**
  * @private
  */
-@:final class SlotFrameData extends TweenFrameData
+@:allow(dragonBones) @:final class SlotFrameData extends TweenFrameData
 {
 	public static var DEFAULT_COLOR:ColorTransform = new ColorTransform();
 	
@@ -17,7 +17,7 @@ import openfl.geom.ColorTransform;
 	public var displayIndex:Int;
 	public var color:ColorTransform;
 	
-	@:allow("dragonBones") private function new()
+	private function new()
 	{
 		super();
 	}

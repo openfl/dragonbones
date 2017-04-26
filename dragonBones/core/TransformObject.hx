@@ -12,7 +12,7 @@ import dragonBones.geom.Transform;
  * 基础变换对象。
  * @version DragonBones 4.5
  */
-class TransformObject extends BaseObject
+@:allow(dragonBones) class TransformObject extends BaseObject
 {
 	/**
 	 * @language zh_CN
@@ -27,7 +27,7 @@ class TransformObject extends BaseObject
      * @readOnly
 	 * @version DragonBones 3.0
 	 */
-	public static var globalTransformMatrix:Matrix = new Matrix();
+	public var globalTransformMatrix:Matrix = new Matrix();
 	/**
 	 * @language zh_CN
 	 * 相对于骨架坐标系的变换。
@@ -35,14 +35,14 @@ class TransformObject extends BaseObject
 	 * @see dragonBones.geom.Transform
 	 * @version DragonBones 3.0
 	 */
-	public static var global:Transform = new Transform();
+	public var global:Transform = new Transform();
 	/**
 	 * @language zh_CN
 	 * 相对于骨架或父骨骼坐标系的偏移变换。
 	 * @see dragonBones.geom.Transform
 	 * @version DragonBones 3.0
 	 */
-	public static var offset:Transform = new Transform();
+	public var offset:Transform = new Transform();
 	/**
 	 * @language zh_CN
 	 * 相对于骨架或父骨骼坐标系的绑定变换。
@@ -60,15 +60,18 @@ class TransformObject extends BaseObject
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones") private var _armature:Armature;
+	private var _armature:Armature;
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones") private var _parent:Bone;
+	private var _parent:Bone;
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones") private function new() {}
+	private function new()
+	{
+		super();
+	}
 	/**
 	 * @private
 	 */
@@ -87,14 +90,14 @@ class TransformObject extends BaseObject
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones") private function _setArmature(value:Armature):Void
+	private function _setArmature(value:Armature):Void
 	{
 		_armature = value;
 	}
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones") private function _setParent(value:Bone):Void
+	private function _setParent(value:Bone):Void
 	{
 		_parent = value;
 	}

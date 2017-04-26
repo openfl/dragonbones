@@ -22,7 +22,7 @@ import dragonBones.objects.SlotTimelineData;
  * @see dragonBones.objects.AnimationData
  * @version DragonBones 3.0
  */
-@:final class AnimationState extends BaseObject
+@:allow(dragonBones) @:final class AnimationState extends BaseObject
 {
 	/**
 	 * @language zh_CN
@@ -71,93 +71,93 @@ import dragonBones.objects.SlotTimelineData;
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones") private var fadeTotalTime:Float;
+	private var fadeTotalTime:Float;
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones.animation") private var _playheadState:Int;
+	private var _playheadState:Int;
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones.animation") private var _fadeState:Int;
+	private var _fadeState:Int;
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones.animation") private var _subFadeState:Int;
+	private var _subFadeState:Int;
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones.animation") private var _layer:Int;
+	private var _layer:Int;
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones.animation") private var _position:Float;
+	private var _position:Float;
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones.animation") private var _duration:Float;
+	private var _duration:Float;
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones") private var _fadeTime:Float;
+	private var _fadeTime:Float;
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones") private var _time:Float;
+	private var _time:Float;
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones.animation") private var _fadeProgress:Float;
+	private var _fadeProgress:Float;
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones.animation") private var _weightResult:Float;
+	private var _weightResult:Float;
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones") private var _name:String;
+	private var _name:String;
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones.animation") private var _group:String;
+	private var _group:String;
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones") private var _boneMask:Vector<String> = new Vector<String>();
+	private var _boneMask:Vector<String> = new Vector<String>();
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones") private var _boneTimelines:Vector<BoneTimelineState> = new Vector<BoneTimelineState>();
+	private var _boneTimelines:Vector<BoneTimelineState> = new Vector<BoneTimelineState>();
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones") private var _slotTimelines:Vector<SlotTimelineState> = new Vector<SlotTimelineState>();
+	private var _slotTimelines:Vector<SlotTimelineState> = new Vector<SlotTimelineState>();
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones") private var _ffdTimelines:Vector<FFDTimelineState> = new Vector<FFDTimelineState>();
+	private var _ffdTimelines:Vector<FFDTimelineState> = new Vector<FFDTimelineState>();
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones") private var _animationData:AnimationData;
+	private var _animationData:AnimationData;
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones") private var _armature:Armature;
+	private var _armature:Armature;
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones.animation") private var _timeline:AnimationTimelineState;
+	private var _timeline:AnimationTimelineState;
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones") private var _zOrderTimeline: ZOrderTimelineState;
+	private var _zOrderTimeline: ZOrderTimelineState;
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones") private function AnimationState()
+	private function new()
 	{
-		super(this);
+		super();
 	}
 	/**
 	 * @private
@@ -230,15 +230,16 @@ import dragonBones.objects.SlotTimelineData;
 	private function _advanceFadeTime(passedTime:Float):Void
 	{
 		var isFadeOut:Bool = _fadeState > 0;
+		var eventType:String, eventObject:EventObject;
 		
 		if (_subFadeState < 0) // Fade start event.
 		{
 			_subFadeState = 0;
 			
-			var eventType:String = isFadeOut ? EventObject.FADE_OUT : EventObject.FADE_IN;
+			eventType = isFadeOut ? EventObject.FADE_OUT : EventObject.FADE_IN;
 			if (_armature.eventDispatcher.hasEvent(eventType)) 
 			{
-				var eventObject:EventObject = cast BaseObject.borrowObject(EventObject);
+				eventObject = cast BaseObject.borrowObject(EventObject);
 				eventObject.animationState = this;
 				_armature._bufferEvent(eventObject, eventType);
 			}
@@ -285,11 +286,11 @@ import dragonBones.objects.SlotTimelineData;
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones") private function _init(armature: Armature, animationData: AnimationData, animationConfig: AnimationConfig):Void 
+	private function _init(armature: Armature, animationData: AnimationData, animationConfig: AnimationConfig):Void 
 	{
 		_armature = armature;
 		_animationData = animationData;
-		_name = animationConfig.name ? animationConfig.name : animationConfig.animationName;
+		_name = animationConfig.name != null ? animationConfig.name : animationConfig.animationName;
 		
 		actionEnabled = animationConfig.actionEnabled;
 		additiveBlending = animationConfig.additiveBlending;
@@ -346,7 +347,7 @@ import dragonBones.objects.SlotTimelineData;
 		_timeline = cast BaseObject.borrowObject(AnimationTimelineState);
 		_timeline._init(_armature, this, _animationData);
 		
-		if (_animationData.zOrderTimeline) 
+		if (_animationData.zOrderTimeline != null) 
 		{
 			_zOrderTimeline = cast BaseObject.borrowObject(ZOrderTimelineState);
 			_zOrderTimeline._init(_armature, this, _animationData.zOrderTimeline);
@@ -357,7 +358,7 @@ import dragonBones.objects.SlotTimelineData;
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones.animation") private function _updateTimelineStates():Void
+	private function _updateTimelineStates():Void
 	{
 		_boneTimelines.fixed = false;
 		_slotTimelines.fixed = false;
@@ -514,7 +515,7 @@ import dragonBones.objects.SlotTimelineData;
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones.animation") private function _advanceTime(passedTime:Float, cacheFrameRate:Float):Void
+	private function _advanceTime(passedTime:Float, cacheFrameRate:Float):Void
 	{
 		// Update fade time.
 		if (_fadeState != 0 || _subFadeState != 0) 
@@ -628,7 +629,7 @@ import dragonBones.objects.SlotTimelineData;
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones.animation") private function _isDisabled(slot:Slot):Bool
+	private function _isDisabled(slot:Slot):Bool
 	{
 		if (
 			displayControl != null &&
@@ -647,7 +648,7 @@ import dragonBones.objects.SlotTimelineData;
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones.animation") private function _getBoneTimelineState(name:String):BoneTimelineState
+	private function _getBoneTimelineState(name:String):BoneTimelineState
 	{
 		for (boneTimelineState in _boneTimelines)
 		{
@@ -915,7 +916,7 @@ import dragonBones.objects.SlotTimelineData;
 	public var isPlaying(get, never):Bool;
 	private function get_isPlaying():Bool
 	{
-		return (_playheadState & 2) && _timeline._playState <= 0;
+		return (_playheadState & 2 != 0) && _timeline._playState <= 0;
 	}
 	/**
 	 * @language zh_CN

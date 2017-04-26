@@ -5,11 +5,11 @@ import openfl.Vector;
 /**
  * @private
  */
-@:final class ExtensionFrameData extends TweenFrameData
+@:allow(dragonBones) @:final class ExtensionFrameData extends TweenFrameData
 {
 	public var tweens:Vector<Float> = new Vector<Float>();
 	
-	@:allow("dragonBones") private function new()
+	private function new()
 	{
 		super();
 	}

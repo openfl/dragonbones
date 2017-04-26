@@ -19,7 +19,7 @@ import dragonBones.enums.BlendMode;
  * 基于 OpenFL 传统显示列表的插槽。
  * @version DragonBones 3.0
  */
-class OpenFLSlot extends Slot
+@:allow(dragonBones) class OpenFLSlot extends Slot
 {
 	private var _renderDisplay:DisplayObject;
 	private var _meshTexture:BitmapData;
@@ -27,7 +27,7 @@ class OpenFLSlot extends Slot
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones") private function new() {}
+	private function new() {}
 	/**
 	 * @private
 	 */

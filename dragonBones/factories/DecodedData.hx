@@ -1,13 +1,14 @@
 package dragonBones.factories;
 
 import openfl.display.Loader;
+import openfl.errors.Error;
 import openfl.system.System;
 import openfl.utils.ByteArray;
 
 /**
  * @private
  */
-@:final class DecodedData extends Loader
+@:allow(dragonBones) @:final class DecodedData extends Loader
 {
 	public static inline var JPG:Int = 1;
 	public static inline var PNG:Int = 2;
@@ -78,7 +79,9 @@ import openfl.utils.ByteArray;
 		dbDataBytes.writeByte(0);
 		dbDataBytes.writeByte(0);
 		
-		helpBytes.writeObject(dragonBonesData);
+		// TODO, writeObject
+		
+		/*helpBytes.writeObject(dragonBonesData);
 		dbDataBytes.writeInt(helpBytes.length);
 		dbDataBytes.writeBytes(helpBytes);
 		
@@ -90,7 +93,7 @@ import openfl.utils.ByteArray;
 		outputBytes.writeBytes(textureAtlasBytes);
 		outputBytes.writeBytes(dbDataBytes);
 		outputBytes.writeInt(dbDataBytes.length);
-		
+		*/
 		dbDataBytes.clear();
 		helpBytes.clear();
 		
@@ -121,6 +124,8 @@ import openfl.utils.ByteArray;
 					helpBytes.writeBytes(decodedBytes, position, dataSize);
 					if (getFormat(helpBytes) == DBDA)
 					{
+						// TODO, readObject
+						/*
 						//Read DragonBones Data
 						decodedBytes.position = position + 8;
 						dataSize = decodedBytes.readInt();
@@ -141,9 +146,11 @@ import openfl.utils.ByteArray;
 						//TextureAtlas
 						decodedBytes.position = decodedBytes.length - intSize;
 						decodedBytes.length = decodedBytes.length - decodedBytes.readInt() - intSize;
+						*/
 					}
 					else
 					{
+						/*
 						//Read DragonBones Data
 						helpBytes.uncompress();
 						helpBytes.position = 0;
@@ -164,6 +171,7 @@ import openfl.utils.ByteArray;
 						
 						//TextureAtlas
 						decodedBytes.length = position;
+						*/
 					}
 					
 					helpBytes.clear();
@@ -205,7 +213,10 @@ import openfl.utils.ByteArray;
 	 */
 	public var textureAtlasBytes:ByteArray = null;
 	
-	private function new() {}
+	private function new()
+	{
+		super();
+	}
 	
 	public function dispose():Void
 	{

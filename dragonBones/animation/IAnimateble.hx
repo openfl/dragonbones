@@ -20,5 +20,5 @@ interface IAnimateble
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones") private var clock(get, set):WorldClock;
+	@:allow(dragonBones) private var clock(get, set):WorldClock;
 }

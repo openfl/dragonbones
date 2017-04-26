@@ -28,14 +28,14 @@ import starling.styles.MeshStyle;
  * Starling 插槽。
  * @version DragonBones 3.0
  */
-@:final class StarlingSlot extends Slot
+@:allow(dragonBones) @:final class StarlingSlot extends Slot
 {
 	#if (starling < "2.0")
 	private static var _emptyEtexture:Texture = null;
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones") private static function getEmptyTexture():Texture
+	private static function getEmptyTexture():Texture
 	{
 		if (_emptyEtexture == null)
 		{
@@ -52,18 +52,21 @@ import starling.styles.MeshStyle;
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones") private var _indexData:IndexData;
+	private var _indexData:IndexData;
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones") private var _vertexData:VertexData;
+	private var _vertexData:VertexData;
 	#end
 	
 	private var _renderDisplay:DisplayObject;
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones") private function new() {}
+	private function new()
+	{
+		super();
+	}
 	/**
 	 * @private
 	 */
@@ -191,7 +194,7 @@ import starling.styles.MeshStyle;
 		var quad:Quad = Std.is(_renderDisplay, Quad) ? cast _renderDisplay : null;
 		if (quad != null)
 		{
-			var color:UInt = (uint(_colorTransform.redMultiplier * 0xFF) << 16) + (uint(_colorTransform.greenMultiplier * 0xFF) << 8) + uint(_colorTransform.blueMultiplier * 0xFF);
+			var color:UInt = (Std.int(_colorTransform.redMultiplier * 0xFF) << 16) + (Std.int(_colorTransform.greenMultiplier * 0xFF) << 8) + Std.int(_colorTransform.blueMultiplier * 0xFF);
 			if (quad.color != color)
 			{
 				quad.color = color;
@@ -203,8 +206,9 @@ import starling.styles.MeshStyle;
 	 */
 	override private function _updateFrame():Void
 	{
-		var isMeshDisplay:Bool = _meshData && _renderDisplay == _meshDisplay;
+		var isMeshDisplay:Bool = _meshData != null && _renderDisplay == _meshDisplay;
 		var currentTextureData:StarlingTextureData = cast (_textureData, StarlingTextureData);
+		var normalDisplay:Image;
 		
 		if (_displayIndex >= 0 && _display != null && currentTextureData != null)
 		{
@@ -264,7 +268,7 @@ import starling.styles.MeshStyle;
 				}
 				else // Normal texture.
 				{
-					var normalDisplay:Image = cast _renderDisplay;
+					normalDisplay = cast _renderDisplay;
 					normalDisplay.texture = currentTextureData.texture;
 					normalDisplay.readjustSize();
 				}
@@ -371,9 +375,11 @@ import starling.styles.MeshStyle;
 	 */
 	override private function _updateTransform(isSkinnedMesh:Bool):Void
 	{
+		var displayMatrix:Matrix;
+		
 		if (isSkinnedMesh)
 		{
-			var displayMatrix:Matrix = _renderDisplay.transformationMatrix;
+			displayMatrix = _renderDisplay.transformationMatrix;
 			displayMatrix.identity();
 			_renderDisplay.transformationMatrix = displayMatrix;
 		}

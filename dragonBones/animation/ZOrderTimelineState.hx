@@ -6,9 +6,12 @@ import dragonBones.objects.ZOrderFrameData;
 /**
  * @private
  */
-@:final class ZOrderTimelineState extends TimelineState
+@:allow(dragonBones) @:final class ZOrderTimelineState extends TimelineState
 {
-	private function new(){}
+	private function new()
+	{
+		super();
+	}
 	
 	override private function _onArriveAtFrame():Void
 	{

@@ -5,11 +5,11 @@ import openfl.Vector;
 /**
  * @private
  */
-@:final class ZOrderFrameData extends FrameData
+@:allow(dragonBones) @:final class ZOrderFrameData extends FrameData
 {
 	public var zOrder:Vector<Int> = new Vector<Int>();
 	
-	@:allow("dragonBones") private function new()
+	private function new()
 	{
 		super();
 	}

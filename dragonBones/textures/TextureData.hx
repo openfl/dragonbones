@@ -8,7 +8,7 @@ import dragonBones.core.DragonBones;
 /**
  * @private
  */
-class TextureData extends BaseObject
+@:allow(dragonBones) class TextureData extends BaseObject
 {
 	public static function generateRectangle():Rectangle
 	{
@@ -21,7 +21,10 @@ class TextureData extends BaseObject
 	public var frame:Rectangle;
 	public var parent:TextureAtlasData;
 	
-	private function new() {}
+	private function new()
+	{
+		super();
+	}
 	
 	override private function _onClear():Void
 	{

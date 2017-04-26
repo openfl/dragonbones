@@ -12,7 +12,7 @@ import dragonBones.objects.TimelineData;
 /**
  * @private
  */
-@:final class SlotTimelineState extends TweenTimelineState
+@:allow(dragonBones) @:final class SlotTimelineState extends TweenTimelineState
 {
 	public var slot:Slot;
 	
@@ -22,7 +22,10 @@ import dragonBones.objects.TimelineData;
 	private var _durationColor:ColorTransform = new ColorTransform();
 	private var _slotColor:ColorTransform;
 	
-	private function new() {}
+	private function new()
+	{
+		super();
+	}
 	
 	override private function _onClear():Void
 	{
@@ -31,7 +34,7 @@ import dragonBones.objects.TimelineData;
 		slot = null;
 		
 		_colorDirty = false;
-		_tweenColor = TWEEN_TYPE_NONE;
+		_tweenColor = TweenTimelineState.TWEEN_TYPE_NONE;
 		_color.alphaMultiplier = 1;
 		_color.redMultiplier = 1;
 		_color.greenMultiplier = 1;
@@ -59,7 +62,7 @@ import dragonBones.objects.TimelineData;
 		{
 			_tweenEasing = DragonBones.NO_TWEEN;
 			_curve = null;
-			_tweenColor = TWEEN_TYPE_NONE;
+			_tweenColor = TweenTimelineState.TWEEN_TYPE_NONE;
 			return;
 		}
 		
@@ -72,11 +75,11 @@ import dragonBones.objects.TimelineData;
 		
 		if (displayIndex >= 0)
 		{
-			_tweenColor = TWEEN_TYPE_NONE;
+			_tweenColor = TweenTimelineState.TWEEN_TYPE_NONE;
 			
 			var currentColor:ColorTransform = currentFrame.color;
 			
-			if (_tweenEasing != DragonBones.NO_TWEEN || _curve)
+			if (_tweenEasing != DragonBones.NO_TWEEN || _curve != null)
 			{
 				var nextFrame:SlotFrameData = cast currentFrame.next;
 				var nextColor:ColorTransform = nextFrame.color;
@@ -102,12 +105,12 @@ import dragonBones.objects.TimelineData;
 						_durationColor.blueOffset != 0
 					)
 					{
-						_tweenColor = TWEEN_TYPE_ALWAYS;
+						_tweenColor = TweenTimelineState.TWEEN_TYPE_ALWAYS;
 					}
 				}
 			}
 			
-			if (_tweenColor == TWEEN_TYPE_NONE)
+			if (_tweenColor == TweenTimelineState.TWEEN_TYPE_NONE)
 			{
 				if (
 					_slotColor.alphaMultiplier != currentColor.alphaMultiplier ||
@@ -120,7 +123,7 @@ import dragonBones.objects.TimelineData;
 					_slotColor.blueOffset != currentColor.blueOffset
 				)
 				{
-					_tweenColor = TWEEN_TYPE_ONCE;
+					_tweenColor = TweenTimelineState.TWEEN_TYPE_ONCE;
 				}
 			}
 		}
@@ -128,7 +131,7 @@ import dragonBones.objects.TimelineData;
 		{
 			_tweenEasing = DragonBones.NO_TWEEN;
 			_curve = null;
-			_tweenColor = TWEEN_TYPE_NONE;
+			_tweenColor = TweenTimelineState.TWEEN_TYPE_NONE;
 		}
 	}
 	
@@ -140,11 +143,11 @@ import dragonBones.objects.TimelineData;
 		
 		var tweenProgress:Float = 0.0;
 		
-		if (_tweenColor != TWEEN_TYPE_NONE && slot.parent._blendLayer >= _animationState._layer)
+		if (_tweenColor != TweenTimelineState.TWEEN_TYPE_NONE && slot.parent._blendLayer >= _animationState._layer)
 		{
-			if (_tweenColor == TWEEN_TYPE_ONCE)
+			if (_tweenColor == TweenTimelineState.TWEEN_TYPE_ONCE)
 			{
-				_tweenColor = TWEEN_TYPE_NONE;
+				_tweenColor = TweenTimelineState.TWEEN_TYPE_NONE;
 				tweenProgress = 0;
 			}
 			else
@@ -175,7 +178,7 @@ import dragonBones.objects.TimelineData;
 	
 	override public function fadeOut():Void
 	{
-		_tweenColor = TWEEN_TYPE_NONE;
+		_tweenColor = TweenTimelineState.TWEEN_TYPE_NONE;
 	}
 	
 	override public function update(passedTime:Float):Void
@@ -183,7 +186,7 @@ import dragonBones.objects.TimelineData;
 		super.update(passedTime);
 		
 		// Fade animation.
-		if (_tweenColor != TWEEN_TYPE_NONE || _colorDirty)
+		if (_tweenColor != TweenTimelineState.TWEEN_TYPE_NONE || _colorDirty)
 		{
 			if (_animationState._fadeState != 0 || _animationState._subFadeState != 0)
 			{

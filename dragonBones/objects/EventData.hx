@@ -6,7 +6,7 @@ import dragonBones.enums.EventType;
 /**
  * @private
  */
-@:final class EventData extends BaseObject
+@:allow(dragonBones) @:final class EventData extends BaseObject
 {
 	public var type:Int;
 	public var name:String;
@@ -14,7 +14,7 @@ import dragonBones.enums.EventType;
 	public var slot:SlotData;
 	public var data:CustomData;
 	
-	@:allow("dragonBones") private function new()
+	private function new()
 	{
 		super();
 	}

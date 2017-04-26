@@ -8,21 +8,21 @@ import dragonBones.core.DragonBones;
 /**
  * @private
  */
-class TimelineData extends BaseObject
+@:allow(dragonBones) class TimelineData extends BaseObject
 {
 	public var scale:Float;
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones") private var offset:Float;
+	private var offset:Float;
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones") private var frames:Vector<FrameData> = new Vector<FrameData>();
+	private var frames:Vector<FrameData> = new Vector<FrameData>();
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones") @:allow("dragonBones") private function new()
+	private function new()
 	{
 		super();
 	}

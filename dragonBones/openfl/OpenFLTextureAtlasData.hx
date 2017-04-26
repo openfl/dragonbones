@@ -6,13 +6,13 @@ import dragonBones.core.BaseObject;
 import dragonBones.textures.TextureAtlasData;
 import dragonBones.textures.TextureData;
 
-@:final class OpenFLTextureAtlasData extends TextureAtlasData
+@:allow(dragonBones) @:final class OpenFLTextureAtlasData extends TextureAtlasData
 {
 	public var texture:BitmapData;
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones") private function new() {}
+	private function new() {}
 	/**
 	 * @private
 	 */

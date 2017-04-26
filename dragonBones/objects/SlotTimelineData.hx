@@ -3,11 +3,11 @@ package dragonBones.objects;
 /**
  * @private
  */
-@:final class SlotTimelineData extends TimelineData
+@:allow(dragonBones) @:final class SlotTimelineData extends TimelineData
 {
 	public var slot:SlotData;
 	
-	@:allow("dragonBones") private function new()
+	private function new()
 	{
 		super();
 	}

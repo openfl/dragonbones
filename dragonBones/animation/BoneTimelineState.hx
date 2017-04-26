@@ -12,7 +12,7 @@ import dragonBones.objects.TimelineData;
 /**
  * @private
  */
-@:final class BoneTimelineState extends TweenTimelineState
+@:allow(dragonBones) @:final class BoneTimelineState extends TweenTimelineState
 {
 	public var bone:Bone;
 	
@@ -25,7 +25,10 @@ import dragonBones.objects.TimelineData;
 	private var _boneTransform:Transform;
 	private var _originalTransform:Transform;
 	
-	private function new() {}
+	private function new()
+	{
+		super();
+	}
 	
 	override private function _onClear():Void
 	{
@@ -34,9 +37,9 @@ import dragonBones.objects.TimelineData;
 		bone = null;
 		
 		_transformDirty = false;
-		_tweenTransform = TWEEN_TYPE_NONE;
-		_tweenRotate = TWEEN_TYPE_NONE;
-		_tweenScale = TWEEN_TYPE_NONE;
+		_tweenTransform = TweenTimelineState.TWEEN_TYPE_NONE;
+		_tweenRotate = TweenTimelineState.TWEEN_TYPE_NONE;
+		_tweenScale = TweenTimelineState.TWEEN_TYPE_NONE;
 		_transform.identity();
 		_durationTransform.identity();
 		_boneTransform = null;
@@ -49,9 +52,9 @@ import dragonBones.objects.TimelineData;
 		
 		var currentFrame:BoneFrameData = cast(_currentFrame, BoneFrameData);
 		
-		_tweenTransform = TWEEN_TYPE_ONCE;
-		_tweenRotate = TWEEN_TYPE_ONCE;
-		_tweenScale = TWEEN_TYPE_ONCE;
+		_tweenTransform = TweenTimelineState.TWEEN_TYPE_ONCE;
+		_tweenRotate = TweenTimelineState.TWEEN_TYPE_ONCE;
+		_tweenScale = TweenTimelineState.TWEEN_TYPE_ONCE;
 		
 		if (_keyFrameCount > 1 && (_tweenEasing != DragonBones.NO_TWEEN || _curve != null))
 		{
@@ -64,14 +67,14 @@ import dragonBones.objects.TimelineData;
 			_durationTransform.y = nextTransform.y - currentTransform.y;
 			if (_durationTransform.x != 0.0 || _durationTransform.y != 0.0) 
 			{
-				_tweenTransform = TWEEN_TYPE_ALWAYS;
+				_tweenTransform = TweenTimelineState.TWEEN_TYPE_ALWAYS;
 			}
 			
 			// Rotate.
 			var tweenRotate:Float = currentFrame.tweenRotate;
 			if (tweenRotate != DragonBones.NO_TWEEN) 
 			{
-				if (tweenRotate) 
+				if (tweenRotate != 0) 
 				{
 					if (tweenRotate > 0.0 ? nextTransform.skewY >= currentTransform.skewY : nextTransform.skewY <= currentTransform.skewY) 
 					{
@@ -89,7 +92,7 @@ import dragonBones.objects.TimelineData;
 				
 				if (_durationTransform.skewX != 0.0 || _durationTransform.skewY != 0.0) 
 				{
-					_tweenRotate = TWEEN_TYPE_ALWAYS;
+					_tweenRotate = TweenTimelineState.TWEEN_TYPE_ALWAYS;
 				}
 			}
 			else 
@@ -105,7 +108,7 @@ import dragonBones.objects.TimelineData;
 				_durationTransform.scaleY = nextTransform.scaleY - currentTransform.scaleY;
 				if (_durationTransform.scaleX != 0.0 || _durationTransform.scaleY != 0.0) 
 				{
-					_tweenScale = TWEEN_TYPE_ALWAYS;
+					_tweenScale = TweenTimelineState.TWEEN_TYPE_ALWAYS;
 				}
 			}
 			else 
@@ -132,11 +135,11 @@ import dragonBones.objects.TimelineData;
 		var tweenProgress:Float = 0.0;
 		var currentTransform:Transform = cast(_currentFrame, BoneFrameData).transform;
 		
-		if (_tweenTransform != TWEEN_TYPE_NONE) 
+		if (_tweenTransform != TweenTimelineState.TWEEN_TYPE_NONE) 
 		{
-			if (_tweenTransform == TWEEN_TYPE_ONCE) 
+			if (_tweenTransform == TweenTimelineState.TWEEN_TYPE_ONCE) 
 			{
-				_tweenTransform = TWEEN_TYPE_NONE;
+				_tweenTransform = TweenTimelineState.TWEEN_TYPE_NONE;
 				tweenProgress = 0.0;
 			}
 			else 
@@ -158,11 +161,11 @@ import dragonBones.objects.TimelineData;
 			_transformDirty = true;
 		}
 		
-		if (_tweenRotate != TWEEN_TYPE_NONE) 
+		if (_tweenRotate != TweenTimelineState.TWEEN_TYPE_NONE) 
 		{
-			if (_tweenRotate == TWEEN_TYPE_ONCE) 
+			if (_tweenRotate == TweenTimelineState.TWEEN_TYPE_ONCE) 
 			{
-				_tweenRotate = TWEEN_TYPE_NONE;
+				_tweenRotate = TweenTimelineState.TWEEN_TYPE_NONE;
 				tweenProgress = 0.0;
 			}
 			else 
@@ -184,11 +187,11 @@ import dragonBones.objects.TimelineData;
 			_transformDirty = true;
 		}
 		
-		if (_tweenScale != TWEEN_TYPE_NONE) 
+		if (_tweenScale != TweenTimelineState.TWEEN_TYPE_NONE) 
 		{
-			if (_tweenScale == TWEEN_TYPE_ONCE) 
+			if (_tweenScale == TweenTimelineState.TWEEN_TYPE_ONCE) 
 			{
-				_tweenScale = TWEEN_TYPE_NONE;
+				_tweenScale = TweenTimelineState.TWEEN_TYPE_NONE;
 				tweenProgress = 0.0;
 			}
 			else 

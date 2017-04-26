@@ -13,7 +13,7 @@ import dragonBones.objects.TimelineData;
 /**
  * @private
  */
-@:final class FFDTimelineState extends TweenTimelineState
+@:allow(dragonBones) @:final class FFDTimelineState extends TweenTimelineState
 {
 	public var slot:Slot;
 	
@@ -23,7 +23,10 @@ import dragonBones.objects.TimelineData;
 	private var _durationFFDVertices:Vector<Float> = new Vector<Float>();
 	private var _slotFFDVertices:Vector<Float>;
 	
-	private function new() {}
+	private function new()
+	{
+		super();
+	}
 	
 	override private function _onClear():Void
 	{
@@ -32,7 +35,7 @@ import dragonBones.objects.TimelineData;
 		slot = null;
 		
 		_ffdDirty = false;
-		_tweenFFD = TWEEN_TYPE_NONE;
+		_tweenFFD = TweenTimelineState.TWEEN_TYPE_NONE;
 		_ffdVertices.fixed = false;
 		_durationFFDVertices.fixed = false;
 		_ffdVertices.length = 0;
@@ -48,15 +51,15 @@ import dragonBones.objects.TimelineData;
 		{
 			_tweenEasing = DragonBones.NO_TWEEN;
 			_curve = null;
-			_tweenFFD = TWEEN_TYPE_NONE;
+			_tweenFFD = TweenTimelineState.TWEEN_TYPE_NONE;
 			return;
 		}
 		
 		var currentFrame:ExtensionFrameData = cast _currentFrame;
 		
-		_tweenFFD = TWEEN_TYPE_NONE;
+		_tweenFFD = TweenTimelineState.TWEEN_TYPE_NONE;
 		
-		if (_tweenEasing != DragonBones.NO_TWEEN || _curve)
+		if (_tweenEasing != DragonBones.NO_TWEEN || _curve != null)
 		{
 			var currentFFDVertices:Vector<Float> = currentFrame.tweens;
 			var nextFFDVertices:Vector<Float> = cast(currentFrame.next, ExtensionFrameData).tweens;
@@ -68,14 +71,14 @@ import dragonBones.objects.TimelineData;
 				_durationFFDVertices[i] = duration;
 				if (duration != 0.0) 
 				{
-					_tweenFFD = TWEEN_TYPE_ALWAYS;
+					_tweenFFD = TweenTimelineState.TWEEN_TYPE_ALWAYS;
 				}
 			}
 		}
 		
-		if (_tweenFFD == TWEEN_TYPE_NONE)
+		if (_tweenFFD == TweenTimelineState.TWEEN_TYPE_NONE)
 		{
-			_tweenFFD = TWEEN_TYPE_ONCE;
+			_tweenFFD = TweenTimelineState.TWEEN_TYPE_ONCE;
 			var l = _durationFFDVertices.length;
 			for (i in 0...l)
 			{
@@ -90,11 +93,11 @@ import dragonBones.objects.TimelineData;
 		
 		var tweenProgress:Float = 0.0;
 		
-		if (_tweenFFD != TWEEN_TYPE_NONE && slot.parent._blendLayer >= _animationState._layer)
+		if (_tweenFFD != TweenTimelineState.TWEEN_TYPE_NONE && slot.parent._blendLayer >= _animationState._layer)
 		{
-			if (_tweenFFD == TWEEN_TYPE_ONCE)
+			if (_tweenFFD == TweenTimelineState.TWEEN_TYPE_ONCE)
 			{
-				_tweenFFD = TWEEN_TYPE_NONE;
+				_tweenFFD = TweenTimelineState.TWEEN_TYPE_NONE;
 				tweenProgress = 0.0;
 			}
 			else
@@ -139,7 +142,7 @@ import dragonBones.objects.TimelineData;
 	
 	override public function fadeOut():Void
 	{
-		_tweenFFD = TWEEN_TYPE_NONE;
+		_tweenFFD = TweenTimelineState.TWEEN_TYPE_NONE;
 	}
 	
 	override public function update(passedTime:Float):Void
@@ -152,7 +155,7 @@ import dragonBones.objects.TimelineData;
 		}
 		
 		// Fade animation.
-		if (_tweenFFD != TWEEN_TYPE_NONE || _ffdDirty)
+		if (_tweenFFD != TweenTimelineState.TWEEN_TYPE_NONE || _ffdDirty)
 		{
 			var l:UInt;
 			if (_animationState._fadeState != 0 || _animationState._subFadeState != 0)

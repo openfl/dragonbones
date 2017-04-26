@@ -6,6 +6,8 @@ import openfl.display.Bitmap;
 import openfl.display.BitmapData;
 import openfl.display.DisplayObject;
 import openfl.display.LoaderInfo;
+import openfl.errors.ArgumentError;
+import openfl.errors.Error;
 import openfl.events.Event;
 import openfl.events.EventDispatcher;
 import openfl.geom.Matrix;
@@ -21,6 +23,7 @@ import dragonBones.Slot;
 import dragonBones.core.BaseObject;
 import dragonBones.core.DragonBones;
 import dragonBones.enums.DisplayType;
+import dragonBones.objects.AnimationData;
 import dragonBones.objects.ArmatureData;
 import dragonBones.objects.BoneData;
 import dragonBones.objects.DisplayData;
@@ -48,12 +51,12 @@ import dragonBones.textures.TextureData;
  * @see dragonBones.Armature
  * @version DragonBones 3.0
  */
-class BaseFactory extends EventDispatcher
+@:allow(dragonBones) class BaseFactory extends EventDispatcher
 {
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones") private static var _defaultDataParser:DataParser = new ObjectDataParser();
+	private static var _defaultDataParser:DataParser = new ObjectDataParser();
 	/**
 	 * @language zh_CN
 	 * 是否开启共享搜索。
@@ -70,7 +73,7 @@ class BaseFactory extends EventDispatcher
 	/** 
 	 * @private 
 	 */
-	private var _textureAtlasDataMap:Map<String, TextureAtlasData> = new Map<String, TextureAtlasData>();
+	private var _textureAtlasDataMap:Map<String, Vector<TextureAtlasData>> = new Map<String, Vector<TextureAtlasData>>();
 	/** 
 	 * @private 
 	 */
@@ -80,6 +83,7 @@ class BaseFactory extends EventDispatcher
 	 */
 	private function new (dataParser:DataParser = null)
 	{
+		super();
 		_dataParser = dataParser != null ? dataParser : _defaultDataParser;
 	}
 	/** 
@@ -87,12 +91,13 @@ class BaseFactory extends EventDispatcher
 	 */
 	private function _getTextureData(textureAtlasName:String, textureName:String):TextureData
 	{
+		var textureData:TextureData;
+		
 		if (_textureAtlasDataMap.exists(textureAtlasName))
 		{
 			var textureAtlasDataList:Vector<TextureAtlasData> = _textureAtlasDataMap[textureAtlasName];
 			
 			var l:UInt = textureAtlasDataList.length;
-			var textureData:TextureData;
 			for (i in 0...l)
 			{
 				textureData = textureAtlasDataList[i].getTexture(textureName);
@@ -210,7 +215,7 @@ class BaseFactory extends EventDispatcher
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones") private function _buildSlots(dataPackage:BuildArmaturePackage, armature:Armature):Void
+	private function _buildSlots(dataPackage:BuildArmaturePackage, armature:Armature):Void
 	{
 		var currentSkin:SkinData = dataPackage.skin;
 		var defaultSkin:SkinData = dataPackage.armature.defaultSkin;
@@ -231,7 +236,7 @@ class BaseFactory extends EventDispatcher
 		
 		var slots:Vector<SlotData> = dataPackage.armature.sortedSlots;
 		var l:UInt = slots.length;
-		var slotData:SlotData, skinSlotData:SlotData, slot:Slot;
+		var slotData:SlotData, skinSlotData:SkinSlotData, slot:Slot;
 		for (i in 0...l)
 		{
 			slotData = slots[i];
@@ -252,7 +257,7 @@ class BaseFactory extends EventDispatcher
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones") private function _replaceSlotDisplay(dataPackage:BuildArmaturePackage, displayData:DisplayData, slot:Slot, displayIndex:Int):Void
+	private function _replaceSlotDisplay(dataPackage:BuildArmaturePackage, displayData:DisplayData, slot:Slot, displayIndex:Int):Void
 	{
 		if (displayIndex < 0) 
 		{
@@ -283,7 +288,7 @@ class BaseFactory extends EventDispatcher
 			{
 				if (displayData.texture == null || dataPackage.textureAtlasName != null) 
 				{
-					displayData.texture = _getTextureData(dataPackage.textureAtlasName ? dataPackage.textureAtlasName : dataPackage.dataName, displayData.path);
+					displayData.texture = _getTextureData(dataPackage.textureAtlasName != null ? dataPackage.textureAtlasName : dataPackage.dataName, displayData.path);
 				}
 				
 				var displayDatas:Vector<DisplayData> = slot.skinSlotData.displays;
@@ -306,7 +311,7 @@ class BaseFactory extends EventDispatcher
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones") private function _generateTextureAtlasData(textureAtlasData:TextureAtlasData, textureAtlas:Dynamic):TextureAtlasData
+	private function _generateTextureAtlasData(textureAtlasData:TextureAtlasData, textureAtlas:Dynamic):TextureAtlasData
 	{
 		throw new Error(DragonBones.ABSTRACT_METHOD_ERROR);
 		return null;
@@ -314,7 +319,7 @@ class BaseFactory extends EventDispatcher
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones") private function _generateArmature(dataPackage:BuildArmaturePackage):Armature
+	private function _generateArmature(dataPackage:BuildArmaturePackage):Armature
 	{
 		throw new Error(DragonBones.ABSTRACT_METHOD_ERROR);
 		return null;
@@ -349,7 +354,7 @@ class BaseFactory extends EventDispatcher
 			if (decodeData != null)
 			{
 				_decodeDataList.push(decodeData);
-				decodeData.name = dragonBonesName || "";
+				decodeData.name = dragonBonesName != null ? dragonBonesName : "";
 				decodeData.contentLoaderInfo.addEventListener(Event.COMPLETE, _loadTextureAtlasHandler);
 				decodeData.loadBytes(decodeData.textureAtlasBytes, null);
 				rawData = decodeData.dragonBonesData;
@@ -367,14 +372,11 @@ class BaseFactory extends EventDispatcher
 		//
 		if (isComplete)
 		{
-			_delay.stop();
-			//clearTimeout(_delayID);
-			_delay.run = function () {
+			if (_delay != null)
+			{
 				_delay.stop();
-				dispatchEvent(new Event(Event.COMPLETE));
-			};
-			_delay.start();
-			//_delayID = setTimeout(dispatchEvent, 30, new Event(Event.COMPLETE));
+			}
+			_delay = Timer.delay(dispatchEvent.bind(new Event(Event.COMPLETE)), 30);
 		}
 		
 		return dragonBonesData;
@@ -409,8 +411,8 @@ class BaseFactory extends EventDispatcher
 			var matrix:Matrix = new Matrix();
 			matrix.scale(textureAtlasData.scale, textureAtlasData.scale);
 			textureAtlasData.bitmapData = new BitmapData(
-				(rect.x + displayObject.width) * textureAtlasData.scale, 
-				(rect.y + displayObject.height) * textureAtlasData.scale, 
+				Std.int((rect.x + displayObject.width) * textureAtlasData.scale), 
+				Std.int((rect.y + displayObject.height) * textureAtlasData.scale), 
 				true, 
 				0
 			);
@@ -457,7 +459,7 @@ class BaseFactory extends EventDispatcher
 			if (dragonBonesName == null) dragonBonesName = data.name;
 			if (dragonBonesName != null)
 			{
-				if (!_dragonBonesDataMap[dragonBonesName] != null)
+				if (!_dragonBonesDataMap.exists(dragonBonesName))
 				{
 					_dragonBonesDataMap[dragonBonesName] = data;
 				}
@@ -812,7 +814,7 @@ class BaseFactory extends EventDispatcher
 	 */
 	public var scaleForTexture:Float = 0;
 	
-	private var _delay:Timer = new Timer(30);
+	private var _delay:Timer;
 	//private var _delayID:UInt = 0;
 	private var _decodeDataList:Vector<DecodedData> = new Vector<DecodedData>();
 	private function _loadTextureAtlasHandler(event:Event):Void
@@ -820,7 +822,7 @@ class BaseFactory extends EventDispatcher
 		var loaderInfo:LoaderInfo = cast(event.target, LoaderInfo);
 		var decodeData:DecodedData = cast(loaderInfo.loader, DecodedData);
 		loaderInfo.removeEventListener(Event.COMPLETE, _loadTextureAtlasHandler);
-		parseTextureAtlasData(decodeData.textureAtlasData, decodeData.content, decodeData.name, scaleForTexture || 0, 1);
+		parseTextureAtlasData(decodeData.textureAtlasData, decodeData.content, decodeData.name, scaleForTexture, 1);
 		decodeData.dispose();
 		_decodeDataList.splice(_decodeDataList.indexOf(decodeData), 1);
 		if (_decodeDataList.length == 0)

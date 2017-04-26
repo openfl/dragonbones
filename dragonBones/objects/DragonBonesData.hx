@@ -12,7 +12,7 @@ import dragonBones.core.BaseObject;
  * @see dragonBones.objects.ArmatureData
  * @version DragonBones 3.0
  */
-class DragonBonesData extends BaseObject
+@:allow(dragonBones) class DragonBonesData extends BaseObject
 {
 	/**
 	 * @language zh_CN
@@ -43,17 +43,17 @@ class DragonBonesData extends BaseObject
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones") private var cachedFrames: Vector<Float> = new Vector<Float>();
+	private var cachedFrames: Vector<Float> = new Vector<Float>();
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones") private var userData: CustomData;
+	private var userData: CustomData;
 	
 	private var _armatureNames:Vector<String> = new Vector<String>();
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones") private function new()
+	private function new()
 	{
 		super();
 	}
@@ -85,7 +85,7 @@ class DragonBonesData extends BaseObject
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones") private function addArmature(value:ArmatureData):Void
+	private function addArmature(value:ArmatureData):Void
 	{
 		if (value != null && value.name != null && !armatures.exists(value.name))
 		{

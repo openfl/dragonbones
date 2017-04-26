@@ -2,6 +2,7 @@ package dragonBones;
 
 import haxe.Constraints;
 
+import openfl.errors.Error;
 import openfl.geom.Point;
 import openfl.Vector;
 
@@ -30,7 +31,7 @@ import dragonBones.textures.TextureAtlasData;
  * @see dragonBones.animation.Animation
  * @version DragonBones 3.0
  */
-@:final class Armature extends BaseObject implements IAnimateble
+@:allow(dragonBones) @:final class Armature extends BaseObject implements IAnimateble
 {
 	private static function _onSortSlots(a:Slot, b:Slot):Int 
 	{
@@ -46,7 +47,7 @@ import dragonBones.textures.TextureAtlasData;
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones") private var debugDraw:Bool;
+	private var debugDraw:Bool;
 	/**
 	 * @language zh_CN
 	 * 用于存储临时数据。
@@ -60,7 +61,7 @@ import dragonBones.textures.TextureAtlasData;
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones") private var _bonesDirty:Bool;
+	private var _bonesDirty:Bool;
 	private var _slotsDirty:Bool;
 	private var _zOrderDirty:Bool;
 	private var _bones:Vector<Bone> = new Vector<Bone>();
@@ -70,11 +71,11 @@ import dragonBones.textures.TextureAtlasData;
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones") private var _armatureData:ArmatureData;
+	private var _armatureData:ArmatureData;
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones") private var _skinData:SkinData;
+	private var _skinData:SkinData;
 	private var _animation:Animation;
 	private var _proxy:IArmatureProxy;
 	private var _display:Dynamic;
@@ -82,17 +83,20 @@ import dragonBones.textures.TextureAtlasData;
 	/**
 	 * @private Slot
 	 */
-	@:allow("dragonBones") private var _parent:Slot;
+	private var _parent:Slot;
 	private var _clock:WorldClock;
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones") private var _replaceTextureAtlasData:TextureAtlasData;
+	private var _replaceTextureAtlasData:TextureAtlasData;
 	private var _replacedTexture:Dynamic;
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones") private function new() {}
+	private function new()
+	{
+		super();
+	}
 	/**
 	 * @private
 	 */
@@ -205,7 +209,8 @@ import dragonBones.textures.TextureAtlasData;
 			
 			if (bone.ik != null && bone.ikChain > 0 && bone.ikChainIndex == bone.ikChain)
 			{
-				_bones.splice(_bones.indexOf(bone.parent) + 1, 0, bone); // ik, parent, bone, children
+				_bones.insertAt(_bones.indexOf(bone.parent) + 1, bone); // ik, parent, bone, children
+				//_bones.splice(_bones.indexOf(bone.parent) + 1, 0, bone); // ik, parent, bone, children
 			}
 			else
 			{
@@ -234,7 +239,7 @@ import dragonBones.textures.TextureAtlasData;
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones") private function _init(
+	private function _init(
 		armatureData: ArmatureData, skinData: SkinData,
 		display:Dynamic, proxy: IArmatureProxy, eventManager: IEventDispatcher
 	):Void 
@@ -257,7 +262,7 @@ import dragonBones.textures.TextureAtlasData;
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones") private function _addBoneToBoneList(value:Bone):Void
+	private function _addBoneToBoneList(value:Bone):Void
 	{
 		if (_bones.indexOf(value) < 0)
 		{
@@ -271,7 +276,7 @@ import dragonBones.textures.TextureAtlasData;
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones") private function _removeBoneFromBoneList(value: Bone):Void 
+	private function _removeBoneFromBoneList(value: Bone):Void 
 	{
 		var index:Int = _bones.indexOf(value);
 		if (index >= 0) 
@@ -287,7 +292,7 @@ import dragonBones.textures.TextureAtlasData;
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones") private function _addSlotToSlotList(value:Slot):Void
+	private function _addSlotToSlotList(value:Slot):Void
 	{
 		if (_slots.indexOf(value) < 0)
 		{
@@ -302,7 +307,7 @@ import dragonBones.textures.TextureAtlasData;
 	 * @internal
 	 * @private
 	 */
-	@:allow("dragonBones") private function _removeSlotFromSlotList(value: Slot):Void 
+	private function _removeSlotFromSlotList(value: Slot):Void 
 	{
 		var index:Int = _slots.indexOf(value);
 		if (index >= 0) 
@@ -318,7 +323,7 @@ import dragonBones.textures.TextureAtlasData;
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones") private function _sortZOrder(slotIndices: Vector<Int>):Void 
+	private function _sortZOrder(slotIndices: Vector<Int>):Void 
 	{
 		var sortedSlots:Vector<SlotData> = _armatureData.sortedSlots;
 		var isOriginal:Bool = slotIndices == null || slotIndices.length < 1;
@@ -350,14 +355,14 @@ import dragonBones.textures.TextureAtlasData;
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones") private function _bufferAction(value:ActionData):Void
+	private function _bufferAction(value:ActionData):Void
 	{
 		_actions.push(value);
 	}
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones") private function _bufferEvent(value:EventObject, type:String):Void
+	private function _bufferEvent(value:EventObject, type:String):Void
 	{
 		value.type = type;
 		value.armature = this;
@@ -456,7 +461,7 @@ import dragonBones.textures.TextureAtlasData;
 				for (i in 0...l) 
 				{
 					eventObject = _events[i];
-					_proxy._dispatchEvent(eventObject.type, eventObject);
+					@:privateAccess _proxy._dispatchEvent(eventObject.type, eventObject);
 					
 					if (eventObject.type == EventObject.SOUND_EVENT)
 					{
@@ -553,7 +558,7 @@ import dragonBones.textures.TextureAtlasData;
 		}
 		else
 		{
-			var l:Uint = _bones.length;
+			var l:UInt = _bones.length;
 			for (i in 0...l)
 			{
 				_bones[i].invalidUpdate();
@@ -635,7 +640,7 @@ import dragonBones.textures.TextureAtlasData;
 				{
 					if (intersectionPointA != null) 
 					{
-						d = isV ? intersectionPointA.y - yA : IntersectionPointA.x - xA;
+						d = isV ? intersectionPointA.y - yA : intersectionPointA.x - xA;
 						if (d < 0.0) 
 						{
 							d = -d;
@@ -648,7 +653,7 @@ import dragonBones.textures.TextureAtlasData;
 							intYA = intersectionPointA.y;
 							intSlotA = slot;
 							
-							if (normalRadians) 
+							if (normalRadians != null) 
 							{
 								intAN = normalRadians.x;
 							}
@@ -744,7 +749,7 @@ import dragonBones.textures.TextureAtlasData;
 	{
 		var slot:Slot = getSlotByDisplay(display);
 		
-		return slot? slot.parent: null;
+		return slot != null? slot.parent: null;
 	}
 	/**
 	 * @language zh_CN
@@ -798,18 +803,18 @@ import dragonBones.textures.TextureAtlasData;
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones") private function _addBone(value:Bone, parentName:String = null):Void
+	private function _addBone(value:Bone, parentName:String = null):Void
 	{
 		if (value != null)
 		{
 			value._setArmature(this);
-			value._setParent(parentName? getBone(parentName): null);
+			value._setParent(parentName != null? getBone(parentName): null);
 		}
 	}
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones") private function _addSlot(value:Slot, parentName:String):Void
+	private function _addSlot(value:Slot, parentName:String):Void
 	{
 		var bone:Bone = getBone(parentName);
 		if (bone != null)
@@ -857,7 +862,7 @@ import dragonBones.textures.TextureAtlasData;
 	public var name(get, never):String;
 	private function get_name():String
 	{
-		return _armatureData? _armatureData.name: null;
+		return _armatureData != null? _armatureData.name: null;
 	}
 	/**
 	 * @language zh_CN
@@ -950,7 +955,7 @@ import dragonBones.textures.TextureAtlasData;
 	/**
 	 * @inheritDoc
 	 */
-	public var clock(get, never):WorldClock;
+	public var clock(get, set):WorldClock;
 	private function get_clock():WorldClock 
 	{
 		return _clock;
@@ -959,7 +964,7 @@ import dragonBones.textures.TextureAtlasData;
 	{
 		if (_clock == value) 
 		{
-			return;
+			return value;
 		}
 		
 		var prevClock:WorldClock = _clock;
@@ -993,7 +998,7 @@ import dragonBones.textures.TextureAtlasData;
 	 * 替换骨架的主贴图，根据渲染引擎的不同，提供不同的贴图数据。
 	 * @version DragonBones 4.5
 	 */
-	public var replacedTexture(get, never):Dynamic;
+	public var replacedTexture(get, set):Dynamic;
 	private function get_replacedTexture():Dynamic 
 	{
 		return _replacedTexture;

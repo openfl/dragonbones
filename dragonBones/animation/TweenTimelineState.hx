@@ -9,13 +9,13 @@ import dragonBones.objects.TweenFrameData;
 /**
  * @private
  */
-class TweenTimelineState extends TimelineState
+@:allow(dragonBones) class TweenTimelineState extends TimelineState
 {
 	private static inline var TWEEN_TYPE_NONE:Int = 0;
 	private static inline var TWEEN_TYPE_ONCE:Int = 1;
 	private static inline var TWEEN_TYPE_ALWAYS:Int = 2;
 	
-	@:allow("dragonBones") static function _getEasingValue(progress:Float, easing:Float):Float
+	static function _getEasingValue(progress:Float, easing:Float):Float
 	{
 		if (progress <= 0.0) 
 		{
@@ -59,7 +59,7 @@ class TweenTimelineState extends TimelineState
 		return (value - progress) * easing + progress;
 	}
 	
-	@:allow("dragonBones") static function _getCurveEasingValue(progress:Float, samples:Vector<Float>):Float
+	static function _getCurveEasingValue(progress:Float, samples:Vector<Float>):Float
 	{
 		if (progress <= 0.0) 
 		{
@@ -82,7 +82,10 @@ class TweenTimelineState extends TimelineState
 	private var _tweenEasing:Float;
 	private var _curve:Vector<Float>;
 	
-	private function new() {}
+	private function new()
+	{
+		super();
+	}
 	
 	override private function _onClear():Void
 	{

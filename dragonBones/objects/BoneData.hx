@@ -9,40 +9,40 @@ import dragonBones.geom.Transform;
  * @see dragonBones.Bone
  * @version DragonBones 3.0
  */
-class BoneData extends BaseObject
+@:allow(dragonBones) class BoneData extends BaseObject
 {
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones") private var inheritTranslation:Bool;
+	private var inheritTranslation:Bool;
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones") private var inheritRotation:Bool;
+	private var inheritRotation:Bool;
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones") private var inheritScale:Bool;
+	private var inheritScale:Bool;
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones") private var bendPositive:Bool;
+	private var bendPositive:Bool;
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones") private var chain:UInt;
+	private var chain:UInt;
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones") private var chainIndex:UInt;
+	private var chainIndex:UInt;
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones") private var weight:Float;
+	private var weight:Float;
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones") private var length:Float;
+	private var length:Float;
 	/**
 	 * @language zh_CN
 	 * 数据名称。
@@ -52,7 +52,7 @@ class BoneData extends BaseObject
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones") private var transform:Transform = new Transform();
+	private var transform:Transform = new Transform();
 	/**
 	 * @language zh_CN
 	 * 所属的父骨骼数据。
@@ -62,15 +62,15 @@ class BoneData extends BaseObject
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones") private var ik:BoneData;
+	private var ik:BoneData;
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones") private var userData: CustomData;
+	private var userData: CustomData;
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones") @:allow("dragonBones") private function new()
+	private function new()
 	{
 		super();
 	}
@@ -102,7 +102,7 @@ class BoneData extends BaseObject
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones") private function toString():String
+	private function toString():String
 	{
 		return name;
 	}

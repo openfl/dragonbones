@@ -5,12 +5,12 @@ import dragonBones.geom.Transform;
 /**
  * @private
  */
-@:final class BoneTimelineData extends TimelineData
+@:allow(dragonBones) @:final class BoneTimelineData extends TimelineData
 {
 	public var originalTransform:Transform = new Transform();
 	public var bone:BoneData;
 	
-	@:allow("dragonBones") private function new()
+	private function new()
 	{
 		super();
 	}

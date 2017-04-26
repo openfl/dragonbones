@@ -13,7 +13,7 @@ import dragonBones.objects.CustomData;
  * 事件数据。
  * @version DragonBones 4.5
  */
-class EventObject extends BaseObject
+@:allow(dragonBones) class EventObject extends BaseObject
 {
 	/**
 	 * @language zh_CN
@@ -86,7 +86,7 @@ class EventObject extends BaseObject
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones") private var frame: AnimationFrameData;
+	private var frame: AnimationFrameData;
 	/**
 	 * @language zh_CN
 	 * 扩展数据。
@@ -120,7 +120,10 @@ class EventObject extends BaseObject
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones") private function new() {}
+	private function new()
+	{
+		super();
+	}
 	/**
 	 * @private
 	 */

@@ -12,31 +12,31 @@ import dragonBones.enums.BlendMode;
  * @see dragonBones.Slot
  * @version DragonBones 3.0
  */
-class SlotData extends BaseObject
+@:allow(dragonBones) class SlotData extends BaseObject
 {
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones") private static var DEFAULT_COLOR:ColorTransform = new ColorTransform();
+	private static var DEFAULT_COLOR:ColorTransform = new ColorTransform();
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones") private static function generateColor():ColorTransform
+	private static function generateColor():ColorTransform
 	{
 		return new ColorTransform();
 	}
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones") private var displayIndex:Int;
+	private var displayIndex:Int;
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones") private var zOrder:Int;
+	private var zOrder:Int;
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones") private var blendMode:Int;
+	private var blendMode:Int;
 	/**
 	 * @language zh_CN
 	 * 数据名称。
@@ -46,7 +46,7 @@ class SlotData extends BaseObject
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones") private var actions: Vector<ActionData> = new Vector<ActionData>();
+	private var actions: Vector<ActionData> = new Vector<ActionData>();
 	/**
 	 * @language zh_CN
 	 * 所属的父骨骼数据。
@@ -57,15 +57,15 @@ class SlotData extends BaseObject
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones") private var color:ColorTransform;
+	private var color:ColorTransform;
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones") private var userData: CustomData;
+	private var userData: CustomData;
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones") @:allow("dragonBones") private function new()
+	private function new()
 	{
 		super();
 	}

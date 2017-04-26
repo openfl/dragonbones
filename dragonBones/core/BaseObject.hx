@@ -9,7 +9,7 @@ import openfl.Vector;
  * 基础对象。
  * @version DragonBones 4.5
  */
-class BaseObject
+@:allow(dragonBones) class BaseObject
 {
 	private static var _hashCode:UInt = 0;
 	private static var _defaultMaxCount:UInt = 5000;
@@ -54,13 +54,15 @@ class BaseObject
 	 */
 	public static function setMaxCount(objectConstructor:Class<Dynamic>, maxCount:UInt):Void
 	{
+		var pool:Vector<BaseObject>;
+		
 		if (objectConstructor != null)
 		{
 			_maxCountMap[objectConstructor] = maxCount;
 			
 			if (_poolsMap.exists(objectConstructor))
 			{
-				var pool:Vector<BaseObject> = _poolsMap[objectConstructor];
+				pool = _poolsMap[objectConstructor];
 				if (pool.length > maxCount)
 				{
 					pool.length = maxCount;
@@ -107,9 +109,9 @@ class BaseObject
 		}
 		else
 		{
-			for (pool in _poolsMap.values())
+			for (k in _poolsMap)
 			{
-				pool.length = 0;
+				_poolsMap[k].length = 0;
 			}
 		}
 	}
@@ -127,7 +129,7 @@ class BaseObject
 		}
 		else
 		{
-			var object:BaseObject = Type.createInstance(objectConstructor, objectConstructor, []);
+			var object:BaseObject = Type.createInstance(objectConstructor, []);
 			object._onClear();
 			return object;
 		}
@@ -141,11 +143,11 @@ class BaseObject
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones") private function new() {}
+	private function new() {}
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones") private function _onClear():Void {}
+	private function _onClear():Void {}
 	/**
 	 * @language zh_CN
 	 * 清除数据并返还对象池。

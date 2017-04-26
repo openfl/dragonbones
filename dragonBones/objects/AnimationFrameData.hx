@@ -5,13 +5,13 @@ import openfl.Vector;
 /**
  * @private
  */
-@:final class AnimationFrameData extends FrameData
+@:allow(dragonBones) @:final class AnimationFrameData extends FrameData
 {
 	
 	public var actions:Vector<ActionData> = new Vector<ActionData>();
 	public var events:Vector<EventData> = new Vector<EventData>();
 	
-	@:allow("dragonBones") private function new()
+	private function new()
 	{
 		super();
 	}

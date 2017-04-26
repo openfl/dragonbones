@@ -8,7 +8,7 @@ import dragonBones.core.DragonBones;
 /**
  * @private
  */
-class TweenFrameData extends FrameData
+@:allow(dragonBones) class TweenFrameData extends FrameData
 {
 	private static function _getCurvePoint(x1:Float, y1:Float, x2:Float, y2:Float, x3:Float, y3:Float, x4:Float, y4:Float, t:Float, result: Point):Void
 	{
@@ -74,7 +74,7 @@ class TweenFrameData extends FrameData
 	public var tweenEasing:Float;
 	public var curve:Vector<Float>;
 	
-	@:allow("dragonBones") private function new()
+	private function new()
 	{
 		super();
 	}

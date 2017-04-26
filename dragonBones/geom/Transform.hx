@@ -8,12 +8,12 @@ import openfl.geom.Point;
  * 2D 变换。
  * @version DragonBones 3.0
  */
-@:allow("dragonBones") @:final class Transform
+@:allow(dragonBones) @:final class Transform
 {
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones") private static function normalizeRadian(value:Float):Float
+	private static function normalizeRadian(value:Float):Float
 	{
 		value = (value + Math.PI) % (Math.PI * 2.0);
 		value += value > 0.0? -Math.PI: Math.PI;
@@ -23,7 +23,7 @@ import openfl.geom.Point;
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones") private static function transformPoint(matrix:Matrix, x:Float, y:Float, result:Point, delta:Bool = false):Void
+	private static function transformPoint(matrix:Matrix, x:Float, y:Float, result:Point, delta:Bool = false):Void
 	{
 		result.x = matrix.a * x + matrix.c * y;
 		result.y = matrix.b * x + matrix.d * y;
@@ -73,11 +73,11 @@ import openfl.geom.Point;
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones") private function new() {}
+	private function new() {}
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones") private function toString():String 
+	private function toString():String 
 	{
 		return "[object dragonBones.geom.Transform] x:" + x + " y:" + y + " skewX:" + skewX * 180 / Math.PI + " skewY:" + skewY * 180 / Math.PI + " scaleX:" + scaleX + " scaleY:" + scaleY;
 	}

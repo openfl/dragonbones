@@ -1,5 +1,6 @@
 package dragonBones.objects;
 
+import openfl.errors.ArgumentError;
 import openfl.Vector;
 	
 import dragonBones.core.BaseObject;
@@ -7,13 +8,16 @@ import dragonBones.core.BaseObject;
 /**
  * @private
  */
-@:final class SkinSlotData extends BaseObject
+@:allow(dragonBones) @:final class SkinSlotData extends BaseObject
 {
 	public var displays:Vector<DisplayData> = new Vector<DisplayData>();
 	public var meshs:Map<String, MeshData> = new Map<String, MeshData>();
 	public var slot:SlotData;
 	
-	private function new () {}
+	private function new ()
+	{
+		super();
+	}
 	
 	override private function _onClear():Void
 	{

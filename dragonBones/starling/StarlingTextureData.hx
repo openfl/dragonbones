@@ -7,11 +7,14 @@ import starling.textures.SubTexture;
 /**
  * @private
  */
-@:final class StarlingTextureData extends TextureData
+@:allow(dragonBones) @:final class StarlingTextureData extends TextureData
 {
 	public var texture:SubTexture = null;
 	
-	private function new() {}
+	private function new()
+	{
+		super();
+	}
 	
 	override private function _onClear():Void
 	{

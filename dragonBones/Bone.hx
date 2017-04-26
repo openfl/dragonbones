@@ -17,7 +17,7 @@ import dragonBones.objects.BoneData;
  * @see dragonBones.Slot
  * @version DragonBones 3.0
  */
-@:final class Bone extends TransformObject
+@:allow(dragonBones) @:final class Bone extends TransformObject
 {
 	/**
 	 * @language zh_CN
@@ -40,7 +40,7 @@ import dragonBones.objects.BoneData;
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones") private var ikBendPositive:Bool;
+	private var ikBendPositive:Bool;
 	/**
 	 * @language zh_CN
 	 * 骨骼长度。
@@ -50,11 +50,11 @@ import dragonBones.objects.BoneData;
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones") private var ikWeight:Float;
+	private var ikWeight:Float;
 	/**
 	 * @private [2: update self, 1: update children, ik children, mesh, ..., 0: stop update]
 	 */
-	@:allow("dragonBones") private var _transformDirty:Int;
+	private var _transformDirty:Int;
 	private var _visible:Bool;
 	private var _cachedFrameIndex:Int;
 	private var _ikChain:UInt;
@@ -62,23 +62,23 @@ import dragonBones.objects.BoneData;
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones") private var _updateState:Int;
+	private var _updateState:Int;
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones") private var _blendLayer:Int;
+	private var _blendLayer:Int;
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones") private var _blendLeftWeight:Float;
+	private var _blendLeftWeight:Float;
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones") private var _blendTotalWeight:Float;
+	private var _blendTotalWeight:Float;
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones") private var _animationPose:Transform = new Transform();
+	private var _animationPose:Transform = new Transform();
 	private var _bones:Vector<Bone> = new Vector<Bone>();
 	private var _slots:Vector<Slot> = new Vector<Slot>();
 	private var _boneData:BoneData;
@@ -86,11 +86,14 @@ import dragonBones.objects.BoneData;
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones") private var _cachedFrameIndices:Vector<Int>;
+	private var _cachedFrameIndices:Vector<Int>;
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones") private function new() {}
+	private function new()
+	{
+		super();
+	}
 	/**
 	 * @private
 	 */
@@ -124,7 +127,7 @@ import dragonBones.objects.BoneData;
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones") private function _updateGlobalTransformMatrix():Void
+	private function _updateGlobalTransformMatrix():Void
 	{
 		global.x = origin.x + offset.x + _animationPose.x;
 		global.y = origin.y + offset.y + _animationPose.y;
@@ -183,7 +186,7 @@ import dragonBones.objects.BoneData;
 		
 		if (_ik != null && _ikChainIndex == _ikChain && ikWeight > 0)
 		{
-			if (inheritTranslation && _ikChain > 0 && _parent)
+			if (inheritTranslation && _ikChain > 0 && _parent != null)
 			{
 				_computeIKB();
 			}
@@ -196,7 +199,7 @@ import dragonBones.objects.BoneData;
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones") private function _computeIKA():Void
+	private function _computeIKA():Void
 	{
 		var ikGlobal:Transform = _ik.global;
 		var x:Float = globalTransformMatrix.a * length;
@@ -217,7 +220,7 @@ import dragonBones.objects.BoneData;
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones") private function _computeIKB():Void
+	private function _computeIKB():Void
 	{
 		// TODO IK
 		var parentGlobal:Transform = _parent.global;
@@ -298,7 +301,7 @@ import dragonBones.objects.BoneData;
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones") private function _init(boneData: BoneData):Void 
+	private function _init(boneData: BoneData):Void 
 	{
 		if (_boneData != null) 
 		{
@@ -325,7 +328,7 @@ import dragonBones.objects.BoneData;
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones") private function _setIK(value:Bone, chain:UInt, chainIndex:UInt):Void
+	private function _setIK(value:Bone, chain:UInt, chainIndex:UInt):Void
 	{
 		if (value != null)
 		{
@@ -385,7 +388,7 @@ import dragonBones.objects.BoneData;
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones") private function _update(cacheFrameIndex:Int):Void
+	private function _update(cacheFrameIndex:Int):Void
 	{
 		_updateState = -1;
 		
@@ -485,7 +488,7 @@ import dragonBones.objects.BoneData;
 			}
 			
 			var ancestor:TransformObject = child;
-			while(ancestor != this && ancestor)
+			while(ancestor != this && ancestor != null)
 			{
 				ancestor = ancestor.parent;
 			}
@@ -545,7 +548,7 @@ import dragonBones.objects.BoneData;
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones") private var boneData(get, never):BoneData;
+	private var boneData(get, never):BoneData;
 	private function get_boneData():BoneData
 	{
 		return _boneData;

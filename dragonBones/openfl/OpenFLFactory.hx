@@ -27,16 +27,16 @@ import dragonBones.textures.TextureAtlasData;
  * 基于 Flash 传统显示列表的工厂。
  * @version DragonBones 3.0
  */
-class OpenFLFactory extends BaseFactory
+@:allow(dragonBones) class OpenFLFactory extends BaseFactory
 {
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones") private static var _eventManager:OpenFLArmatureDisplay = new OpenFLArmatureDisplay();
+	private static var _eventManager:OpenFLArmatureDisplay = new OpenFLArmatureDisplay();
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones") static var _clock:WorldClock = new WorldClock();
+	static var _clock:WorldClock = new WorldClock();
 	/**
 	 * @language zh_CN
 	 * 一个可以直接使用的全局工厂实例.
@@ -46,7 +46,7 @@ class OpenFLFactory extends BaseFactory
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones") private static function _clockHandler(event:Event):Void 
+	private static function _clockHandler(event:Event):Void 
 	{
 		var time:Float = getTimer() * 0.001;
 		var passedTime:Float = time - _clock.time;

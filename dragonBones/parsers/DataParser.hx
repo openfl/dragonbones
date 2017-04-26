@@ -1,5 +1,6 @@
 ﻿package dragonBones.parsers;
 
+import openfl.errors.Error;
 import openfl.geom.Matrix;
 import openfl.geom.Point;
 import openfl.Vector;
@@ -32,7 +33,7 @@ import dragonBones.textures.TextureAtlasData;
 /**
  * @private
  */
-class DataParser
+@:allow(dragonBones) class DataParser
 {
 	private static inline var DATA_VERSION_2_3:String = "2.3";
 	private static inline var DATA_VERSION_3_0:String = "3.0";
@@ -40,7 +41,7 @@ class DataParser
 	private static inline var DATA_VERSION_4_5:String = "4.5";
 	private static inline var DATA_VERSION_5_0:String = "5.0";
 	private static inline var DATA_VERSION:String = DATA_VERSION_5_0;
-	private static var DATA_VERSIONS:Vector<String> = Vector<String>([
+	private static var DATA_VERSIONS:Vector<String> = Vector.ofArray([
 		DATA_VERSION_5_0,
 		DATA_VERSION_4_5,
 		DATA_VERSION_4_0,
@@ -316,7 +317,7 @@ class DataParser
 		var frameIndex:UInt = Std.int(position * animation.frameCount / animation.duration);
 		if (timeline.frames.length == 1 || frameIndex >= timeline.frames.length) 
 		{
-			transform.copyFrom((timeline.frames[0]).transform);
+			transform.copyFrom(cast(timeline.frames[0], BoneFrameData).transform);
 		} 
 		else 
 		{
@@ -388,7 +389,7 @@ class DataParser
 					continue;	
 				}
 				
-				parentTimeline = bone.parent? animation.getBoneTimeline(bone.parent.name): null;
+				parentTimeline = bone.parent != null? animation.getBoneTimeline(bone.parent.name): null;
 				_helpTransformB.copyFrom(timeline.originalTransform);
 				keyFrames.length = 0;
 				
@@ -460,7 +461,7 @@ class DataParser
 		
 		var i:UInt = 0, l:UInt = 0;
 		var insertedFrame:AnimationFrameData = null;
-		var replacedFrame:AnimationFrameData = frames.length? cast(frames[frameStart], AnimationFrameData): null;
+		var replacedFrame:AnimationFrameData = frames.length != 0? cast(frames[frameStart], AnimationFrameData): null;
 		
 		if (replacedFrame != null && (frameStart == 0 || frames[frameStart - 1] == replacedFrame.prev)) // Key frame.
 		{
@@ -474,7 +475,7 @@ class DataParser
 			
 			for (i in (frameStart + 1)...l) // Clear replaced frame.
 			{
-				if (replacedFrame && frames[i] == replacedFrame) 
+				if (replacedFrame != null && frames[i] == replacedFrame) 
 				{
 					frames[i] = null;
 				}

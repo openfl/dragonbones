@@ -10,7 +10,7 @@ import dragonBones.textures.TextureData;
 /**
  * @private
  */
-class DisplayData extends BaseObject
+@:allow(dragonBones) class DisplayData extends BaseObject
 {
 	public var isRelativePivot:Bool;
 	public var inheritAnimation:Bool;
@@ -25,7 +25,7 @@ class DisplayData extends BaseObject
 	public var mesh:MeshData;
 	public var boundingBox: BoundingBoxData;
 	
-	@:allow("dragonBones") private function new()
+	private function new()
 	{
 		super();
 	}

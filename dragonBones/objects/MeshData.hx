@@ -8,7 +8,7 @@ import dragonBones.core.BaseObject;
 /**
  * @private
  */
-@:final class MeshData extends BaseObject
+@:allow(dragonBones) @:final class MeshData extends BaseObject
 {
 	public var skinned:Bool;
 	public var name:String;
@@ -25,7 +25,7 @@ import dragonBones.core.BaseObject;
 	public var bones:Vector<BoneData> = new Vector<BoneData>(); // bones
 	public var inverseBindPose:Vector<Matrix> = new Vector<Matrix>(); // bones
 	
-	@:allow("dragonBones") private function new()
+	private function new()
 	{
 		super();
 	}

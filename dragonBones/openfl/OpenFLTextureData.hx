@@ -5,7 +5,10 @@ import dragonBones.textures.TextureData;
 /**
  * @private
  */
-@:final class OpenFLTextureData extends TextureData
+@:allow(dragonBones) @:final class OpenFLTextureData extends TextureData
 {
-	private function new() {}
+	private function new()
+	{
+		super();
+	}
 }

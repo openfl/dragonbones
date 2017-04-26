@@ -12,14 +12,15 @@ import dragonBones.core.DragonBones;
  * @see dragonBones.Armature
  * @version DragonBones 3.0
  */
-@:final class WorldClock implements IAnimateble
+@:allow(dragonBones) @:final class WorldClock implements IAnimateble
 {
 	/**
 	 * @language zh_CN
 	 * 一个可以直接使用的全局 WorldClock 实例.
 	 * @version DragonBones 3.0
 	 */
-	public static var clock:WorldClock = new WorldClock();
+	public static var instance:WorldClock = new WorldClock();
+	//public static var clock:WorldClock = new WorldClock();
 	/**
 	 * @language zh_CN
 	 * 当前时间。 (以秒为单位)
@@ -78,14 +79,14 @@ import dragonBones.core.DragonBones;
 			time += passedTime;
 		}
 		
-		if (passedTime) 
+		if (passedTime != 0) 
 		{
 			var i:UInt = 0, r:UInt = 0, l:UInt = _animatebles.length;
 			var animateble:IAnimateble;
 			for (i in 0...l) 
 			{
 				animateble = _animatebles[i];
-				if (animateble) 
+				if (animateble != null) 
 				{
 					if (r > 0) 
 					{
@@ -107,7 +108,7 @@ import dragonBones.core.DragonBones;
 				for (j in i...l) 
 				{
 					animateble = _animatebles[j];
-					if (animateble) 
+					if (animateble != null) 
 					{
 						_animatebles[j - r] = animateble;
 					}
@@ -181,7 +182,7 @@ import dragonBones.core.DragonBones;
 	/**
 	 * @inheritDoc
 	 */
-	/*private var clock(get, set):WorldClock;
+	private var clock(get, set):WorldClock;
 	private function get_clock(): WorldClock 
 	{
 		return _clock;
@@ -203,5 +204,5 @@ import dragonBones.core.DragonBones;
 			_clock.add(this);
 		}
 		return value;
-	}*/
+	}
 }

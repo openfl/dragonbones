@@ -1,16 +1,18 @@
 package dragonBones.objects;
 
+import openfl.errors.ArgumentError;
+
 import dragonBones.core.BaseObject;
 
 /**
  * @private
  */
-@:final class SkinData extends BaseObject
+@:allow(dragonBones) @:final class SkinData extends BaseObject
 {
 	public var name:String;
 	public var slots:Map<String, SkinSlotData> = new Map<String, SkinSlotData>();
 	
-	@:allow("dragonBones") private function new()
+	private function new()
 	{
 		super();
 	}

@@ -11,7 +11,7 @@ import dragonBones.enums.BoundingBoxType;
  * 自定义包围盒数据。
  * @version DragonBones 5.0
  */
-@:final class BoundingBoxData extends BaseObject
+@:allow(dragonBones) @:final class BoundingBoxData extends BaseObject
 {
 	/**
 	 * Cohen–Sutherland algorithm https://en.wikipedia.org/wiki/Cohen%E2%80%93Sutherland_algorithm
@@ -58,7 +58,7 @@ import dragonBones.enums.BoundingBoxType;
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones") private static function segmentIntersectsRectangle(
+	private static function segmentIntersectsRectangle(
 		xA:Float, yA:Float, xB:Float, yB:Float,
 		xMin:Float, yMin:Float, xMax:Float, yMax:Float,
 		intersectionPointA: Point = null,
@@ -80,12 +80,12 @@ import dragonBones.enums.BoundingBoxType;
 		
 		while (true) 
 		{
-			if (!(outcode0 | outcode1)) // Bitwise OR is 0. Trivially accept and get out of loop
+			if ((outcode0 | outcode1) == 0) // Bitwise OR is 0. Trivially accept and get out of loop
 			{   
 				intersectionCount = 2;
 				break;
 			}
-			else if (outcode0 & outcode1) // Bitwise AND is not 0. Trivially reject and get out of loop
+			else if ((outcode0 & outcode1) != 0) // Bitwise AND is not 0. Trivially reject and get out of loop
 			{
 				break;
 			}
@@ -97,45 +97,45 @@ import dragonBones.enums.BoundingBoxType;
 			var normalRadian:Float = 0.0;
 			
 			// At least one endpoint is outside the clip rectangle; pick it.
-			var outcodeOut:UInt = outcode0 ? outcode0 : outcode1;
+			var outcodeOut:UInt = outcode0 != 0 ? outcode0 : outcode1;
 			
 			// Now find the intersection point;
-			if (outcodeOut & OutCode_Top) // point is above the clip rectangle
+			if (outcodeOut & OutCode_Top != 0) // point is above the clip rectangle
 			{
 				x = xA + (xB - xA) * (yMin - yA) / (yB - yA);
 				y = yMin;
 				
-				if (normalRadians) 
+				if (normalRadians != null) 
 				{
 					normalRadian = -Math.PI * 0.5;
 				}
 			}
-			else if (outcodeOut & OutCode_Bottom) // point is below the clip rectangle
+			else if (outcodeOut & OutCode_Bottom != 0) // point is below the clip rectangle
 			{
 				x = xA + (xB - xA) * (yMax - yA) / (yB - yA);
 				y = yMax;
 				
-				if (normalRadians) 
+				if (normalRadians != null) 
 				{
 					normalRadian = Math.PI * 0.5;
 				}
 			}
-			else if (outcodeOut & OutCode_Right) // point is to the right of clip rectangle
+			else if (outcodeOut & OutCode_Right != 0) // point is to the right of clip rectangle
 			{
 				y = yA + (yB - yA) * (xMax - xA) / (xB - xA);
 				x = xMax;
 				
-				if (normalRadians) 
+				if (normalRadians != null) 
 				{
 					normalRadian = 0;
 				}
 			}
-			else if (outcodeOut & OutCode_Left) // point is to the left of clip rectangle
+			else if (outcodeOut & OutCode_Left != 0) // point is to the left of clip rectangle
 			{
 				y = yA + (yB - yA) * (xMin - xA) / (xB - xA);
 				x = xMin;
 				
-				if (normalRadians) 
+				if (normalRadians != null) 
 				{
 					normalRadian = Math.PI;
 				}
@@ -149,7 +149,7 @@ import dragonBones.enums.BoundingBoxType;
 				yA = y;
 				outcode0 = BoundingBoxData._computeOutCode(xA, yA, xMin, yMin, xMax, yMax);
 				
-				if (normalRadians) 
+				if (normalRadians != null) 
 				{
 					normalRadians.x = normalRadian;
 				}
@@ -159,7 +159,7 @@ import dragonBones.enums.BoundingBoxType;
 				yB = y;
 				outcode1 = BoundingBoxData._computeOutCode(xB, yB, xMin, yMin, xMax, yMax);
 				
-				if (normalRadians) 
+				if (normalRadians != null) 
 				{
 					normalRadians.y = normalRadian;
 				}
@@ -224,7 +224,7 @@ import dragonBones.enums.BoundingBoxType;
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones") private static function segmentIntersectsEllipse(
+	private static function segmentIntersectsEllipse(
 		xA:Float, yA:Float, xB:Float, yB:Float,
 		xC:Float, yC:Float, widthH:Float, heightH:Float,
 		intersectionPointA: Point = null,
@@ -347,7 +347,7 @@ import dragonBones.enums.BoundingBoxType;
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones") private static function segmentIntersectsPolygon(
+	private static function segmentIntersectsPolygon(
 		xA:Float, yA:Float, xB:Float, yB:Float,
 		vertices: Vector<Float>,
 		intersectionPointA: Point = null,
@@ -552,7 +552,7 @@ import dragonBones.enums.BoundingBoxType;
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones") @:allow("dragonBones") private function new()
+	private function new()
 	{
 		super();
 	}

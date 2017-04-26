@@ -6,14 +6,14 @@ import dragonBones.enums.ActionType;
 /**
  * @private
  */
-@:final class ActionData extends BaseObject
+@:allow(dragonBones) @:final class ActionData extends BaseObject
 {
 	public var type:Int;
 	public var bone:BoneData;
 	public var slot:SlotData;
 	public var animationConfig:AnimationConfig;
 	
-	@:allow("dragonBones") private function new()
+	private function new()
 	{
 		super();
 	}

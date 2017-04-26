@@ -35,16 +35,16 @@ import starling.rendering.VertexData;
  * Starling 工厂。
  * @version DragonBones 3.0
  */
-@:final class StarlingFactory extends BaseFactory
+@:allow(dragonBones) @:final class StarlingFactory extends BaseFactory
 {
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones") private static var _eventManager:StarlingArmatureDisplay = new StarlingArmatureDisplay();
+	private static var _eventManager:StarlingArmatureDisplay = new StarlingArmatureDisplay();
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones") static var _clock:WorldClock = new WorldClock();
+	static var _clock:WorldClock = new WorldClock();
 	/**
 	 * @language zh_CN
 	 * 一个可以直接使用的全局工厂实例.
@@ -54,7 +54,7 @@ import starling.rendering.VertexData;
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones") private static function _clockHandler(event:EnterFrameEvent):Void 
+	private static function _clockHandler(event:EnterFrameEvent):Void 
 	{
 		_clock.advanceTime(event.passedTime);
 	}
@@ -85,7 +85,7 @@ import starling.rendering.VertexData;
 				starlingTextureAtlasData.disposeTexture = true;
 				
 				#if (starling < "2.0")
-				if (starlingTextureAtlasData.bitmapData && !Starling.handleLostContext)
+				if (starlingTextureAtlasData.bitmapData != null && !Starling.handleLostContext)
 				{
 					starlingTextureAtlasData.bitmapData.dispose();
 					starlingTextureAtlasData.bitmapData = null;
@@ -153,7 +153,7 @@ import starling.rendering.VertexData;
 				case DisplayType.Image:
 					if (displayData.texture == null || dataPackage.textureAtlasName != null)
 					{
-						displayData.texture = _getTextureData(dataPackage.textureAtlasName || dataPackage.dataName, displayData.name);
+						displayData.texture = _getTextureData(dataPackage.textureAtlasName != null ? dataPackage.textureAtlasName : dataPackage.dataName, displayData.name);
 					}
 					
 					displayList[i] = slot.rawDisplay;
@@ -161,7 +161,7 @@ import starling.rendering.VertexData;
 				case DisplayType.Mesh:
 					if (displayData.texture == null #if (starling < "2.0") || dataPackage.textureAtlasName != null #end)
 					{
-						displayData.texture = _getTextureData(dataPackage.textureAtlasName || dataPackage.dataName, displayData.name);
+						displayData.texture = _getTextureData(dataPackage.textureAtlasName != null ? dataPackage.textureAtlasName : dataPackage.dataName, displayData.name);
 					}
 					
 					displayList[i] = #if (starling >= "2.0") slot.meshDisplay #else slot.rawDisplay #end;

@@ -8,7 +8,7 @@ import starling.textures.SubTexture;
 import starling.textures.Texture;
 import starling.textures.TextureAtlas;
 
-@:final class StarlingTextureAtlasData extends TextureAtlasData
+@:allow(dragonBones) @:final class StarlingTextureAtlasData extends TextureAtlasData
 {
 	public static function fromTextureAtlas(textureAtlas:TextureAtlas):StarlingTextureAtlasData
 	{
@@ -33,13 +33,16 @@ import starling.textures.TextureAtlas;
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones") private var disposeTexture:Bool;
+	private var disposeTexture:Bool;
 	
 	public var texture:Texture;
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones") private function new() {}
+	private function new()
+	{
+		super();
+	}
 	/**
 	 * @private
 	 */

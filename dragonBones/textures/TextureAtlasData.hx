@@ -1,6 +1,8 @@
 ﻿package dragonBones.textures;
 
 import openfl.display.BitmapData;
+import openfl.errors.ArgumentError;
+import openfl.errors.Error;
 
 import dragonBones.core.BaseObject;
 import dragonBones.core.DragonBones;
@@ -10,7 +12,7 @@ import dragonBones.core.DragonBones;
  * 贴图集数据。
  * @version DragonBones 3.0
  */
-class TextureAtlasData extends BaseObject
+@:allow(dragonBones) class TextureAtlasData extends BaseObject
 {
 	/**
 	 * @language zh_CN
@@ -28,11 +30,11 @@ class TextureAtlasData extends BaseObject
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones") private var width:Float;
+	private var width:Float;
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones") private var height:Float;
+	private var height:Float;
 	/**
 	 * @language zh_CN
 	 * 贴图集名称。
@@ -52,11 +54,14 @@ class TextureAtlasData extends BaseObject
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones") private var textures:Map<String, TextureData> = new Map<String, TextureData>();
+	private var textures:Map<String, TextureData> = new Map<String, TextureData>();
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones") private function new() {}
+	private function new()
+	{
+		super();
+	}
 	/**
 	 * @private
 	 */
@@ -85,7 +90,7 @@ class TextureAtlasData extends BaseObject
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones") private function generateTexture():TextureData
+	private function generateTexture():TextureData
 	{
 		throw new Error(DragonBones.ABSTRACT_METHOD_ERROR);
 		return null;
@@ -93,7 +98,7 @@ class TextureAtlasData extends BaseObject
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones") private function addTexture(value:TextureData):Void
+	private function addTexture(value:TextureData):Void
 	{
 		if (value != null && value.name != null && !textures.exists(value.name))
 		{
@@ -108,14 +113,14 @@ class TextureAtlasData extends BaseObject
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones") private function getTexture(name:String):TextureData
+	private function getTexture(name:String):TextureData
 	{
 		return textures[name];
 	}
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones") private function copyFrom(value: TextureAtlasData):Void 
+	private function copyFrom(value: TextureAtlasData):Void 
 	{
 		autoSearch = value.autoSearch;
 		scale = value.scale;

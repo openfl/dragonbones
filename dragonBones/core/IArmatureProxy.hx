@@ -9,16 +9,16 @@ import dragonBones.events.IEventDispatcher;
  * 骨架代理接口。
  * @version DragonBones 5.0
  */
-interface IArmatureProxy extends IEventDispatcher
+@:allow(dragonBones) interface IArmatureProxy extends IEventDispatcher
 {
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones") private function _onClear():Void;
+	private function _onClear():Void;
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones") private function _debugDraw(isEnabled:Bool):Void;
+	private function _debugDraw(isEnabled:Bool):Void;
 	/**
 	 * @language zh_CN
 	 * 释放代理和骨架。 (骨架会回收到对象池)

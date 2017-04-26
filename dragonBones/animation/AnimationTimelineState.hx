@@ -15,9 +15,12 @@ import dragonBones.objects.FrameData;
 /**
  * @private
  */
-@:final class AnimationTimelineState extends TimelineState
+@:allow(dragonBones) @:final class AnimationTimelineState extends TimelineState
 {
-	private function new() {}
+	private function new()
+	{
+		super();
+	}
 	
 	private function _onCrossFrame(frame:FrameData):Void
 	{
@@ -77,6 +80,7 @@ import dragonBones.objects.FrameData;
 		var prevState:Int = _playState;
 		var prevPlayTimes:UInt = _currentPlayTimes;
 		var prevTime:Float = _currentTime;
+		var eventObject:EventObject;
 		
 		if (_playState <= 0 && _setCurrentTime(passedTime)) 
 		{
@@ -91,7 +95,7 @@ import dragonBones.objects.FrameData;
 				
 				if (eventDispatcher.hasEvent(EventObject.START)) 
 				{
-					var eventObject:EventObject = cast BaseObject.borrowObject(EventObject);
+					eventObject = cast BaseObject.borrowObject(EventObject);
 					eventObject.animationState = _animationState;
 					_armature._bufferEvent(eventObject, EventObject.START);
 				}
@@ -105,7 +109,7 @@ import dragonBones.objects.FrameData;
 			if (_keyFrameCount > 1) 
 			{
 				var currentFrameIndex:UInt = Math.floor(_currentTime * _frameRate);
-				var currentFrame:AnimationFrameData = _timelineData.frames[currentFrameIndex];
+				var currentFrame:AnimationFrameData = cast _timelineData.frames[currentFrameIndex];
 				if (_currentFrame != currentFrame) 
 				{
 					var isReverse:Bool = _currentPlayTimes == prevPlayTimes && prevTime > _currentTime;
@@ -115,7 +119,7 @@ import dragonBones.objects.FrameData;
 					if (crossedFrame == null) 
 					{
 						var prevFrameIndex:UInt = Math.floor(prevTime * _frameRate);
-						crossedFrame = _timelineData.frames[prevFrameIndex];
+						crossedFrame = cast _timelineData.frames[prevFrameIndex];
 						
 						if (isReverse) 
 						{
@@ -150,7 +154,7 @@ import dragonBones.objects.FrameData;
 					}
 				}
 			}
-			else if (_keyFrameCount > 0 && !_currentFrame) 
+			else if (_keyFrameCount > 0 && _currentFrame == null) 
 			{
 				_currentFrame = _timelineData.frames[0];
 				_onCrossFrame(_currentFrame);

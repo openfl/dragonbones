@@ -1,5 +1,6 @@
 package dragonBones.objects;
 
+import openfl.errors.ArgumentError;
 import openfl.geom.Matrix;
 import openfl.geom.Rectangle;
 import openfl.Vector;
@@ -14,7 +15,7 @@ import dragonBones.geom.Transform;
  * @see dragonBones.Armature
  * @version DragonBones 3.0
  */
-class ArmatureData extends BaseObject
+@:allow(dragonBones) class ArmatureData extends BaseObject
 {
 	private static function _onSortSlots(a:SlotData, b:SlotData):Int
 	{
@@ -29,15 +30,15 @@ class ArmatureData extends BaseObject
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones") private var type:Int;
+	private var type:Int;
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones") private var cacheFrameRate:UInt;
+	private var cacheFrameRate:UInt;
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones") private var scale:Float;
+	private var scale:Float;
 	/**
 	 * @language zh_CN
 	 * 数据名称。
@@ -47,7 +48,7 @@ class ArmatureData extends BaseObject
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones") private var aabb:Rectangle = new Rectangle();
+	private var aabb:Rectangle = new Rectangle();
 	/**
 	 * @language zh_CN
 	 * 所有骨骼数据。
@@ -79,7 +80,7 @@ class ArmatureData extends BaseObject
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones") private var actions: Vector<ActionData> = new Vector<ActionData>();
+	private var actions: Vector<ActionData> = new Vector<ActionData>();
 	/**
 	 * @language zh_CN
 	 * 所属的龙骨数据。
@@ -90,7 +91,7 @@ class ArmatureData extends BaseObject
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones") private var userData: CustomData;
+	private var userData: CustomData;
 	
 	private var _boneDirty:Bool;
 	private var _slotDirty:Bool;
@@ -103,7 +104,7 @@ class ArmatureData extends BaseObject
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones") @:allow("dragonBones") private function new()
+	private function new()
 	{
 		super();
 	}
@@ -216,7 +217,8 @@ class ArmatureData extends BaseObject
 			
 			if (bone.ik != null && bone.chain > 0 && bone.chainIndex == bone.chain)
 			{
-				_sortedBones.splice(_sortedBones.indexOf(bone.parent) + 1, 0, bone); // ik, parent, bone, children
+				_sortedBones.insertAt(_sortedBones.indexOf(bone.parent) + 1, bone);
+				//_sortedBones.splice(_sortedBones.indexOf(bone.parent) + 1, 0, bone); // ik, parent, bone, children
 			}
 			else
 			{
@@ -234,7 +236,7 @@ class ArmatureData extends BaseObject
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones") private function cacheFrames(value:UInt):Void
+	private function cacheFrames(value:UInt):Void
 	{
 		if (cacheFrameRate > 0) 
 		{
@@ -251,7 +253,7 @@ class ArmatureData extends BaseObject
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones") private function setCacheFrame(globalTransformMatrix: Matrix, transform: Transform):Float {
+	private function setCacheFrame(globalTransformMatrix: Matrix, transform: Transform):Float {
 		var dataArray:Vector<Float> = parent.cachedFrames;
 		var arrayOffset:UInt = dataArray.length;
 		
@@ -272,7 +274,7 @@ class ArmatureData extends BaseObject
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones") private function getCacheFrame(globalTransformMatrix: Matrix, transform: Transform, arrayOffset:Float):Void {
+	private function getCacheFrame(globalTransformMatrix: Matrix, transform: Transform, arrayOffset:Int):Void {
 		var dataArray:Vector<Float> = parent.cachedFrames;
 		
 		globalTransformMatrix.a = dataArray[arrayOffset];
@@ -289,21 +291,24 @@ class ArmatureData extends BaseObject
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones") private function addBone(value:BoneData, parentName:String):Void
+	private function addBone(value:BoneData, parentName:String):Void
 	{
-		if (value != null && value.name != null && !bones[value.name])
+		if (value != null && value.name != null && !bones.exists(value.name))
 		{
 			if (parentName != null)
 			{
 				var parent:BoneData = getBone(parentName);
-				if (parent)
+				if (parent != null)
 				{
 					value.parent = parent;
 				}
-				else
+				
+				if (_bonesChildren[parentName] == null)
 				{
-					(_bonesChildren[parentName] = _bonesChildren[parentName] || new Vector<BoneData>()).push(value);
+					_bonesChildren[parentName] = new Vector<BoneData>();
 				}
+				
+				_bonesChildren[parentName].push(value);
 			}
 			
 			var children:Vector<BoneData> = _bonesChildren[value.name];
@@ -331,7 +336,7 @@ class ArmatureData extends BaseObject
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones") private function addSlot(value:SlotData):Void
+	private function addSlot(value:SlotData):Void
 	{
 		if (value != null && value.name != null && slots[value.name] == null)
 		{
@@ -348,13 +353,13 @@ class ArmatureData extends BaseObject
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones") private function addSkin(value:SkinData):Void
+	private function addSkin(value:SkinData):Void
 	{
 		if (value != null && value.name != null && skins[value.name] == null)
 		{
 			skins[value.name] = value;
 			
-			if (!_defaultSkin)
+			if (_defaultSkin == null)
 			{
 				_defaultSkin = value;
 			}
@@ -367,14 +372,14 @@ class ArmatureData extends BaseObject
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones") private function addAnimation(value:AnimationData):Void
+	private function addAnimation(value:AnimationData):Void
 	{
 		if (value != null && value.name != null && animations[value.name] == null)
 		{
 			animations[value.name] = value;
 			_animationNames.push(value.name);
 			
-			if (!_defaultAnimation)
+			if (_defaultAnimation == null)
 			{
 				_defaultAnimation = value;
 			}
@@ -409,9 +414,9 @@ class ArmatureData extends BaseObject
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones") private function getSkin(name:String):SkinData
+	private function getSkin(name:String):SkinData
 	{
-		return name? skins[name]: _defaultSkin;
+		return name != null? skins[name]: _defaultSkin;
 	}
 	/**
 	 * @language zh_CN
@@ -422,7 +427,7 @@ class ArmatureData extends BaseObject
 	 */
 	public function getAnimation(name:String):AnimationData
 	{
-		return name? animations[name]: _defaultAnimation;
+		return name != null? animations[name]: _defaultAnimation;
 	}
 	/**
 	 * @language zh_CN
@@ -438,7 +443,7 @@ class ArmatureData extends BaseObject
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones") private var sortedBones(get, never):Vector<BoneData>;
+	private var sortedBones(get, never):Vector<BoneData>;
 	private function get_sortedBones():Vector<BoneData>
 	{
 		if (_boneDirty)
@@ -452,7 +457,7 @@ class ArmatureData extends BaseObject
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones") private var sortedSlots(get, never):Vector<SlotData>;
+	private var sortedSlots(get, never):Vector<SlotData>;
 	private function get_sortedSlots():Vector<SlotData>
 	{
 		if (_slotDirty)
@@ -466,7 +471,7 @@ class ArmatureData extends BaseObject
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones") private var defaultSkin(get, never):SkinData;
+	private var defaultSkin(get, never):SkinData;
 	private function get_defaultSkin():SkinData
 	{
 		return _defaultSkin;

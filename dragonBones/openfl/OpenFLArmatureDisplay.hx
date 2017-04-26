@@ -19,22 +19,22 @@ import dragonBones.objects.BoundingBoxData;
 /**
  * @inheritDoc
  */
-class OpenFLArmatureDisplay extends Sprite implements IArmatureDisplay
+@:allow(dragonBones) class OpenFLArmatureDisplay extends Sprite implements IArmatureDisplay
 {
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones") private var _armature:Armature;
+	private var _armature:Armature;
 	
 	private var _debugDrawer:Sprite;
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones") private function new() {}
+	private function new() {}
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones") private function _onClear():Void
+	private function _onClear():Void
 	{
 		_armature = null;
 		_debugDrawer = null;
@@ -42,7 +42,7 @@ class OpenFLArmatureDisplay extends Sprite implements IArmatureDisplay
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones") private function _dispatchEvent(type:String, eventObject:EventObject):Void
+	private function _dispatchEvent(type:String, eventObject:EventObject):Void
 	{
 		var event:FlashEvent = new FlashEvent(type, eventObject);
 		dispatchEvent(event);
@@ -50,7 +50,7 @@ class OpenFLArmatureDisplay extends Sprite implements IArmatureDisplay
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones") private function _debugDraw(isEnabled:Bool):Void
+	private function _debugDraw(isEnabled:Bool):Void
 	{
 		if (isEnabled)
 		{

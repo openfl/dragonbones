@@ -2,6 +2,8 @@
 
 import haxe.Constraints;
 
+import openfl.errors.ArgumentError;
+import openfl.errors.Error;
 import openfl.geom.ColorTransform;
 import openfl.geom.Matrix;
 import openfl.Vector;
@@ -47,12 +49,12 @@ import dragonBones.textures.TextureData;
 /**
  * 
  */
-class ObjectDataParser extends DataParser
+@:allow(dragonBones) class ObjectDataParser extends DataParser
 {
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones") private static #if !js inline #end function _getBoolean(rawData:Dynamic, key:String, defaultValue:Bool):Bool
+	private static function _getBoolean(rawData:Dynamic, key:String, defaultValue:Bool):Bool
 	{
 		if (Reflect.hasField(rawData, key))
 		{
@@ -88,7 +90,7 @@ class ObjectDataParser extends DataParser
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones") private static #if !js inline #end function _getNumber(rawData:Dynamic, key:String, defaultValue:Float):Float
+	private static function _getFloat(rawData:Dynamic, key:String, defaultValue:Float):Float
 	{
 		if (Reflect.hasField(rawData, key))
 		{
@@ -98,7 +100,7 @@ class ObjectDataParser extends DataParser
 				return defaultValue;
 			}
 			
-			return value; // Number(value);
+			return Std.parseFloat(value); // Number(value);
 		}
 		
 		return defaultValue;
@@ -106,7 +108,25 @@ class ObjectDataParser extends DataParser
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones") private static #if !js inline #end function _getString(rawData:Dynamic, key:String, defaultValue:String):String
+	private static function _getInt(rawData:Dynamic, key:String, defaultValue:Int):Int
+	{
+		if (Reflect.hasField(rawData, key))
+		{
+			var value:Dynamic = Reflect.field(rawData, key);
+			if (value == null || value == "NaN")
+			{
+				return defaultValue;
+			}
+			
+			return Std.parseInt(value); // Number(value);
+		}
+		
+		return defaultValue;
+	}
+	/**
+	 * @private
+	 */
+	private static function _getString(rawData:Dynamic, key:String, defaultValue:String):String
 	{
 		if (Reflect.hasField(key, rawData))
 		{
@@ -118,24 +138,27 @@ class ObjectDataParser extends DataParser
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones") private function new() {}
+	private function new()
+	{
+		super();
+	}
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones") private function _parseArmature(rawData:Dynamic, scale:Float):ArmatureData
+	private function _parseArmature(rawData:Dynamic, scale:Float):ArmatureData
 	{
 		var armature:ArmatureData = cast BaseObject.borrowObject(ArmatureData);
 		armature.name = _getString(rawData, DataParser.NAME, null);
-		armature.frameRate = _getNumber(rawData, DataParser.FRAME_RATE, _data.frameRate) || _data.frameRate;
+		armature.frameRate = _getInt(rawData, DataParser.FRAME_RATE, _data.frameRate);
 		armature.scale = scale;
 		
 		if (Reflect.hasField(rawData, DataParser.TYPE) && Std.is(Reflect.field(rawData, DataParser.TYPE), String)) 
 		{
-			armature.type = _getArmatureType(Reflect.field(rawData, DataParser.TYPE));
+			armature.type = DataParser._getArmatureType(Reflect.field(rawData, DataParser.TYPE));
 		} 
 		else 
 		{
-			armature.type = _getNumber(rawData, DataParser.TYPE, ArmatureType.Armature);
+			armature.type = _getInt(rawData, DataParser.TYPE, ArmatureType.Armature);
 		}
 		
 		_armature = armature;
@@ -204,14 +227,14 @@ class ObjectDataParser extends DataParser
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones") private function _parseBone(rawData:Dynamic):BoneData
+	private function _parseBone(rawData:Dynamic):BoneData
 	{
 		var bone:BoneData = cast BaseObject.borrowObject(BoneData);
 		bone.name = _getString(rawData, DataParser.NAME, null);
 		bone.inheritTranslation = _getBoolean(rawData, DataParser.INHERIT_TRANSLATION, true);
 		bone.inheritRotation = _getBoolean(rawData, DataParser.INHERIT_ROTATION, true);
 		bone.inheritScale = _getBoolean(rawData, DataParser.INHERIT_SCALE, true);
-		bone.length = _getNumber(rawData, DataParser.LENGTH, 0) * _armature.scale;
+		bone.length = _getFloat(rawData, DataParser.LENGTH, 0) * _armature.scale;
 		
 		if (Reflect.hasField(rawData, DataParser.TRANSFORM))
 		{
@@ -229,15 +252,15 @@ class ObjectDataParser extends DataParser
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones") private function _parseIK(rawData:Dynamic):Void
+	private function _parseIK(rawData:Dynamic):Void
 	{
 		var bone:BoneData = _armature.getBone(_getString(rawData, Reflect.hasField(rawData, DataParser.BONE)? DataParser.BONE: DataParser.NAME, null));
 		if (bone != null)
 		{
 			bone.ik = _armature.getBone(_getString(rawData, DataParser.TARGET, null));
 			bone.bendPositive = _getBoolean(rawData, DataParser.BEND_POSITIVE, true);
-			bone.chain = _getNumber(rawData, DataParser.CHAIN, 0);
-			bone.weight = _getNumber(rawData, DataParser.WEIGHT, 1);
+			bone.chain = _getInt(rawData, DataParser.CHAIN, 0);
+			bone.weight = _getFloat(rawData, DataParser.WEIGHT, 1);
 			
 			if (bone.chain > 0 && bone.parent != null && bone.parent.ik == null)
 			{
@@ -257,13 +280,13 @@ class ObjectDataParser extends DataParser
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones") private function _parseSlot(rawData:Dynamic, zOrder:Int):SlotData
+	private function _parseSlot(rawData:Dynamic, zOrder:Int):SlotData
 	{
 		var slot:SlotData = cast BaseObject.borrowObject(SlotData);
 		slot.name = _getString(rawData, DataParser.NAME, null);
 		slot.parent = _armature.getBone(_getString(rawData, DataParser.PARENT, null));
-		slot.displayIndex = _getNumber(rawData, DataParser.DISPLAY_INDEX, 0);
-		slot.zOrder = _getNumber(rawData, DataParser.Z, zOrder); // Support 2.x ~ 3.x data.
+		slot.displayIndex = _getInt(rawData, DataParser.DISPLAY_INDEX, 0);
+		slot.zOrder = _getInt(rawData, DataParser.Z, zOrder); // Support 2.x ~ 3.x data.
 		
 		if (Reflect.hasField(rawData, DataParser.COLOR))
 		{
@@ -278,11 +301,11 @@ class ObjectDataParser extends DataParser
 		if (Reflect.hasField(rawData, DataParser.BLEND_MODE) && Std.is(Reflect.field(rawData, DataParser.BLEND_MODE), String))
 		{
 			
-			slot.blendMode = _getBlendMode(Reflect.field(rawData, DataParser.BLEND_MODE));
+			slot.blendMode = DataParser._getBlendMode(Reflect.field(rawData, DataParser.BLEND_MODE));
 		}
 		else
 		{
-			slot.blendMode = _getNumber(rawData, DataParser.BLEND_MODE, BlendMode.Normal);
+			slot.blendMode = _getInt(rawData, DataParser.BLEND_MODE, BlendMode.Normal);
 		}
 		
 		if (Reflect.hasField(rawData, DataParser.ACTIONS) || Reflect.hasField(rawData, DataParser.DEFAULT_ACTIONS))
@@ -309,7 +332,7 @@ class ObjectDataParser extends DataParser
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones") private function _parseSkin(rawData:Dynamic):SkinData
+	private function _parseSkin(rawData:Dynamic):SkinData
 	{
 		var skin:SkinData = cast BaseObject.borrowObject(SkinData);
 		skin.name = _getString(rawData, DataParser.NAME, DataParser.DEFAULT_NAME);
@@ -338,7 +361,7 @@ class ObjectDataParser extends DataParser
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones") private function _parseSlotDisplaySet(rawData:Dynamic):SkinSlotData
+	private function _parseSlotDisplaySet(rawData:Dynamic):SkinSlotData
 	{
 		var slotDisplayDataSet:SkinSlotData = cast BaseObject.borrowObject(SkinSlotData);
 		slotDisplayDataSet.slot = _armature.getSlot(_getString(rawData, DataParser.NAME, null));
@@ -365,7 +388,7 @@ class ObjectDataParser extends DataParser
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones") private function _parseDisplay(rawData:Dynamic):DisplayData
+	private function _parseDisplay(rawData:Dynamic):DisplayData
 	{
 		var display:DisplayData = cast BaseObject.borrowObject(DisplayData);
 		display.name = _getString(rawData, DataParser.NAME, null);
@@ -374,11 +397,11 @@ class ObjectDataParser extends DataParser
 		if (Reflect.hasField(rawData, DataParser.TYPE) && Std.is(Reflect.field(rawData, DataParser.TYPE), String))
 		{
 			
-			display.type = _getDisplayType(Reflect.field(rawData, DataParser.TYPE));
+			display.type = DataParser._getDisplayType(Reflect.field(rawData, DataParser.TYPE));
 		}
 		else
 		{
-			display.type = _getNumber(rawData, DataParser.TYPE, DisplayType.Image);
+			display.type = _getInt(rawData, DataParser.TYPE, DisplayType.Image);
 		}
 		
 		display.isRelativePivot = true;
@@ -386,15 +409,15 @@ class ObjectDataParser extends DataParser
 		if (Reflect.hasField(rawData, DataParser.PIVOT))
 		{
 			var rawPivot:Dynamic = Reflect.field(rawData, DataParser.PIVOT);
-			display.pivot.x = _getNumber(rawPivot, DataParser.X, 0);
-			display.pivot.y = _getNumber(rawPivot, DataParser.Y, 0);
+			display.pivot.x = _getFloat(rawPivot, DataParser.X, 0);
+			display.pivot.y = _getFloat(rawPivot, DataParser.Y, 0);
 		}
 		else if (_isOldData) // Support 2.x ~ 3.x data.
 		{
 			var rawTransform:Dynamic = Reflect.field(rawData, DataParser.TRANSFORM);
 			display.isRelativePivot = false;
-			display.pivot.x = _getNumber(rawTransform, DataParser.PIVOT_X, 0) * _armature.scale;
-			display.pivot.y = _getNumber(rawTransform, DataParser.PIVOT_Y, 0) * _armature.scale;
+			display.pivot.x = _getFloat(rawTransform, DataParser.PIVOT_X, 0) * _armature.scale;
+			display.pivot.y = _getFloat(rawTransform, DataParser.PIVOT_Y, 0) * _armature.scale;
 		}
 		else
 		{
@@ -415,7 +438,7 @@ class ObjectDataParser extends DataParser
 			
 			case DisplayType.Mesh:
 				display.share = _getString(rawData, DataParser.SHARE, null);
-				if (!display.share) 
+				if (display.share == null) 
 				{
 					display.mesh = _parseMesh(rawData);
 					_skinSlotData.addMesh(display.mesh);
@@ -430,25 +453,25 @@ class ObjectDataParser extends DataParser
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones") private function _parseBoundingBox(rawData:Dynamic): BoundingBoxData 
+	private function _parseBoundingBox(rawData:Dynamic): BoundingBoxData 
 	{
 		var boundingBox:BoundingBoxData = cast BaseObject.borrowObject(BoundingBoxData);
 		
 		if (Reflect.hasField (rawData, DataParser.SUB_TYPE) && Std.is(Reflect.field(rawData, DataParser.SUB_TYPE), String)) {
-			boundingBox.type = _getBoundingBoxType(Reflect.field(rawData, DataParser.SUB_TYPE));
+			boundingBox.type = DataParser._getBoundingBoxType(Reflect.field(rawData, DataParser.SUB_TYPE));
 		}
 		else 
 		{
-			boundingBox.type = _getNumber(rawData, DataParser.SUB_TYPE, BoundingBoxType.Rectangle);
+			boundingBox.type = _getInt(rawData, DataParser.SUB_TYPE, BoundingBoxType.Rectangle);
 		}
 		
-		boundingBox.color = _getNumber(rawData, DataParser.COLOR, 0x000000);
+		boundingBox.color = _getInt(rawData, DataParser.COLOR, 0x000000);
 		
 		switch (boundingBox.type) 
 		{
 			case BoundingBoxType.Rectangle, BoundingBoxType.Ellipse:
-				boundingBox.width = _getNumber(rawData, DataParser.WIDTH, 0.0);
-				boundingBox.height = _getNumber(rawData, DataParser.HEIGHT, 0.0);
+				boundingBox.width = _getFloat(rawData, DataParser.WIDTH, 0.0);
+				boundingBox.height = _getFloat(rawData, DataParser.HEIGHT, 0.0);
 			
 			case BoundingBoxType.Polygon:
 				if (Reflect.hasField(rawData, DataParser.VERTICES)) 
@@ -507,7 +530,7 @@ class ObjectDataParser extends DataParser
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones") private function _parseMesh(rawData:Dynamic):MeshData
+	private function _parseMesh(rawData:Dynamic):MeshData
 	{
 		var mesh:MeshData = cast BaseObject.borrowObject(MeshData);
 		
@@ -521,7 +544,7 @@ class ObjectDataParser extends DataParser
 		var inverseBindPose:Vector<Matrix> = new Vector<Matrix>(_armature.sortedBones.length, true);
 		
 		mesh.skinned = Reflect.hasField(rawData, DataParser.WEIGHTS)&& cast(Reflect.field(rawData, DataParser.WEIGHTS), Array<Dynamic>).length > 0;
-		mesh.name = _getString(rawData, NAME, null);
+		mesh.name = _getString(rawData, DataParser.NAME, null);
 		mesh.uvs.length = numVertices * 2;
 		mesh.uvs.fixed = true;
 		mesh.vertices.length = numVertices * 2;
@@ -584,7 +607,7 @@ class ObjectDataParser extends DataParser
 		while (i < l)
 		{
 			iN = i + 1;
-			vertexIndex = i / 2;
+			vertexIndex = Std.int(i / 2);
 			
 			x = mesh.vertices[i] = rawVertices[i] * _armature.scale;
 			y = mesh.vertices[iN] = rawVertices[iN] * _armature.scale;
@@ -649,15 +672,15 @@ class ObjectDataParser extends DataParser
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones") private function _parseAnimation(rawData:Dynamic):AnimationData
+	private function _parseAnimation(rawData:Dynamic):AnimationData
 	{
 		var animation:AnimationData = cast BaseObject.borrowObject(AnimationData);
 		animation.name = _getString(rawData, DataParser.NAME, DataParser.DEFAULT_NAME);
 		if (animation.name == null) animation.name = DataParser.DEFAULT_NAME;
-		animation.frameCount = Math.max(_getNumber(rawData, DataParser.DURATION, 1), 1);
+		animation.frameCount = Std.int(Math.max(_getInt(rawData, DataParser.DURATION, 1), 1));
 		animation.duration = animation.frameCount / _armature.frameRate;
-		animation.playTimes = _getNumber(rawData, DataParser.PLAY_TIMES, 1);
-		animation.fadeInTime = _getNumber(rawData, DataParser.FADE_IN_TIME, 0);
+		animation.playTimes = _getInt(rawData, DataParser.PLAY_TIMES, 1);
+		animation.fadeInTime = _getFloat(rawData, DataParser.FADE_IN_TIME, 0);
 		
 		_animation = animation;
 		
@@ -697,8 +720,8 @@ class ObjectDataParser extends DataParser
 		if (_isOldData) // Support 2.x ~ 3.x data.
 		{
 			_isAutoTween = _getBoolean(rawData, DataParser.AUTO_TWEEN, true);
-			_animationTweenEasing = _getNumber(rawData, DataParser.TWEEN_EASING, 0) || 0;
-			animation.playTimes = _getNumber(rawData, DataParser.LOOP, 1);
+			_animationTweenEasing = _getFloat(rawData, DataParser.TWEEN_EASING, 0);
+			animation.playTimes = _getInt(rawData, DataParser.LOOP, 1);
 			
 			if (Reflect.hasField(rawData, DataParser.TIMELINE)) 
 			{
@@ -781,7 +804,7 @@ class ObjectDataParser extends DataParser
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones") private function _parseBoneTimeline(rawData:Dynamic):BoneTimelineData
+	private function _parseBoneTimeline(rawData:Dynamic):BoneTimelineData
 	{
 		var timeline:BoneTimelineData = cast BaseObject.borrowObject(BoneTimelineData);
 		timeline.bone = _armature.getBone(_getString(rawData, DataParser.NAME, null));
@@ -789,10 +812,12 @@ class ObjectDataParser extends DataParser
 		_parseTimeline(rawData, timeline, _parseBoneFrame);
 		
 		var originTransform:Transform = timeline.originalTransform;
-		var prevFrame:BoneFrameData = null;
+		var prevFrame:BoneFrameData = null, frame:BoneFrameData;
+		var l:UInt = timeline.frames.length;
 		
-		for (frame in timeline.frames)
+		for (i in 0...l)
 		{
+			frame = cast timeline.frames[i];
 			if (prevFrame == null)
 			{
 				originTransform.copyFrom(frame.transform);
@@ -820,8 +845,8 @@ class ObjectDataParser extends DataParser
 		
 		if (_isOldData && (Reflect.hasField(rawData, DataParser.PIVOT_X) || Reflect.hasField(rawData, DataParser.PIVOT_Y)))  // Support 2.x ~ 3.x data.
 		{
-			_timelinePivot.x = _getNumber(rawData, DataParser.PIVOT_X, 0.0) * _armature.scale;
-			_timelinePivot.y = _getNumber(rawData, DataParser.PIVOT_Y, 0.0) * _armature.scale;
+			_timelinePivot.x = _getFloat(rawData, DataParser.PIVOT_X, 0.0) * _armature.scale;
+			_timelinePivot.y = _getFloat(rawData, DataParser.PIVOT_Y, 0.0) * _armature.scale;
 		} 
 		else 
 		{
@@ -835,7 +860,7 @@ class ObjectDataParser extends DataParser
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones") private function _parseSlotTimeline(rawData:Dynamic):SlotTimelineData
+	private function _parseSlotTimeline(rawData:Dynamic):SlotTimelineData
 	{
 		var timeline:SlotTimelineData = cast BaseObject.borrowObject(SlotTimelineData);
 		timeline.slot = _armature.getSlot(_getString(rawData, DataParser.NAME, null));
@@ -848,7 +873,7 @@ class ObjectDataParser extends DataParser
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones") private function _parseFFDTimeline(rawData:Dynamic):FFDTimelineData
+	private function _parseFFDTimeline(rawData:Dynamic):FFDTimelineData
 	{
 		var timeline:FFDTimelineData = cast BaseObject.borrowObject(FFDTimelineData);
 		timeline.skin = _armature.getSkin(_getString(rawData, DataParser.SKIN, null));
@@ -875,7 +900,7 @@ class ObjectDataParser extends DataParser
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones") private function _parseAnimationFrame(rawData:Dynamic, frameStart:UInt, frameCount:UInt):AnimationFrameData
+	private function _parseAnimationFrame(rawData:Dynamic, frameStart:UInt, frameCount:UInt):AnimationFrameData
 	{
 		var frame:AnimationFrameData = cast BaseObject.borrowObject(AnimationFrameData);
 		
@@ -897,7 +922,7 @@ class ObjectDataParser extends DataParser
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones") private function _parseZOrderFrame(rawData:Dynamic, frameStart:UInt, frameCount:UInt):ZOrderFrameData 
+	private function _parseZOrderFrame(rawData:Dynamic, frameStart:UInt, frameCount:UInt):ZOrderFrameData 
 	{
 		var frame:ZOrderFrameData = cast BaseObject.borrowObject(ZOrderFrameData);
 		
@@ -906,7 +931,7 @@ class ObjectDataParser extends DataParser
 		var zOrder:Array<Dynamic> = cast(Reflect.field(rawData, DataParser.Z_ORDER), Array<Dynamic>);
 		if (zOrder != null && zOrder.length > 0) {
 			var slotCount:UInt = _armature.sortedSlots.length;
-			var unchanged:Vector<Int> = new Vector<Int>(slotCount - zOrder.length / 2);
+			var unchanged:Vector<Int> = new Vector<Int>(Std.int(slotCount - zOrder.length / 2));
 			
 			frame.zOrder.length = slotCount;
 			var l:UInt = slotCount;
@@ -939,7 +964,7 @@ class ObjectDataParser extends DataParser
 			}
 			
 			i = slotCount;
-			while (i--) 
+			while (i-- != 0) 
 			{
 				if (frame.zOrder[i] == -1) 
 				{
@@ -954,10 +979,10 @@ class ObjectDataParser extends DataParser
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones") private function _parseBoneFrame(rawData:Dynamic, frameStart:UInt, frameCount:UInt):BoneFrameData
+	private function _parseBoneFrame(rawData:Dynamic, frameStart:UInt, frameCount:UInt):BoneFrameData
 	{
 		var frame:BoneFrameData = cast BaseObject.borrowObject(BoneFrameData);
-		frame.tweenRotate = _getNumber(rawData, DataParser.TWEEN_ROTATE, 0.0);
+		frame.tweenRotate = _getFloat(rawData, DataParser.TWEEN_ROTATE, 0.0);
 		frame.tweenScale = _getBoolean(rawData, DataParser.TWEEN_SCALE, true);
 		
 		_parseTweenFrame(rawData, frame, frameStart, frameCount);
@@ -969,8 +994,8 @@ class ObjectDataParser extends DataParser
 			
 			if (_isOldData) // Support 2.x ~ 3.x data.
 			{
-				_helpPoint.x = _timelinePivot.x + _getNumber(transformObject, DataParser.PIVOT_X, 0.0) * _armature.scale;
-				_helpPoint.y = _timelinePivot.y + _getNumber(transformObject, DataParser.PIVOT_Y, 0.0) * _armature.scale;
+				_helpPoint.x = _timelinePivot.x + _getFloat(transformObject, DataParser.PIVOT_X, 0.0) * _armature.scale;
+				_helpPoint.y = _timelinePivot.y + _getFloat(transformObject, DataParser.PIVOT_Y, 0.0) * _armature.scale;
 				frame.transform.toMatrix(_helpMatrix);
 				Transform.transformPoint(_helpMatrix, _helpPoint.x, _helpPoint.y, _helpPoint, true);
 				frame.transform.x += _helpPoint.x;
@@ -1004,10 +1029,10 @@ class ObjectDataParser extends DataParser
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones") private function _parseSlotFrame(rawData:Dynamic, frameStart:UInt, frameCount:UInt):SlotFrameData
+	private function _parseSlotFrame(rawData:Dynamic, frameStart:UInt, frameCount:UInt):SlotFrameData
 	{
 		var frame:SlotFrameData = cast BaseObject.borrowObject(SlotFrameData);
-		frame.displayIndex = _getNumber(rawData, DataParser.DISPLAY_INDEX, 0);
+		frame.displayIndex = _getInt(rawData, DataParser.DISPLAY_INDEX, 0);
 		
 		_parseTweenFrame(rawData, frame, frameStart, frameCount);
 		
@@ -1042,7 +1067,7 @@ class ObjectDataParser extends DataParser
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones") private function _parseFFDFrame(rawData:Dynamic, frameStart:UInt, frameCount:UInt):ExtensionFrameData
+	private function _parseFFDFrame(rawData:Dynamic, frameStart:UInt, frameCount:UInt):ExtensionFrameData
 	{
 		var ffdTimeline:FFDTimelineData = cast(_timeline, FFDTimelineData);
 		var mesh:MeshData = ffdTimeline.display.mesh;
@@ -1051,7 +1076,7 @@ class ObjectDataParser extends DataParser
 		_parseTweenFrame(rawData, frame, frameStart, frameCount);
 		
 		var rawVertices:Array<Dynamic> = Reflect.field(rawData, DataParser.VERTICES);
-		var offset:UInt = _getNumber(rawData, DataParser.OFFSET, 0);
+		var offset:UInt = _getInt(rawData, DataParser.OFFSET, 0);
 		var x:Float = 0.0;
 		var y:Float = 0.0;
 		var i:UInt = 0;
@@ -1059,7 +1084,7 @@ class ObjectDataParser extends DataParser
 		var boneIndices:Vector<UInt>, lB:UInt, boneIndex:UInt;
 		while (i < l)
 		{
-			if (!rawVertices || i < offset || i - offset >= rawVertices.length)
+			if (rawVertices == null || i < offset || i - offset >= rawVertices.length)
 			{
 				x = 0.0;
 				y = 0.0;
@@ -1082,12 +1107,14 @@ class ObjectDataParser extends DataParser
 				{
 					boneIndex = boneIndices[iB];
 					Transform.transformPoint(mesh.inverseBindPose[boneIndex], x, y, _helpPoint, true);
-					frame.tweens.push(_helpPoint.x, _helpPoint.y);
+					frame.tweens.push(_helpPoint.x);
+					frame.tweens.push(_helpPoint.y);
 				}
 			}
 			else
 			{
-				frame.tweens.push(x, y);
+				frame.tweens.push(x);
+				frame.tweens.push(y);
 			}
 			i += 2;
 		}
@@ -1099,7 +1126,7 @@ class ObjectDataParser extends DataParser
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones") private function _parseTweenFrame(rawData:Dynamic, frame:TweenFrameData, frameStart:UInt, frameCount:UInt):Void
+	private function _parseTweenFrame(rawData:Dynamic, frame:TweenFrameData, frameStart:UInt, frameCount:UInt):Void
 	{
 		_parseFrame(rawData, frame, frameStart, frameCount);
 		
@@ -1107,7 +1134,7 @@ class ObjectDataParser extends DataParser
 		{
 			if (Reflect.hasField(rawData, DataParser.TWEEN_EASING))
 			{
-				frame.tweenEasing = _getNumber(rawData, DataParser.TWEEN_EASING, DragonBones.NO_TWEEN);
+				frame.tweenEasing = _getFloat(rawData, DataParser.TWEEN_EASING, DragonBones.NO_TWEEN);
 			}
 			else if (_isOldData) // Support 2.x ~ 3.x data.
 			{
@@ -1138,7 +1165,7 @@ class ObjectDataParser extends DataParser
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones") private function _parseFrame(rawData:Dynamic, frame:FrameData, frameStart:UInt, frameCount:UInt):Void
+	private function _parseFrame(rawData:Dynamic, frame:FrameData, frameStart:UInt, frameCount:UInt):Void
 	{
 		frame.position = frameStart / _armature.frameRate;
 		frame.duration = frameCount / _armature.frameRate;
@@ -1146,10 +1173,10 @@ class ObjectDataParser extends DataParser
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones") private function _parseTimeline(rawData:Dynamic, timeline:TimelineData, frameParser:Function):Void
+	private function _parseTimeline(rawData:Dynamic, timeline:TimelineData, frameParser:Function):Void
 	{
-		timeline.scale = _getNumber(rawData, DataParser.SCALE, 1);
-		timeline.offset = _getNumber(rawData, DataParser.OFFSET, 0);
+		timeline.scale = _getFloat(rawData, DataParser.SCALE, 1);
+		timeline.offset = _getFloat(rawData, DataParser.OFFSET, 0);
 		
 		_timeline = timeline;
 		
@@ -1159,7 +1186,7 @@ class ObjectDataParser extends DataParser
 			if (rawFrames.length == 1)
 			{
 				timeline.frames.length = 1;
-				timeline.frames[0] = frameParser(rawFrames[0], 0, _getNumber(rawFrames[0], DataParser.DURATION, 1));
+				timeline.frames[0] = frameParser(rawFrames[0], 0, _getFloat(rawFrames[0], DataParser.DURATION, 1));
 			}
 			else if (rawFrames.length > 1)
 			{
@@ -1179,7 +1206,7 @@ class ObjectDataParser extends DataParser
 					{
 						rawFrame = rawFrames[iW++];
 						frameStart = i;
-						frameCount = _getNumber(rawFrame, DataParser.DURATION, 1);
+						frameCount = _getInt(rawFrame, DataParser.DURATION, 1);
 						frame = frameParser(rawFrame, frameStart, frameCount);
 						
 						if (prevFrame != null)
@@ -1189,7 +1216,7 @@ class ObjectDataParser extends DataParser
 							
 							if (_isOldData) // Support 2.x ~ 3.x data.
 							{
-								if (Std.is(prevFrame, TweenFrameData) && rawFrame[DataParser.DISPLAY_INDEX] == -1) 
+								if (Std.is(prevFrame, TweenFrameData) && _getInt(rawFrame, DataParser.DISPLAY_INDEX, 0) == -1) 
 								{
 									cast(prevFrame, TweenFrameData).tweenEasing = DragonBones.NO_TWEEN;
 								}
@@ -1210,7 +1237,7 @@ class ObjectDataParser extends DataParser
 				
 				if (_isOldData) // Support 2.x ~ 3.x data.
 				{
-					if (Std.is(prevFrame, TweenFrameData) && rawFrames[0][DataParser.DISPLAY_INDEX] == -1) 
+					if (Std.is(prevFrame, TweenFrameData) && _getInt(rawFrames[0], DataParser.DISPLAY_INDEX, 0) == -1) 
 					{
 						cast(prevFrame, TweenFrameData).tweenEasing = DragonBones.NO_TWEEN;
 					}
@@ -1225,8 +1252,10 @@ class ObjectDataParser extends DataParser
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones") private function _parseActionData(rawData:Dynamic, actions:Vector<ActionData>, bone:BoneData, slot:SlotData):Void
+	private function _parseActionData(rawData:Dynamic, actions:Vector<ActionData>, bone:BoneData, slot:SlotData):Void
 	{
+		var actionData:ActionData;
+		
 		var rawActions:Dynamic =
 		if (Reflect.hasField(rawData, DataParser.ACTION)) Reflect.field(rawData, DataParser.ACTION)
 		else if (Reflect.hasField(rawData, DataParser.ACTIONS)) Reflect.field(rawData, DataParser.ACTIONS)
@@ -1235,7 +1264,7 @@ class ObjectDataParser extends DataParser
 		
 		if (Std.is(rawActions, String))
 		{
-			var actionData:ActionData = cast BaseObject.borrowObject(ActionData);
+			actionData = cast BaseObject.borrowObject(ActionData);
 			actionData.type = ActionType.Play;
 			actionData.bone = bone;
 			actionData.slot = slot;
@@ -1259,7 +1288,7 @@ class ObjectDataParser extends DataParser
 					actionType = actionObject[0];
 					if (Std.is(actionType, String)) 
 					{
-						actionData.type = _getActionType(Std.string(actionType));
+						actionData.type = DataParser._getActionType(Std.string(actionType));
 					} 
 					else 
 					{
@@ -1289,8 +1318,10 @@ class ObjectDataParser extends DataParser
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones") private function _parseEventData(rawData:Dynamic, events:Vector<EventData>, bone:BoneData, slot:SlotData):Void
+	private function _parseEventData(rawData:Dynamic, events:Vector<EventData>, bone:BoneData, slot:SlotData):Void
 	{
+		var eventData:EventData;
+		
 		if (Reflect.hasField(rawData, DataParser.SOUND))
 		{
 			var soundEventData:EventData = cast BaseObject.borrowObject(EventData);
@@ -1303,7 +1334,7 @@ class ObjectDataParser extends DataParser
 		
 		if (Reflect.hasField(rawData, DataParser.EVENT))
 		{
-			var eventData:EventData = cast BaseObject.borrowObject(EventData);
+			eventData = cast BaseObject.borrowObject(EventData);
 			eventData.type = EventType.Frame;
 			eventData.name = _getString(rawData, DataParser.EVENT, null);
 			eventData.bone = bone;
@@ -1373,29 +1404,29 @@ class ObjectDataParser extends DataParser
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones") private function _parseTransform(rawData:Dynamic, transform:Transform):Void
+	private function _parseTransform(rawData:Dynamic, transform:Transform):Void
 	{
-		transform.x = _getNumber(rawData, DataParser.X, 0.0) * _armature.scale;
-		transform.y = _getNumber(rawData, DataParser.Y, 0.0) * _armature.scale;
-		transform.skewX = _getNumber(rawData, DataParser.SKEW_X, 0.0) * DragonBones.ANGLE_TO_RADIAN;
-		transform.skewY = _getNumber(rawData, DataParser.SKEW_Y, 0.0) * DragonBones.ANGLE_TO_RADIAN;
-		transform.scaleX = _getNumber(rawData, DataParser.SCALE_X, 1.0);
-		transform.scaleY = _getNumber(rawData, DataParser.SCALE_Y, 1.0);
+		transform.x = _getFloat(rawData, DataParser.X, 0.0) * _armature.scale;
+		transform.y = _getFloat(rawData, DataParser.Y, 0.0) * _armature.scale;
+		transform.skewX = _getFloat(rawData, DataParser.SKEW_X, 0.0) * DragonBones.ANGLE_TO_RADIAN;
+		transform.skewY = _getFloat(rawData, DataParser.SKEW_Y, 0.0) * DragonBones.ANGLE_TO_RADIAN;
+		transform.scaleX = _getFloat(rawData, DataParser.SCALE_X, 1.0);
+		transform.scaleY = _getFloat(rawData, DataParser.SCALE_Y, 1.0);
 	}
 	
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones") private function _parseColorTransform(rawData:Dynamic, color:ColorTransform):Void
+	private function _parseColorTransform(rawData:Dynamic, color:ColorTransform):Void
 	{
-		color.alphaMultiplier = _getNumber(rawData, DataParser.ALPHA_MULTIPLIER, 100) * 0.01;
-		color.redMultiplier = _getNumber(rawData, DataParser.RED_MULTIPLIER, 100) * 0.01;
-		color.greenMultiplier = _getNumber(rawData, DataParser.GREEN_MULTIPLIER, 100) * 0.01;
-		color.blueMultiplier = _getNumber(rawData, DataParser.BLUE_MULTIPLIER, 100) * 0.01;
-		color.alphaOffset = _getNumber(rawData, DataParser.ALPHA_OFFSET, 0);
-		color.redOffset = _getNumber(rawData, DataParser.RED_OFFSET, 0);
-		color.greenOffset = _getNumber(rawData, DataParser.GREEN_OFFSET, 0);
-		color.blueOffset = _getNumber(rawData, DataParser.BLUE_OFFSET, 0);
+		color.alphaMultiplier = _getFloat(rawData, DataParser.ALPHA_MULTIPLIER, 100) * 0.01;
+		color.redMultiplier = _getFloat(rawData, DataParser.RED_MULTIPLIER, 100) * 0.01;
+		color.greenMultiplier = _getFloat(rawData, DataParser.GREEN_MULTIPLIER, 100) * 0.01;
+		color.blueMultiplier = _getFloat(rawData, DataParser.BLUE_MULTIPLIER, 100) * 0.01;
+		color.alphaOffset = _getFloat(rawData, DataParser.ALPHA_OFFSET, 0);
+		color.redOffset = _getFloat(rawData, DataParser.RED_OFFSET, 0);
+		color.greenOffset = _getFloat(rawData, DataParser.GREEN_OFFSET, 0);
+		color.blueOffset = _getFloat(rawData, DataParser.BLUE_OFFSET, 0);
 	}
 	/**
 	 * @inheritDoc
@@ -1410,7 +1441,7 @@ class ObjectDataParser extends DataParser
 			
 			if (_isOldData) 
 			{
-				_isGlobalTransform = _getBoolean(rawData, IS_GLOBAL, true);
+				_isGlobalTransform = _getBoolean(rawData, DataParser.IS_GLOBAL, true);
 			} 
 			else 
 			{
@@ -1428,7 +1459,7 @@ class ObjectDataParser extends DataParser
 			{
 				var data:DragonBonesData = cast BaseObject.borrowObject(DragonBonesData);
 				data.name = _getString(rawData, DataParser.NAME, null);
-				data.frameRate = _getNumber(rawData, DataParser.FRAME_RATE, 24);
+				data.frameRate = Std.int(_getFloat(rawData, DataParser.FRAME_RATE, 24));
 				if (data.frameRate == 0) 
 				{
 					data.frameRate = 24;
@@ -1469,8 +1500,8 @@ class ObjectDataParser extends DataParser
 		{
 			textureAtlasData.name = _getString(rawData, DataParser.NAME, null);
 			textureAtlasData.imagePath = _getString(rawData, DataParser.IMAGE_PATH, null);
-			textureAtlasData.width = _getNumber(rawData, DataParser.WIDTH, 0.0);
-			textureAtlasData.height = _getNumber(rawData, DataParser.HEIGHT, 0.0);
+			textureAtlasData.width = _getFloat(rawData, DataParser.WIDTH, 0.0);
+			textureAtlasData.height = _getFloat(rawData, DataParser.HEIGHT, 0.0);
 			
 			// Texture format.
 			
@@ -1480,7 +1511,7 @@ class ObjectDataParser extends DataParser
 			}
 			else
 			{
-				scale = textureAtlasData.scale = _getNumber(rawData, DataParser.SCALE, textureAtlasData.scale);
+				scale = textureAtlasData.scale = _getFloat(rawData, DataParser.SCALE, textureAtlasData.scale);
 			}
 			
 			scale = 1.0 / (rawScale > 0.0 ? rawScale : scale);
@@ -1493,18 +1524,18 @@ class ObjectDataParser extends DataParser
 						textureData = textureAtlasData.generateTexture();
 						textureData.name = _getString(rawTexture, DataParser.NAME, null);
 					textureData.rotated = _getBoolean(rawTexture, DataParser.ROTATED, false);
-					textureData.region.x = _getNumber(rawTexture, DataParser.X, 0.0) * scale;
-					textureData.region.y = _getNumber(rawTexture, DataParser.Y, 0.0) * scale;
-					textureData.region.width = _getNumber(rawTexture, DataParser.WIDTH, 0.0) * scale;
-					textureData.region.height = _getNumber(rawTexture, DataParser.HEIGHT, 0.0) * scale;
+					textureData.region.x = _getFloat(rawTexture, DataParser.X, 0.0) * scale;
+					textureData.region.y = _getFloat(rawTexture, DataParser.Y, 0.0) * scale;
+					textureData.region.width = _getFloat(rawTexture, DataParser.WIDTH, 0.0) * scale;
+					textureData.region.height = _getFloat(rawTexture, DataParser.HEIGHT, 0.0) * scale;
 					
-					frameWidth = _getNumber(rawTexture, DataParser.FRAME_WIDTH, -1.0);
-					frameHeight = _getNumber(rawTexture, DataParser.FRAME_HEIGHT, -1.0);
+					frameWidth = _getFloat(rawTexture, DataParser.FRAME_WIDTH, -1.0);
+					frameHeight = _getFloat(rawTexture, DataParser.FRAME_HEIGHT, -1.0);
 					if (frameWidth > 0.0 && frameHeight > 0.0)
 					{
 						textureData.frame = TextureData.generateRectangle();
-						textureData.frame.x = _getNumber(rawTexture, DataParser.FRAME_X, 0.0) * scale;
-						textureData.frame.y = _getNumber(rawTexture, DataParser.FRAME_Y, 0.0) * scale;
+						textureData.frame.x = _getFloat(rawTexture, DataParser.FRAME_X, 0.0) * scale;
+						textureData.frame.y = _getFloat(rawTexture, DataParser.FRAME_Y, 0.0) * scale;
 						textureData.frame.width = frameWidth * scale;
 						textureData.frame.height = frameHeight * scale;
 					}
@@ -1521,7 +1552,7 @@ class ObjectDataParser extends DataParser
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones") private static var _instance:ObjectDataParser = null;
+	private static var _instance:ObjectDataParser = null;
 	/**
 	 * @deprecated
 	 * @see dragonBones.factories.BaseFactory#parseTextureAtlasData()

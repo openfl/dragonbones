@@ -1,5 +1,8 @@
 package;
 
+import haxe.Json;
+
+import openfl.errors.Error;
 import openfl.Assets;
 
 // Starling render
@@ -22,6 +25,7 @@ class Game extends Sprite
 
 	public function new()
 	{
+		super();
 		this.addEventListener(Event.ADDED_TO_STAGE, _addToStageHandler);
 	}
 
@@ -29,10 +33,10 @@ class Game extends Sprite
 	{
 		// Load DragonBones Data
 		var dragonBonesData: DragonBonesData = _factory.parseDragonBonesData(
-			JSON.parse(Assets.getText("assets/AnimationBaseTest.json"))
+			Json.parse(Assets.getText("assets/AnimationBaseTest.json"))
 		);
 		_factory.parseTextureAtlasData(
-			JSON.parse(Assets.getText("assets/texture.json")),
+			Json.parse(Assets.getText("assets/texture.json")),
 			Assets.getBitmapData("assets/texture.png")
 		);
 		
@@ -85,7 +89,7 @@ class Game extends Sprite
 								_isTouched = false;
 							
 							case TouchPhase.MOVED:
-								if (_isTouched && _armatureDisplay.animation.getState("idle") && !_armatureDisplay.animation.getState("idle").isPlaying)
+								if (_isTouched && _armatureDisplay.animation.getState("idle") != null && !_armatureDisplay.animation.getState("idle").isPlaying)
 								{
 									_armatureDisplay.animation.gotoAndStopByProgress("idle", progress);
 								}
@@ -104,6 +108,6 @@ class Game extends Sprite
 	{
 		var eventObject: EventObject = cast(event.data, EventObject);
 
-		trace(eventObject.animationState.name, event.type, eventObject.name ? eventObject.name : "");
+		trace(eventObject.animationState.name, event.type, eventObject.name != null ? eventObject.name : "");
 	}
 }

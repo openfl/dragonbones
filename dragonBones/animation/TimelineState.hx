@@ -9,12 +9,12 @@ import dragonBones.objects.TimelineData;
 /**
  * @private
  */
-class TimelineState extends BaseObject
+@:allow(dragonBones) class TimelineState extends BaseObject
 {
-	@:allow("dragonBones.animation") private var _playState:Int; // -1 start 0 play 1 complete
-	@:allow("dragonBones.animation") private var _currentPlayTimes:UInt;
-	@:allow("dragonBones.animation") private var _currentTime:Float;
-	@:allow("dragonBones.animation") private var _timelineData:TimelineData;
+	private var _playState:Int; // -1 start 0 play 1 complete
+	private var _currentPlayTimes:UInt;
+	private var _currentTime:Float;
+	private var _timelineData:TimelineData;
 	
 	private var _frameRate:UInt;
 	private var _keyFrameCount:UInt;
@@ -29,7 +29,10 @@ class TimelineState extends BaseObject
 	private var _animationState:AnimationState;
 	private var _mainTimeline:AnimationTimelineState;
 	
-	private function new() {}
+	private function new()
+	{
+		super();
+	}
 	
 	override private function _onClear():Void
 	{
@@ -163,8 +166,8 @@ class TimelineState extends BaseObject
 		_position = _animationState._position;
 		_duration = _animationState._duration;
 		_animationDutation = _animationState.animationData.duration;
-		_timeScale = !_mainTimeline ? 1.0 : (1.0 / _timelineData.scale);
-		_timeOffset = !_mainTimeline ? 0.0 : _timelineData.offset;
+		_timeScale = _mainTimeline == null ? 1.0 : (1.0 / _timelineData.scale);
+		_timeOffset = _mainTimeline == null ? 0.0 : _timelineData.offset;
 	}
 	
 	public function fadeOut():Void {}
@@ -179,7 +182,7 @@ class TimelineState extends BaseObject
 	{
 		if (_playState <= 0 && _setCurrentTime(passedTime)) 
 		{
-			var currentFrameIndex:UInt = _keyFrameCount > 1 ? uint(_currentTime * _frameRate) : 0;
+			var currentFrameIndex:UInt = _keyFrameCount > 1 ? Std.int(_currentTime * _frameRate) : 0;
 			var currentFrame:FrameData = _timelineData.frames[currentFrameIndex];
 			
 			if (_currentFrame != currentFrame) 

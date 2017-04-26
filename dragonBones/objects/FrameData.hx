@@ -6,14 +6,14 @@ import dragonBones.core.DragonBones;
 /**
  * @private
  */
-class FrameData extends BaseObject
+@:allow(dragonBones) class FrameData extends BaseObject
 {
 	public var position:Float;
 	public var duration:Float;
 	public var prev:FrameData;
 	public var next:FrameData;
 	
-	@:allow("dragonBones") private function new()
+	private function new()
 	{
 		super();
 	}

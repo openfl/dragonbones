@@ -7,12 +7,12 @@ import haxe.Constraints;
  * 事件接口。
  * @version DragonBones 4.5
  */
-interface IEventDispatcher
+@:allow(dragonBones) interface IEventDispatcher
 {
 	/**
 	 * @private
 	 */
-	@:allow("dragonBones") private function _dispatchEvent(type:String, value:EventObject):Void;
+	private function _dispatchEvent(type:String, value:EventObject):Void;
 	/**
 	 * @language zh_CN
 	 * 是否包含指定类型的事件。
