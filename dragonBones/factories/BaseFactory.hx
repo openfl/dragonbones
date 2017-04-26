@@ -376,7 +376,11 @@ import dragonBones.textures.TextureData;
 			{
 				_delay.stop();
 			}
-			_delay = Timer.delay(dispatchEvent.bind(new Event(Event.COMPLETE)), 30);
+			
+			_delay = Timer.delay(function ()
+			{
+				dispatchEvent(new Event(Event.COMPLETE));
+			}, 30);
 		}
 		
 		return dragonBonesData;
