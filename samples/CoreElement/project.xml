@@ -1,13 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <project>
 	
-	<meta title="CoreElement" package="com.sample.coreelement" version="1.0.0" company="Company Name" />
+	<meta title="CoreElement" package="dragonbones.sample.coreelement" version="1.0.0" company="" />
 	<app main="Startup" path="Export" file="CoreElement" swf-version="12.0" />
+	
+	<window background="#666666" fps="60" />
 	
 	<source path="Source" />
 	
 	<haxelib name="openfl" />
 	<haxelib name="starling" />
+	<haxelib name="dragonbones" />
 	
 	<assets path="Assets" rename="assets" />
 	

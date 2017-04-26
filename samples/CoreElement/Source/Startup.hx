@@ -16,6 +16,7 @@ class Startup extends Sprite {
 		super ();
 		
 		starling = new Starling (Game, stage);
+		starling.showStats = true;
 		starling.start ();
 		
 	}

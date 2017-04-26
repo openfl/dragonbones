@@ -14,9 +14,9 @@ import dragonBones.openfl.OpenFLEvent;
 import dragonBones.openfl.OpenFLFactory;
 import dragonBones.objects.DragonBonesData;
 
-class FlashRender extends flash.display.Sprite
+class OpenFLRender extends openfl.display.Sprite
 {
-	public static var instance: FlashRender = null;
+	public static var instance: OpenFLRender = null;
 
 	public var dragonBonesData: DragonBonesData = null;
 
@@ -30,7 +30,7 @@ class FlashRender extends flash.display.Sprite
 		
 		instance = this;
 		
-		this.addEventListener(flash.events.Event.ADDED_TO_STAGE, _addToStageHandler);
+		this.addEventListener(openfl.events.Event.ADDED_TO_STAGE, _addToStageHandler);
 	}
 
 	public var armatureDisplay(get, never):OpenFLArmatureDisplay;
@@ -39,7 +39,7 @@ class FlashRender extends flash.display.Sprite
 		return _armatureDisplay;
 	}
 
-	private function _addToStageHandler(event: flash.events.Event): Void
+	private function _addToStageHandler(event: openfl.events.Event): Void
 	{
 		// Parse data.
 		dragonBonesData = OpenFLFactory.factory.parseDragonBonesData(

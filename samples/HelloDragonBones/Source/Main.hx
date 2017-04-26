@@ -48,8 +48,8 @@ class Main extends Sprite {
 	
 	private function _flashInit(): Void
 	{
-		var flashRender: FlashRender = new FlashRender();
-		this.addChild(flashRender);
+		var openFLRender: OpenFLRender = new OpenFLRender();
+		this.addChild(openFLRender);
 	}
 	
 	private function _starlingInit(): Void
@@ -68,10 +68,10 @@ class Main extends Sprite {
 		switch (event.type)
 		{
 			case MouseEvent.MOUSE_DOWN:
-				if (FlashRender.instance != null)
+				if (OpenFLRender.instance != null)
 				{
-					_prevArmatureScale = FlashRender.instance.armatureDisplay.scaleX;
-					_prevAnimationScale = FlashRender.instance.armatureDisplay.animation.timeScale;
+					_prevArmatureScale = OpenFLRender.instance.armatureDisplay.scaleX;
+					_prevAnimationScale = OpenFLRender.instance.armatureDisplay.animation.timeScale;
 				}
 				else
 				{
@@ -89,15 +89,15 @@ class Main extends Sprite {
 				{
 					var touchRight: Bool = event.localX > stage.stageWidth * 0.5;
 					
-					if (FlashRender.instance != null)
+					if (OpenFLRender.instance != null)
 					{
-						if (FlashRender.instance != null && FlashRender.instance.dragonBonesData.armatureNames.length > 1 && !touchRight)
+						if (OpenFLRender.instance != null && OpenFLRender.instance.dragonBonesData.armatureNames.length > 1 && !touchRight)
 						{
-							FlashRender.instance.changeArmature();
+							OpenFLRender.instance.changeArmature();
 						}
 						else
 						{
-							FlashRender.instance.changeAnimation();
+							OpenFLRender.instance.changeAnimation();
 						}
 					}
 					
@@ -138,9 +138,9 @@ class Main extends Sprite {
 						{
 							var currentAnimationScale:Float = Math.max((-dX / 200) + _prevAnimationScale, 0.01);
 							
-							if (FlashRender.instance != null)
+							if (OpenFLRender.instance != null)
 							{
-								FlashRender.instance.armatureDisplay.animation.timeScale = currentAnimationScale;
+								OpenFLRender.instance.armatureDisplay.animation.timeScale = currentAnimationScale;
 							}
 							
 							if (StarlingRender.instance != null)
@@ -151,9 +151,9 @@ class Main extends Sprite {
 						else 
 						{
 							var currentArmatureScale:Float = Math.max((dY / 200) + _prevArmatureScale, 0.01);
-							if (FlashRender.instance != null)
+							if (OpenFLRender.instance != null)
 							{
-								FlashRender.instance.armatureDisplay.scaleX = FlashRender.instance.armatureDisplay.scaleY = currentArmatureScale;
+								OpenFLRender.instance.armatureDisplay.scaleX = OpenFLRender.instance.armatureDisplay.scaleY = currentArmatureScale;
 							}
 							
 							if (StarlingRender.instance != null)
