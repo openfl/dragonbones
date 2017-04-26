@@ -53,13 +53,13 @@ class Game extends Sprite
 			Assets.getBitmapData("assets/CoreElement_texture_1.png")
 		);
 
+		_player = new Mecha();
+		
 		this.addEventListener(EnterFrameEvent.ENTER_FRAME, _enterFrameHandler);
 		this.stage.addEventListener(KeyboardEvent.KEY_DOWN, _keyHandler);
 		this.stage.addEventListener(KeyboardEvent.KEY_UP, _keyHandler);
 		this.stage.addEventListener(TouchEvent.TOUCH, _mouseHandler);
 
-		_player = new Mecha();
-		
 		var text: TextField = new TextField(800, 60, "Press W/A/S/D to move. Press Q/E/SPACE to switch weapens.\nMouse Move to aim. Click to fire.");
 		text.x = 0;
 		text.y = this.stage.stageHeight - 60;
@@ -133,7 +133,7 @@ class Game extends Sprite
 		_player.update();
 		
 		var i: Int = _bullets.length;
-		while (i-- != 0)
+		while (i-- > 0)
 		{
 			var bullet: Bullet = _bullets[i];
 			if (bullet.update())
