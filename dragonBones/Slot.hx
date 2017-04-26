@@ -651,7 +651,7 @@ import dragonBones.textures.TextureData;
 			if (prevChildArmature != null)
 			{
 				prevChildArmature._parent = null; // Update child armature parent.
-				prevChildArmature.clock = null;
+				prevChildArmature._clock = null;
 				if (prevChildArmature.inheritAnimation)
 				{
 					prevChildArmature.animation.reset();
@@ -661,7 +661,7 @@ import dragonBones.textures.TextureData;
 			if (_childArmature != null)
 			{
 				_childArmature._parent = this; // Update child armature parent.
-				_childArmature.clock = _armature.clock;
+				_childArmature._clock = _armature._clock;
 				if (_childArmature.inheritAnimation)
 				{
 					if (_childArmature.cacheFrameRate == 0) // Set child armature frameRate.

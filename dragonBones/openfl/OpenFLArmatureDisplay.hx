@@ -77,7 +77,7 @@ import dragonBones.objects.BoundingBoxData;
 				endX = startX + bone.globalTransformMatrix.a * boneLength;
 				endY = startY + bone.globalTransformMatrix.b * boneLength;
 				
-				_debugDrawer.graphics.lineStyle(2.0, bone.ik != null ? 0xFF0000 : 0x00FFFF, 0.7);
+				_debugDrawer.graphics.lineStyle(2.0, bone._ik != null ? 0xFF0000 : 0x00FFFF, 0.7);
 				_debugDrawer.graphics.moveTo(startX, startY);
 				_debugDrawer.graphics.lineTo(endX, endY);
 				_debugDrawer.graphics.lineStyle(0.0, 0, 0);
@@ -211,11 +211,11 @@ import dragonBones.objects.BoundingBoxData;
 	{
 		if (on)
 		{
-			_armature.clock = OpenFLFactory._clock;
+			_armature._clock = OpenFLFactory._clock;
 		} 
 		else 
 		{
-			_armature.clock = null;
+			_armature._clock = null;
 		}
 	}
 }

@@ -48,7 +48,7 @@ class Hero
 
 		_updateAnimation();
 
-		WorldClock.instance.add(_armature);
+		WorldClock.clock.add(_armature);
 		Game.instance.addChild(_armatureDisplay);
 	}
 

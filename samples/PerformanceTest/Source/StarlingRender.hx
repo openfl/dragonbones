@@ -101,7 +101,7 @@ class StarlingRender extends Sprite
 			_resetPosition();
 		}
 		
-		WorldClock.instance.advanceTime(-1);
+		WorldClock.clock.advanceTime(-1);
 	}
 
 	private function _touchHandler(event: TouchEvent): Void
@@ -135,7 +135,7 @@ class StarlingRender extends Sprite
 		var animationName:String = armature.animation.animationNames[0];
 		//const animationName:String = armature.animation.animationNames[Math.floor(Math.random() * armature.animation.animationNames.length)];
 		armature.animation.play(animationName, 0);
-		WorldClock.instance.add(armature);
+		WorldClock.clock.add(armature);
 
 		_armatures.push(armature);
 		_updateText();
@@ -151,7 +151,7 @@ class StarlingRender extends Sprite
 		var armature: Armature = _armatures.pop();
 		var armatureDisplay: StarlingArmatureDisplay = cast armature.display;
 		this.removeChild(armatureDisplay);
-		WorldClock.instance.remove(armature);
+		WorldClock.clock.remove(armature);
 		armature.dispose();
 
 		_updateText();

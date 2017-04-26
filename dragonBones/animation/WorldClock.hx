@@ -19,8 +19,7 @@ import dragonBones.core.DragonBones;
 	 * 一个可以直接使用的全局 WorldClock 实例.
 	 * @version DragonBones 3.0
 	 */
-	public static var instance:WorldClock = new WorldClock();
-	//public static var clock:WorldClock = new WorldClock();
+	public static var clock:WorldClock = new WorldClock();
 	/**
 	 * @language zh_CN
 	 * 当前时间。 (以秒为单位)
@@ -36,7 +35,7 @@ import dragonBones.core.DragonBones;
 	public var timeScale:Float = 1;
 	
 	private var _animatebles:Vector<IAnimateble> = new Vector<IAnimateble>();
-	private var _clock: WorldClock = null;
+	private var __clock: WorldClock = null;
 	/**
 	 * @language zh_CN
 	 * 创建一个新的 WorldClock 实例。
@@ -143,7 +142,7 @@ import dragonBones.core.DragonBones;
 		if (value != null && _animatebles.indexOf(value) < 0)
 		{
 			_animatebles.push(value);
-			value.clock = this;
+			value._clock = this;
 		}
 	}
 	/**
@@ -158,7 +157,7 @@ import dragonBones.core.DragonBones;
 		if (index >= 0)
 		{
 			_animatebles[index] = null;
-			value.clock = null;
+			value._clock = null;
 		}
 	}
 	/**
@@ -176,33 +175,33 @@ import dragonBones.core.DragonBones;
 			_animatebles[i] = null;
 			if (animateble != null) 
 			{
-				animateble.clock = null;
+				animateble._clock = null;
 			}
 		}
 	}
 	/**
 	 * @inheritDoc
 	 */
-	private var clock(get, set):WorldClock;
-	private function get_clock(): WorldClock 
+	private var _clock(get, set):WorldClock;
+	private function get__clock(): WorldClock 
 	{
-		return _clock;
+		return __clock;
 	}
-	private function set_clock(value: WorldClock):WorldClock
+	private function set__clock(value: WorldClock):WorldClock
 	{
-		if (_clock == value) {
+		if (__clock == value) {
 			return value;
 		}
 		
-		var prevClock:WorldClock = _clock;
-		_clock = value;
+		var prevClock:WorldClock = __clock;
+		__clock = value;
 		
 		if (prevClock != null) {
 			prevClock.remove(this);
 		}
 		
-		if (_clock != null) {
-			_clock.add(this);
+		if (__clock != null) {
+			__clock.add(this);
 		}
 		return value;
 	}

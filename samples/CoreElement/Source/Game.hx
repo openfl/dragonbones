@@ -142,7 +142,7 @@ class Game extends Sprite
 			}
 		}
 
-		WorldClock.instance.advanceTime(-1);
+		WorldClock.clock.advanceTime(-1);
 	}
 
 	private function _updateMove(dir: Int): Void

@@ -26,7 +26,7 @@ class Bullet
 		_armatureDisplay.rotation = radian;
 		_armature.animation.play("idle");
 		
-		WorldClock.instance.add(_armature);
+		WorldClock.clock.add(_armature);
 		Game.instance.addChild(_armatureDisplay);
 	}
 
@@ -43,7 +43,7 @@ class Bullet
 			_armatureDisplay.y < -100 || _armatureDisplay.y >= Game.instance.stage.stageHeight + 100
 		)
 		{
-			WorldClock.instance.remove(_armature);
+			WorldClock.clock.remove(_armature);
 			Game.instance.removeChild(_armatureDisplay);
 			_armature.dispose();
 

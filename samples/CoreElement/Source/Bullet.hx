@@ -43,11 +43,11 @@ class Bullet
 			
 			_effect.animation.play("idle");
 			
-			WorldClock.instance.add(_effect);
+			WorldClock.clock.add(_effect);
 			Game.instance.addChild(effectDisplay);
 		}
 
-		WorldClock.instance.add(_armature);
+		WorldClock.clock.add(_armature);
 		Game.instance.addChild(_armatureDisplay);
 	}
 
@@ -61,13 +61,13 @@ class Bullet
 			_armatureDisplay.y < -100 || _armatureDisplay.y >= Game.instance.stage.stageHeight + 100
 		)
 		{
-			WorldClock.instance.remove(_armature);
+			WorldClock.clock.remove(_armature);
 			Game.instance.removeChild(_armatureDisplay);
 			_armature.dispose();
 
 			if (_effect != null)
 			{
-				WorldClock.instance.remove(_effect);
+				WorldClock.clock.remove(_effect);
 				Game.instance.removeChild(cast _effect.display);
 				_effect.dispose();
 			}

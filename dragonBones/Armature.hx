@@ -84,7 +84,7 @@ import dragonBones.textures.TextureAtlasData;
 	 * @private Slot
 	 */
 	private var _parent:Slot;
-	private var _clock:WorldClock;
+	private var __clock:WorldClock;
 	/**
 	 * @private
 	 */
@@ -955,29 +955,29 @@ import dragonBones.textures.TextureAtlasData;
 	/**
 	 * @inheritDoc
 	 */
-	public var clock(get, set):WorldClock;
-	private function get_clock():WorldClock 
+	public var _clock(get, set):WorldClock;
+	private function get__clock():WorldClock 
 	{
-		return _clock;
+		return __clock;
 	}
-	private function set_clock(value:WorldClock):WorldClock
+	private function set__clock(value:WorldClock):WorldClock
 	{
-		if (_clock == value) 
+		if (__clock == value) 
 		{
 			return value;
 		}
 		
-		var prevClock:WorldClock = _clock;
-		_clock = value;
+		var prevClock:WorldClock = __clock;
+		__clock = value;
 		
 		if (prevClock != null) 
 		{
 			prevClock.remove(this);
 		}
 		
-		if (_clock != null) 
+		if (__clock != null) 
 		{
-			_clock.add(this);
+			__clock.add(this);
 		}
 		
 		// Update childArmature clock.
@@ -988,7 +988,7 @@ import dragonBones.textures.TextureAtlasData;
 			childArmature = _slots[i].childArmature;
 			if (childArmature != null) 
 			{
-				childArmature.clock = _clock;
+				childArmature._clock = __clock;
 			}
 		}
 		return value;

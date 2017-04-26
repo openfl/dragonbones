@@ -83,7 +83,7 @@ class Game extends Sprite
 			}
 		}
 
-		WorldClock.instance.advanceTime(0.015);
+		WorldClock.clock.advanceTime(0.015);
 	}
 
 	private function _keyHandler(event: KeyboardEvent): Void
