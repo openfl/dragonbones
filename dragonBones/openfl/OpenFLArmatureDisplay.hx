@@ -30,7 +30,10 @@ import dragonBones.objects.BoundingBoxData;
 	/**
 	 * @private
 	 */
-	private function new() {}
+	private function new()
+	{
+		super();
+	}
 	/**
 	 * @private
 	 */
@@ -44,7 +47,7 @@ import dragonBones.objects.BoundingBoxData;
 	 */
 	private function _dispatchEvent(type:String, eventObject:EventObject):Void
 	{
-		var event:FlashEvent = new FlashEvent(type, eventObject);
+		var event:OpenFLEvent = new OpenFLEvent(type, eventObject);
 		dispatchEvent(event);
 	}
 	/**
@@ -74,7 +77,7 @@ import dragonBones.objects.BoundingBoxData;
 				endX = startX + bone.globalTransformMatrix.a * boneLength;
 				endY = startY + bone.globalTransformMatrix.b * boneLength;
 				
-				_debugDrawer.graphics.lineStyle(2.0, bone.ik ? 0xFF0000 : 0x00FFFF, 0.7);
+				_debugDrawer.graphics.lineStyle(2.0, bone.ik != null ? 0xFF0000 : 0x00FFFF, 0.7);
 				_debugDrawer.graphics.moveTo(startX, startY);
 				_debugDrawer.graphics.lineTo(endX, endY);
 				_debugDrawer.graphics.lineStyle(0.0, 0, 0);
@@ -103,7 +106,7 @@ import dragonBones.objects.BoundingBoxData;
 					}
 					
 					child.graphics.clear();
-					child.graphics.beginFill(boundingBoxData.color ? boundingBoxData.color : 0xFF00FF, 0.3);
+					child.graphics.beginFill(boundingBoxData.color != 0 ? boundingBoxData.color : 0xFF00FF, 0.3);
 					
 					switch (boundingBoxData.type) 
 					{
@@ -175,19 +178,19 @@ import dragonBones.objects.BoundingBoxData;
 	 */
 	public function addEvent(type:String, listener:Function):Void
 	{
-		addEventListener(type, listener);
+		addEventListener(type, cast listener);
 	}
 	/**
 	 * @inheritDoc
 	 */
 	public function removeEvent(type:String, listener:Function):Void
 	{
-		removeEventListener(type, listener);
+		removeEventListener(type, cast listener);
 	}
 	/**
 	 * @inheritDoc
 	 */
-	public function armature(get, never):Armature;
+	public var armature(get, never):Armature;
 	private function get_armature():Armature
 	{
 		return _armature;
@@ -195,7 +198,7 @@ import dragonBones.objects.BoundingBoxData;
 	/**
 	 * @inheritDoc
 	 */
-	public function animation(get, never):Animation;
+	public var animation(get, never):Animation;
 	private function get_animation():Animation
 	{
 		return _armature.animation;
@@ -208,7 +211,7 @@ import dragonBones.objects.BoundingBoxData;
 	{
 		if (on)
 		{
-			_armature.clock = FlashFactory._clock;
+			_armature.clock = OpenFLFactory._clock;
 		} 
 		else 
 		{

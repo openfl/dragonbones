@@ -4,7 +4,8 @@ import openfl.display.BitmapData;
 import openfl.display.Shape;
 import openfl.events.Event;
 import openfl.geom.Matrix;
-import openfl.utils.getTimer;
+//import openfl.utils.getTimer;
+import openfl.Lib;
 import openfl.Vector;
 
 import dragonBones.Armature;
@@ -48,7 +49,7 @@ import dragonBones.textures.TextureAtlasData;
 	 */
 	private static function _clockHandler(event:Event):Void 
 	{
-		var time:Float = getTimer() * 0.001;
+		var time:Float = Lib.getTimer() * 0.001;
 		var passedTime:Float = time - _clock.time;
 		_clock.advanceTime(passedTime);
 		_clock.time = time;
@@ -88,7 +89,7 @@ import dragonBones.textures.TextureAtlasData;
 	{
 		if (!_eventManager.hasEventListener(Event.ENTER_FRAME))
 		{
-			_clock.time = getTimer() * 0.001;
+			_clock.time = Lib.getTimer() * 0.001;
 			_eventManager.addEventListener(Event.ENTER_FRAME, _clockHandler, false, -999999);
 		}
 		
@@ -108,7 +109,7 @@ import dragonBones.textures.TextureAtlasData;
 	 */
 	override private function _generateSlot(dataPackage:BuildArmaturePackage, skinSlotData:SkinSlotData, armature:Armature):Slot
 	{
-		var slot:FlashSlot = cast BaseObject.borrowObject(OpenFLSlot);
+		var slot:OpenFLSlot = cast BaseObject.borrowObject(OpenFLSlot);
 		var slotData:SlotData = skinSlotData.slot;
 		var displayList:Vector<Dynamic> = new Vector<Dynamic>(skinSlotData.displays.length, true);
 		var slotDisplay:Shape = new Shape();
@@ -130,7 +131,7 @@ import dragonBones.textures.TextureAtlasData;
 					
 					if (dataPackage.textureAtlasName != null)
 					{
-						slot._textureDatas[i] = _getTextureData(dataPackage.textureAtlasName, displayData.path)
+						slot._textureDatas[i] = _getTextureData(dataPackage.textureAtlasName, displayData.path);
 					}
 					
 					displayList[i] = slot.rawDisplay;
@@ -143,7 +144,7 @@ import dragonBones.textures.TextureAtlasData;
 					
 					if (dataPackage.textureAtlasName != null)
 					{
-						slot._textureDatas[i] = _getTextureData(dataPackage.textureAtlasName, displayData.path)
+						slot._textureDatas[i] = _getTextureData(dataPackage.textureAtlasName, displayData.path);
 					}
 					
 					displayList[i] = slot.meshDisplay;
@@ -213,7 +214,7 @@ import dragonBones.textures.TextureAtlasData;
 	 */
 	public function getTextureDisplay(textureName:String, textureAtlasName:String = null):Shape 
 	{
-		var textureData:OpenFLTextureData = cast(_getTextureData(textureAtlasName, textureName), FlashTextureData);
+		var textureData:OpenFLTextureData = cast(_getTextureData(textureAtlasName, textureName), OpenFLTextureData);
 		if (textureData != null)
 		{
 			var width:Float = 0;

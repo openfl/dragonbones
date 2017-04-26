@@ -27,7 +27,10 @@ import dragonBones.enums.BlendMode;
 	/**
 	 * @private
 	 */
-	private function new() {}
+	private function new()
+	{
+		super();
+	}
 	/**
 	 * @private
 	 */
@@ -171,6 +174,7 @@ import dragonBones.enums.BlendMode;
 	{
 		var isMeshDisplay:Bool = _meshData != null && _renderDisplay == _meshDisplay;
 		var currentTextureData:OpenFLTextureData = cast(_textureData, OpenFLTextureData);
+		var meshDisplay:Shape, normalDisplay:Shape;
 		
 		if (_displayIndex >= 0 && _display != null && currentTextureData != null)
 		{
@@ -197,9 +201,9 @@ import dragonBones.enums.BlendMode;
 				var textureAtlasWidth:Float = currentTextureAtlasData.width > 0.0 ? currentTextureAtlasData.width : currentTextureAtlas.width;
 				var textureAtlasHeight:Float = currentTextureAtlasData.height > 0.0 ? currentTextureAtlasData.height : currentTextureAtlas.height;
 				
-				if (isMeshDisplay != null) // Mesh.
+				if (isMeshDisplay) // Mesh.
 				{
-					var meshDisplay:Shape = cast(_renderDisplay, Shape);
+					meshDisplay = cast(_renderDisplay, Shape);
 					
 					if (_path != null)
 					{
@@ -279,30 +283,30 @@ import dragonBones.enums.BlendMode;
 					
 					if (currentTextureData.rotated)
 					{
-						_helpMatrix.a = 0;
-						_helpMatrix.b = -scale;
-						_helpMatrix.c = scale;
-						_helpMatrix.d = 0;
-						_helpMatrix.tx = -_pivotX - currentTextureData.region.y;
-						_helpMatrix.ty = -_pivotY + currentTextureData.region.x + height;
+						Slot._helpMatrix.a = 0;
+						Slot._helpMatrix.b = -scale;
+						Slot._helpMatrix.c = scale;
+						Slot._helpMatrix.d = 0;
+						Slot._helpMatrix.tx = -_pivotX - currentTextureData.region.y;
+						Slot._helpMatrix.ty = -_pivotY + currentTextureData.region.x + height;
 					}
 					else
 					{
-						_helpMatrix.a = scale;
-						_helpMatrix.b = 0;
-						_helpMatrix.c = 0;
-						_helpMatrix.d = scale;
-						_helpMatrix.tx = -_pivotX - currentTextureData.region.x;
-						_helpMatrix.ty = -_pivotY - currentTextureData.region.y;
+						Slot._helpMatrix.a = scale;
+						Slot._helpMatrix.b = 0;
+						Slot._helpMatrix.c = 0;
+						Slot._helpMatrix.d = scale;
+						Slot._helpMatrix.tx = -_pivotX - currentTextureData.region.x;
+						Slot._helpMatrix.ty = -_pivotY - currentTextureData.region.y;
 					}
 					
-					var normalDisplay:Shape = cast(_renderDisplay, Shape);
+					normalDisplay = cast(_renderDisplay, Shape);
 					
 					normalDisplay.graphics.clear();
 					
 					if (currentTextureAtlas != null)
 					{
-						normalDisplay.graphics.beginBitmapFill(currentTextureAtlas, _helpMatrix, false, true);
+						normalDisplay.graphics.beginBitmapFill(currentTextureAtlas, Slot._helpMatrix, false, true);
 						normalDisplay.graphics.drawRect(-_pivotX, -_pivotY, width, height);
 					}
 				}
@@ -335,7 +339,7 @@ import dragonBones.enums.BlendMode;
 	 */
 	override private function _updateMesh():Void
 	{
-		var meshDisplay:Shape = _renderDisplay as Shape;
+		var meshDisplay:Shape = cast _renderDisplay;
 		
 		if (_meshTexture == null)
 		{
@@ -361,7 +365,8 @@ import dragonBones.enums.BlendMode;
 				boneVertices = _meshData.boneVertices[iH];
 				weights = _meshData.weights[iH];
 				
-				xG = 0, yG = 0;
+				xG = 0;
+				yG = 0;
 				lB = boneIndices.length;
 				
 				for (iB in 0...lB)

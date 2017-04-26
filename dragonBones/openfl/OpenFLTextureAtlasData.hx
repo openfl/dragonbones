@@ -12,7 +12,10 @@ import dragonBones.textures.TextureData;
 	/**
 	 * @private
 	 */
-	private function new() {}
+	private function new()
+	{
+		super();
+	}
 	/**
 	 * @private
 	 */
