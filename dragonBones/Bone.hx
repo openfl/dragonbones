@@ -355,9 +355,9 @@ import dragonBones.objects.BoneData;
 				else
 				{
 					var ancestor:Bone = value;
-					while(ancestor.ik != null && ancestor.ikChain != 0)
+					while(ancestor._ik != null && ancestor._ikChain != 0)
 					{
-						if (chainEnd.contains(ancestor.ik))
+						if (chainEnd.contains(ancestor._ik))
 						{
 							value = null;
 							chain = 0;

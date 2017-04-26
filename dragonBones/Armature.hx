@@ -202,12 +202,12 @@ import dragonBones.textures.TextureAtlasData;
 				continue;
 			}
 			
-			if (bone.ik != null && _bones.indexOf(bone.ik) < 0)
+			if (bone._ik != null && _bones.indexOf(bone._ik) < 0)
 			{
 				continue;
 			}
 			
-			if (bone.ik != null && bone.ikChain > 0 && bone.ikChainIndex == bone.ikChain)
+			if (bone._ik != null && bone._ikChain > 0 && bone._ikChainIndex == bone._ikChain)
 			{
 				_bones.insertAt(_bones.indexOf(bone.parent) + 1, bone); // ik, parent, bone, children
 				//_bones.splice(_bones.indexOf(bone.parent) + 1, 0, bone); // ik, parent, bone, children
