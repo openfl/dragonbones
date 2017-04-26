@@ -5,7 +5,7 @@ import openfl.display.Sprite;
 import starling.core.Starling;
 
 
-class Startup extends Sprite {
+class Main extends Sprite {
 	
 	
 	private var starling:Starling;
@@ -15,7 +15,8 @@ class Startup extends Sprite {
 		
 		super ();
 		
-		starling = new Starling (Game, stage);
+		starling = new Starling (StarlingRender, stage);
+		starling.showStats = true;
 		starling.start ();
 		
 	}
