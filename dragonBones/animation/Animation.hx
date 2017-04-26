@@ -258,7 +258,7 @@ import dragonBones.objects.AnimationData;
 				
 				if (i == animationStateCount - 1 && r > 0)
 				{
-					_animationStates.length -= r;
+					_animationStates.length = _animationStates.length - r;
 					
 					if (_lastAnimationState == null && _animationStates.length > 0) 
 					{

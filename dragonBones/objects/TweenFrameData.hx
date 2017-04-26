@@ -26,7 +26,7 @@ import dragonBones.core.DragonBones;
 	
 	public static function samplingEasingCurve(curve:Array<Float>, samples:Vector<Float>):Void
 	{
-		var curveCount:UInt = curve.length;
+		var curveCount:Int = curve.length;
 		var result:Point = new Point();
 		
 		var stepIndex:Int = -2;

@@ -83,7 +83,7 @@ import dragonBones.core.DragonBones;
 		{
 			var i:UInt = 0, r:UInt = 0, l:UInt = _animatebles.length;
 			var animateble:IAnimateble;
-			for (i in 0...l) 
+			while (i < l)
 			{
 				animateble = _animatebles[i];
 				if (animateble != null) 
@@ -100,6 +100,7 @@ import dragonBones.core.DragonBones;
 				{
 					r++;
 				}
+				i++;
 			}
 			
 			if (r > 0) 
@@ -118,7 +119,7 @@ import dragonBones.core.DragonBones;
 					}
 				}
 				
-				_animatebles.length -= r;
+				_animatebles.length = _animatebles.length - r;
 			}
 		}
 	}

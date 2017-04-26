@@ -930,11 +930,11 @@ import dragonBones.textures.TextureData;
 		
 		var zOrder:Array<Dynamic> = cast(Reflect.field(rawData, DataParser.Z_ORDER), Array<Dynamic>);
 		if (zOrder != null && zOrder.length > 0) {
-			var slotCount:UInt = _armature.sortedSlots.length;
+			var slotCount:Int = _armature.sortedSlots.length;
 			var unchanged:Vector<Int> = new Vector<Int>(Std.int(slotCount - zOrder.length / 2));
 			
 			frame.zOrder.length = slotCount;
-			var l:UInt = slotCount;
+			var l:Int = slotCount;
 			for (i in 0...l) {
 				frame.zOrder[i] = -1;
 			}
@@ -1079,8 +1079,8 @@ import dragonBones.textures.TextureData;
 		var offset:Int = _getInt(rawData, DataParser.OFFSET, 0);
 		var x:Float = 0.0;
 		var y:Float = 0.0;
-		var i:UInt = 0;
-		var l:UInt = mesh.vertices.length;
+		var i:Int = 0;
+		var l:Int = mesh.vertices.length;
 		var boneIndices:Vector<UInt>, lB:UInt, boneIndex:UInt;
 		while (i < l)
 		{
@@ -1192,13 +1192,13 @@ import dragonBones.textures.TextureData;
 			{
 				timeline.frames.length = _animation.frameCount + 1;
 				
-				var frameStart:UInt = 0;
-				var frameCount:UInt = 0;
+				var frameStart:Int = 0;
+				var frameCount:Int = 0;
 				var frame:FrameData = null;
 				var prevFrame:FrameData = null;
 				
-				var iW:UInt = 0;
-				var l:UInt = timeline.frames.length;
+				var iW:Int = 0;
+				var l:Int = timeline.frames.length;
 				var rawFrame:Dynamic;
 				for (i in 0...l)
 				{
