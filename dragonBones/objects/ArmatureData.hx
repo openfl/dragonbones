@@ -253,7 +253,7 @@ import dragonBones.geom.Transform;
 	/**
 	 * @private
 	 */
-	private function setCacheFrame(globalTransformMatrix: Matrix, transform: Transform):Float {
+	private function setCacheFrame(globalTransformMatrix: Matrix, transform: Transform):Int {
 		var dataArray:Vector<Float> = parent.cachedFrames;
 		var arrayOffset:UInt = dataArray.length;
 		

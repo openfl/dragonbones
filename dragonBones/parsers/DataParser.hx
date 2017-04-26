@@ -314,7 +314,7 @@ import dragonBones.textures.TextureAtlasData;
 	
 	private function _getTimelineFrameMatrix(animation:AnimationData, timeline:BoneTimelineData, position:Float, transform:Transform):Void 
 	{
-		var frameIndex:UInt = Std.int(position * animation.frameCount / animation.duration);
+		var frameIndex:Int = Std.int(position * animation.frameCount / animation.duration);
 		if (timeline.frames.length == 1 || frameIndex >= timeline.frames.length) 
 		{
 			transform.copyFrom(cast(timeline.frames[0], BoneFrameData).transform);

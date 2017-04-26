@@ -1230,7 +1230,7 @@ import dragonBones.textures.TextureData;
 			return value;
 		}
 		
-		var displayListLength:UInt = _displayList.length;
+		var displayListLength:Int = _displayList.length;
 		if (_displayIndex < 0 && displayListLength == 0)  // Emprty
 		{
 			_displayIndex = 0;

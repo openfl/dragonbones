@@ -88,7 +88,7 @@ import dragonBones.objects.FrameData;
 			
 			if (prevState < 0 && _playState != prevState) 
 			{
-				if (_animationState.displayControl != null)
+				if (_animationState.displayControl)
 				{
 					_armature._sortZOrder(null);
 				}

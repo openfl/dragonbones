@@ -58,7 +58,7 @@ import dragonBones.objects.BoneData;
 	private var _visible:Bool;
 	private var _cachedFrameIndex:Int;
 	private var _ikChain:UInt;
-	private var _ikChainIndex:Int;
+	private var _ikChainIndex:UInt;
 	/**
 	 * @private
 	 */
@@ -355,7 +355,7 @@ import dragonBones.objects.BoneData;
 				else
 				{
 					var ancestor:Bone = value;
-					while(ancestor.ik != null && ancestor.ikChain != null)
+					while(ancestor.ik != null && ancestor.ikChain != 0)
 					{
 						if (chainEnd.contains(ancestor.ik))
 						{
@@ -601,7 +601,7 @@ import dragonBones.objects.BoneData;
 	 * @deprecated
 	 */
 	@:deprecated public var ikChainIndex(get, never):UInt;
-	private function get_ikChainIndex():Int
+	private function get_ikChainIndex():UInt
 	{
 		return _ikChainIndex;
 	}

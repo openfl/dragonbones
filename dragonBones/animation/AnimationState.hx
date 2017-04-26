@@ -430,7 +430,7 @@ import dragonBones.objects.SlotTimelineData;
 		
 		var slots:Vector<Slot> = _armature.getSlots();
 		l = slots.length;
-		var slot:Slot, slotTimelineName:String, parentTimelineName:String, resetFFDVertices:Bool, slotTimelineData:SlotTimelineData, ffdTimelineDatas:Dynamic;
+		var slot:Slot, slotTimelineName:String, parentTimelineName:String, resetFFDVertices:Bool, slotTimelineData:SlotTimelineData, ffdTimelineDatas:Map<String, FFDTimelineData>;
 		for (i in 0...l)
 		{
 			slot = slots[i];
@@ -632,7 +632,7 @@ import dragonBones.objects.SlotTimelineData;
 	private function _isDisabled(slot:Slot):Bool
 	{
 		if (
-			displayControl != null &&
+			displayControl &&
 			(
 				slot.displayController == null ||
 				slot.displayController == _name ||
@@ -811,10 +811,9 @@ import dragonBones.objects.SlotTimelineData;
 			if (currentBone != null) 
 			{
 				var bones:Vector<Bone> = _armature.getBones();
-				var l:UInt, bone:Bone;
+				var l:UInt = bones.length, bone:Bone;
 				if (_boneMask.length > 0) // Remove recursive mixing.
 				{
-					l = bones.length;
 					for (i in 0...l)
 					{
 						bone = bones[i];

@@ -102,7 +102,7 @@ import dragonBones.objects.TimelineData;
 			}
 			
 			// Scale.
-			if (currentFrame.tweenScale != null) 
+			if (currentFrame.tweenScale) 
 			{
 				_durationTransform.scaleX = nextTransform.scaleX - currentTransform.scaleX;
 				_durationTransform.scaleY = nextTransform.scaleY - currentTransform.scaleY;

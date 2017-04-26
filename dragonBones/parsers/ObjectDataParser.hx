@@ -344,7 +344,7 @@ import dragonBones.textures.TextureData;
 			var zOrder:Int = 0;
 			for (slotObject in cast(Reflect.field(rawData, DataParser.SLOT), Array<Dynamic>))
 			{
-				if (_isOldData != null) // Support 2.x ~ 3.x data.
+				if (_isOldData) // Support 2.x ~ 3.x data.
 				{
 					_armature.addSlot(_parseSlot(slotObject, zOrder++));
 				}
@@ -1076,7 +1076,7 @@ import dragonBones.textures.TextureData;
 		_parseTweenFrame(rawData, frame, frameStart, frameCount);
 		
 		var rawVertices:Array<Dynamic> = Reflect.field(rawData, DataParser.VERTICES);
-		var offset:UInt = _getInt(rawData, DataParser.OFFSET, 0);
+		var offset:Int = _getInt(rawData, DataParser.OFFSET, 0);
 		var x:Float = 0.0;
 		var y:Float = 0.0;
 		var i:UInt = 0;

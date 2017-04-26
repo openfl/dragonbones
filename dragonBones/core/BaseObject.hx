@@ -13,14 +13,14 @@ import openfl.Vector;
 {
 	private static var _hashCode:UInt = 0;
 	private static var _defaultMaxCount:UInt = 5000;
-	private static var _maxCountMap:Dictionary<Class<Dynamic>, UInt> = new Dictionary();
-	private static var _poolsMap:Dictionary<Class<Dynamic>, Vector<BaseObject>> = new Dictionary();
+	private static var _maxCountMap:Dictionary<Class<Dynamic>, Int> = new Dictionary<Class<Dynamic>, Int>();
+	private static var _poolsMap:Dictionary<Class<Dynamic>, Vector<BaseObject>> = new Dictionary<Class<Dynamic>, Vector<BaseObject>>();
 	
 	private static function _returnObject(object:BaseObject):Void
 	{
 		//var objectConstructor:Class<Dynamic> = getDefinitionByName(getQualifiedClassName(object));
 		var objectConstructor:Class<Dynamic> = Type.getClass(object);
-		var maxCount:UInt = _maxCountMap.exists(objectConstructor) ? _maxCountMap[objectConstructor] : _defaultMaxCount;
+		var maxCount:Int = _maxCountMap.exists(objectConstructor) ? _maxCountMap[objectConstructor] : _defaultMaxCount;
 		var pool:Vector<BaseObject>;
 		
 		if (_poolsMap.exists(objectConstructor))
@@ -52,7 +52,7 @@ import openfl.Vector;
 	 * @param maxCount 最大缓存数量。 (设置为 0 则不缓存)
 	 * @version DragonBones 4.5
 	 */
-	public static function setMaxCount(objectConstructor:Class<Dynamic>, maxCount:UInt):Void
+	public static function setMaxCount(objectConstructor:Class<Dynamic>, maxCount:Int):Void
 	{
 		var pool:Vector<BaseObject>;
 		

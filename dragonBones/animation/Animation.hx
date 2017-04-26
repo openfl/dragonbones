@@ -177,7 +177,7 @@ import dragonBones.objects.AnimationData;
 		
 		var animationState:AnimationState = null;
 		
-		var animationStateCount:UInt = _animationStates.length;
+		var animationStateCount:Int = _animationStates.length;
 		if (animationStateCount == 1)
 		{
 			animationState = _animationStates[0];
