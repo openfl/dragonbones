@@ -1,13 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <project>
 	
-	<meta title="MultiResolutionTextureAtlas" package="com.sample.multiresolutiontextureatlas" version="1.0.0" company="Company Name" />
-	<app main="Startup" path="Export" file="MultiResolutionTextureAtlas" swf-version="12.0" />
+	<meta title="MultiResolutionTextureAtlas" package="dragonbones.sample.multiresolutiontextureatlas" version="1.0.0" company="" />
+	<app main="Main" path="Export" file="MultiResolutionTextureAtlas" swf-version="12.0" />
+	
+	<window background="#666666" fps="60" />
 	
 	<source path="Source" />
 	
 	<haxelib name="openfl" />
 	<haxelib name="starling" />
+	<haxelib name="dragonbones" />
 	
 	<assets path="Assets" rename="assets" />
 	
