@@ -110,7 +110,7 @@ import starling.styles.MeshStyle;
 	 */
 	override private function _onUpdateDisplay():Void
 	{
-		_renderDisplay = cast(_display ? _display : _rawDisplay, DisplayObject);
+		_renderDisplay = cast(_display != null ? _display : _rawDisplay, DisplayObject);
 	}
 	/**
 	 * @private

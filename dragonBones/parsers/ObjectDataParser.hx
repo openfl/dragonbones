@@ -59,20 +59,19 @@ import dragonBones.textures.TextureData;
 		if (Reflect.hasField(rawData, key))
 		{
 			var value:Dynamic = Reflect.field(rawData, key);
-			if (Std.is(value, Bool) || Std.is(value, Float))
+			if (Std.is(value, Bool))
 			{
 				return value;
 			}
+			else if (Std.is(value, Float))
+			{
+				return value != 0;
+			}
 			else if (Std.is(value, String))
 			{
-				switch(value)
+				switch(Std.string(value))
 				{
-					case "0":
-					case "NaN":
-					case "":
-					case "false":
-					case "null":
-					case "undefined":
+					case "0", "NaN", "", "false", "null", "undefined":
 						return false;
 						
 					default:
@@ -81,7 +80,7 @@ import dragonBones.textures.TextureData;
 			}
 			else 
 			{
-				return value; // Boolean(value);
+				return Std.parseInt(Std.string(value)) != 0; // Boolean(value);
 			}
 		}
 		
