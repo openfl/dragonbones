@@ -150,6 +150,7 @@ import dragonBones.textures.TextureData;
 		var armature:ArmatureData = cast BaseObject.borrowObject(ArmatureData);
 		armature.name = _getString(rawData, DataParser.NAME, null);
 		armature.frameRate = _getInt(rawData, DataParser.FRAME_RATE, _data.frameRate);
+		if (armature.frameRate == 0) armature.frameRate = _data.frameRate;
 		armature.scale = scale;
 		
 		if (Reflect.hasField(rawData, DataParser.TYPE) && Std.is(Reflect.field(rawData, DataParser.TYPE), String)) 
