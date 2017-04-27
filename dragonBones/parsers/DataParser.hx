@@ -459,7 +459,7 @@ import dragonBones.textures.TextureAtlasData;
 			}
 		}
 		
-		var i:UInt = 0, l:UInt = 0;
+		var l:UInt = 0;
 		var insertedFrame:AnimationFrameData = null;
 		var replacedFrame:AnimationFrameData = (frames.length != 0 && frames[frameStart] != null)? cast(frames[frameStart], AnimationFrameData): null;
 		
@@ -473,6 +473,7 @@ import dragonBones.textures.TextureAtlasData;
 			insertedFrame.position = frameStart / _armature.frameRate;
 			frames[frameStart] = insertedFrame;
 			
+			l = frames.length;
 			for (i in (frameStart + 1)...l) // Clear replaced frame.
 			{
 				if (replacedFrame != null && frames[i] == replacedFrame) 

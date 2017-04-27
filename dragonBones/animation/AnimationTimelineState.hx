@@ -136,22 +136,12 @@ import dragonBones.objects.FrameData;
 						}
 					}
 					
-					// TODO: Is this caused by a bug in porting?
-					var startFrame = crossedFrame;
-					
 					if (isReverse) 
 					{
 						while (crossedFrame != currentFrame) 
 						{
 							_onCrossFrame(crossedFrame);
 							crossedFrame = cast crossedFrame.prev;
-							// added
-							if (crossedFrame == startFrame)
-							{
-								crossedFrame = currentFrame;
-								_onCrossFrame(crossedFrame);
-							}
-							//
 						}
 					}
 					else 
@@ -160,13 +150,6 @@ import dragonBones.objects.FrameData;
 						{
 							crossedFrame = cast crossedFrame.next;
 							_onCrossFrame(crossedFrame);
-							// added
-							if (crossedFrame == startFrame)
-							{
-								crossedFrame = currentFrame;
-								_onCrossFrame(crossedFrame);
-							}
-							//
 						}
 					}
 				}
