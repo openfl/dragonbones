@@ -35,8 +35,9 @@ import openfl.Vector;
 		
 		if (pool.length < maxCount)
 		{
-			if (pool.indexOf(object) < 0)
+			if (!object._isInPool)
 			{
+				object._isInPool = true;
 				pool.push(object);
 			}
 			else
@@ -125,7 +126,9 @@ import openfl.Vector;
 		var pool:Vector<BaseObject> = _poolsMap.exists(objectConstructor) ? _poolsMap[objectConstructor] : null;
 		if (pool != null && pool.length > 0)
 		{
-			return pool.pop();
+			var object = pool.pop();
+			object._isInPool = false;
+			return object;
 		}
 		else
 		{
@@ -140,6 +143,8 @@ import openfl.Vector;
 	 * @version DragonBones 4.5
 	 */
 	public var hashCode:UInt = _hashCode++;
+
+	private var _isInPool:Bool = false;
 	/**
 	 * @private
 	 */

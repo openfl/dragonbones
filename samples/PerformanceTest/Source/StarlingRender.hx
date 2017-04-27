@@ -24,7 +24,6 @@ class StarlingRender extends Sprite
 {
 	private var _addingArmature: Bool = false;
 	private var _removingArmature: Bool = false;
-	private var _dragonBonesData: DragonBonesData = null;
 	private var _text:TextField = null;
 	private var _armatures: Vector<Armature> = new Vector<Armature>();
 
@@ -43,30 +42,15 @@ class StarlingRender extends Sprite
 		_text.autoSize = "center";
 		this.addChild(_text);
 		
-		_dragonBonesData = StarlingFactory.factory.parseDragonBonesData(
-			Json.parse(Assets.getText("assets/DragonBoy.json"))
-		);
-		StarlingFactory.factory.parseTextureAtlasData(
-			Json.parse(Assets.getText("assets/DragonBoy_texture_1.json")),
-			Assets.getBitmapData("assets/DragonBoy_texture_1.png")
-		);
+		this.addEventListener(EnterFrameEvent.ENTER_FRAME, _enterFrameHandler);
+		this.stage.addEventListener(TouchEvent.TOUCH, _touchHandler);
 		
-		if (_dragonBonesData != null)
-		{
-			this.addEventListener(EnterFrameEvent.ENTER_FRAME, _enterFrameHandler);
-			this.stage.addEventListener(TouchEvent.TOUCH, _touchHandler);
-			
-			//
-			for (i in 0...100) {
-				_addArmature();
-			}
-
-			_resetPosition();
+		//
+		for (i in 0...100) {
+			_addArmature();
 		}
-		else
-		{
-			throw new Error();
-		}
+		
+		_resetPosition();
 	}
 
 	private function _enterFrameHandler(event: EnterFrameEvent): Void
@@ -84,6 +68,7 @@ class StarlingRender extends Sprite
 			_addArmature();
 			_addArmature();
 			_resetPosition();
+			_updateText();
 		}
 
 		if (_removingArmature)
@@ -99,6 +84,7 @@ class StarlingRender extends Sprite
 			_removeArmature();
 			_removeArmature();
 			_resetPosition();
+			_updateText();
 		}
 		
 		WorldClock.clock.advanceTime(-1);
@@ -125,7 +111,18 @@ class StarlingRender extends Sprite
 
 	private function _addArmature(): Void
 	{
-		var armature: Armature = StarlingFactory.factory.buildArmature(_dragonBonesData.armatureNames[0]);
+		if (_armatures.length == 0)
+		{
+			StarlingFactory.factory.parseDragonBonesData(
+				Json.parse(Assets.getText("assets/DragonBoy.json"))
+			);
+			StarlingFactory.factory.parseTextureAtlasData(
+				Json.parse(Assets.getText("assets/DragonBoy_texture_1.json")),
+				Assets.getBitmapData("assets/DragonBoy_texture_1.png")
+			);
+		}
+		
+		var armature: Armature = StarlingFactory.factory.buildArmature("DragonBoy");
 		var armatureDisplay: StarlingArmatureDisplay = cast armature.display;
 
 		armatureDisplay.scaleX = armatureDisplay.scaleY = 0.7;
@@ -138,23 +135,31 @@ class StarlingRender extends Sprite
 		WorldClock.clock.add(armature);
 
 		_armatures.push(armature);
-		_updateText();
 	}
 
 	private function _removeArmature(): Void
 	{
-		if (_armatures.length == 0)
+		if (this._armatures.length == 0) 
 		{
 			return;
 		}
-
+			
 		var armature: Armature = _armatures.pop();
 		var armatureDisplay: StarlingArmatureDisplay = cast armature.display;
 		this.removeChild(armatureDisplay);
 		WorldClock.clock.remove(armature);
 		armature.dispose();
+		armature.dispose();
+		armature.dispose();
+		armature.dispose();
+		armature.dispose();
+		armature.dispose();
+		armature.dispose();
 
-		_updateText();
+		if (this._armatures.length == 0) 
+		{
+			StarlingFactory.factory.clear();
+		}
 	}
 
 	private function _resetPosition(): Void

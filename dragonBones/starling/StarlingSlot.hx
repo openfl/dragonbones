@@ -150,7 +150,7 @@ import starling.styles.MeshStyle;
 			return;
 		}
 		
-		container.addChildAt(_renderDisplay, _zOrder < index ? _zOrder : _zOrder + 1);
+		container.addChildAt(_renderDisplay, _zOrder);
 	}
 	/**
 	 * @private
@@ -264,6 +264,8 @@ import starling.styles.MeshStyle;
 					}
 					
 					meshDisplay.texture = currentTextureData.texture;
+					meshDisplay.pivotX = _pivotX;
+					meshDisplay.pivotY = _pivotY;
 					#end
 				}
 				else // Normal texture.
@@ -271,6 +273,8 @@ import starling.styles.MeshStyle;
 					normalDisplay = cast _renderDisplay;
 					normalDisplay.texture = currentTextureData.texture;
 					normalDisplay.readjustSize();
+					normalDisplay.pivotX = _pivotX;
+					normalDisplay.pivotY = _pivotY;
 				}
 				
 				_updateVisible();

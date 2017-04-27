@@ -375,11 +375,16 @@ import dragonBones.textures.TextureAtlasData;
 	 */
 	public function dispose():Void
 	{
-		_delayDispose = true;
-		
-		if (!_lockDispose && _armatureData != null)
+		if (_armatureData != null)
 		{
-			returnToPool();
+			if (_lockDispose)
+			{
+				_delayDispose = true;
+			}
+			else
+			{
+				returnToPool();
+			}
 		}
 	}
 	/**
@@ -401,6 +406,13 @@ import dragonBones.textures.TextureAtlasData;
 			throw new Error("The armature data has been disposed.");
 		}
 		
+		var prevCacheFrameIndex:Int = _animation._cacheFrameIndex;
+		
+		// Update nimation.
+		_animation._advanceTime(passedTime);
+		
+		var currentCacheFrameIndex:Int = _animation._cacheFrameIndex;
+		
 		// Sort bones and slots.
 		if (_bonesDirty)
 		{
@@ -415,13 +427,6 @@ import dragonBones.textures.TextureAtlasData;
 			_sortSlots();
 			_slots.fixed = true;
 		}
-		
-		var prevCacheFrameIndex:Int = _animation._cacheFrameIndex;
-		
-		// Update nimation.
-		_animation._advanceTime(passedTime);
-		
-		var currentCacheFrameIndex:Int = _animation._cacheFrameIndex;
 		
 		var l:UInt = 0;
 		

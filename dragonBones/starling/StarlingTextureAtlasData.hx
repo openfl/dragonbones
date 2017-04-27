@@ -33,7 +33,7 @@ import starling.textures.TextureAtlas;
 	/**
 	 * @private
 	 */
-	private var disposeTexture:Bool;
+	private var _disposeTexture:Bool;
 	
 	public var texture:Texture;
 	/**
@@ -50,20 +50,13 @@ import starling.textures.TextureAtlas;
 	{
 		super._onClear();
 		
-		if (texture != null)
+		if (_disposeTexture && texture != null)
 		{
-			if (disposeTexture)
-			{
-				disposeTexture = false;
-				texture.dispose();
-			}
-			
-			texture = null;
+			texture.dispose();
 		}
-		else
-		{
-			disposeTexture = false;
-		}
+		
+		_disposeTexture = false;
+		texture = null;
 	}
 	/**
 	 * @private

@@ -1409,8 +1409,8 @@ import dragonBones.textures.TextureData;
 	{
 		transform.x = _getFloat(rawData, DataParser.X, 0.0) * _armature.scale;
 		transform.y = _getFloat(rawData, DataParser.Y, 0.0) * _armature.scale;
-		transform.skewX = _getFloat(rawData, DataParser.SKEW_X, 0.0) * DragonBones.ANGLE_TO_RADIAN;
-		transform.skewY = _getFloat(rawData, DataParser.SKEW_Y, 0.0) * DragonBones.ANGLE_TO_RADIAN;
+		transform.skewX = Transform.normalizeRadian(_getFloat(rawData, DataParser.SKEW_X, 0.0) * DragonBones.ANGLE_TO_RADIAN);
+		transform.skewY = Transform.normalizeRadian(_getFloat(rawData, DataParser.SKEW_Y, 0.0) * DragonBones.ANGLE_TO_RADIAN);
 		transform.scaleX = _getFloat(rawData, DataParser.SCALE_X, 1.0);
 		transform.scaleY = _getFloat(rawData, DataParser.SCALE_Y, 1.0);
 	}

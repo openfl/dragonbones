@@ -82,7 +82,7 @@ import starling.rendering.VertexData;
 			if (Std.is(textureAtlas, BitmapData))
 			{
 				starlingTextureAtlasData.texture = Texture.fromBitmapData(cast textureAtlas, generateMipMaps, false, textureAtlasData.scale);
-				starlingTextureAtlasData.disposeTexture = true;
+				starlingTextureAtlasData._disposeTexture = true;
 				
 				#if (starling < "2.0")
 				if (starlingTextureAtlasData.bitmapData != null && !Starling.handleLostContext)

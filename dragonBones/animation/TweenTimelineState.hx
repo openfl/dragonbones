@@ -75,7 +75,7 @@ import dragonBones.objects.TweenFrameData;
 		var fromValue:Float = valueIndex == 0 ? 0.0 : samples[valueIndex - 1];
 		var toValue:Float = (valueIndex == segmentCount - 1) ? 1.0 : samples[valueIndex];
 		
-		return fromValue + (toValue - fromValue) * (progress - valueIndex / segmentCount);
+		return fromValue + (toValue - fromValue) * (progress * segmentCount - valueIndex);
 	}
 	
 	private var _tweenProgress:Float;
