@@ -207,7 +207,7 @@ import dragonBones.objects.BoundingBoxData;
 	/**
 	 * @deprecated
 	 */
-	public function advanceTimeBySelf(on:Bool):Void
+	@:deprecated public function advanceTimeBySelf(on:Bool):Void
 	{
 		if (on)
 		{

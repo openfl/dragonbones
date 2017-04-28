@@ -1562,7 +1562,7 @@ import dragonBones.textures.TextureData;
 	 * @see dragonBones.factories.BaseFactory#parseTextureAtlasData()
 	 * @see dragonBones.factories.BaseFactory#parseDragonBonesData()
 	 */
-	public static function getInstance():ObjectDataParser
+	@:deprecated public static function getInstance():ObjectDataParser
 	{
 		if (_instance == null)
 		{

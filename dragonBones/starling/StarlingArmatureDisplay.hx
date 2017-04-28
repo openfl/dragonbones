@@ -109,7 +109,7 @@ import starling.display.Sprite;
 	/**
 	 * @deprecated
 	 */
-	public function advanceTimeBySelf(on:Bool):Void
+	@:deprecated public function advanceTimeBySelf(on:Bool):Void
 	{
 		if (on)
 		{

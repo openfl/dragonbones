@@ -1039,7 +1039,7 @@ import dragonBones.textures.TextureAtlasData;
 	 * @deprecated
 	 * @see dragonBones.Armature#eventDispatcher
 	 */
-	public function hasEventListener(type:String):Void
+	@:deprecated public function hasEventListener(type:String):Void
 	{
 		_display.hasEvent(type);
 	}
@@ -1047,7 +1047,7 @@ import dragonBones.textures.TextureAtlasData;
 	 * @deprecated
 	 * @see dragonBones.Armature#eventDispatcher
 	 */
-	public function addEventListener(type:String, listener:Function):Void
+	@:deprecated public function addEventListener(type:String, listener:Function):Void
 	{
 		_display.addEvent(type, listener);
 	}
@@ -1055,7 +1055,7 @@ import dragonBones.textures.TextureAtlasData;
 	 * @deprecated
 	 * @see dragonBones.Armature#eventDispatcher
 	 */
-	public function removeEventListener(type:String, listener:Function):Void
+	@:deprecated public function removeEventListener(type:String, listener:Function):Void
 	{
 		_display.removeEvent(type, listener);
 	}
