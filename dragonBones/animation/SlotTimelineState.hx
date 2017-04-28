@@ -66,7 +66,7 @@ import dragonBones.objects.TimelineData;
 			return;
 		}
 		
-		var currentFrame:SlotFrameData = cast(_currentFrame, SlotFrameData);
+		var currentFrame:SlotFrameData = cast _currentFrame;
 		var displayIndex:Int = currentFrame.displayIndex;
 		if (_playState >= 0 && slot.displayIndex != displayIndex) 
 		{

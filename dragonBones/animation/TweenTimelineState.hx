@@ -107,7 +107,7 @@ import dragonBones.objects.TweenFrameData;
 			)
 		) 
 		{
-			var currentFrame:TweenFrameData = cast(_currentFrame, TweenFrameData);
+			var currentFrame:TweenFrameData = cast _currentFrame;
 			_tweenEasing = currentFrame.tweenEasing;
 			_curve = currentFrame.curve;
 		}

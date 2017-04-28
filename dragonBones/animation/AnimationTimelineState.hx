@@ -56,7 +56,7 @@ import dragonBones.objects.FrameData;
 			{
 				eventObject = cast BaseObject.borrowObject(EventObject);
 				eventObject.name = eventData.name;
-				eventObject.frame = cast(frame, AnimationFrameData);
+				eventObject.frame = cast frame;
 				eventObject.data = eventData.data;
 				eventObject.animationState = _animationState;
 				

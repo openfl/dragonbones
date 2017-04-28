@@ -50,7 +50,7 @@ import dragonBones.objects.TimelineData;
 	{
 		super._onArriveAtFrame();
 		
-		var currentFrame:BoneFrameData = cast(_currentFrame, BoneFrameData);
+		var currentFrame:BoneFrameData = cast _currentFrame;
 		
 		_tweenTransform = TweenTimelineState.TWEEN_TYPE_ONCE;
 		_tweenRotate = TweenTimelineState.TWEEN_TYPE_ONCE;
@@ -59,7 +59,7 @@ import dragonBones.objects.TimelineData;
 		if (_keyFrameCount > 1 && (_tweenEasing != DragonBones.NO_TWEEN || _curve != null))
 		{
 			var currentTransform:Transform = currentFrame.transform;
-			var nextFrame:BoneFrameData = cast(currentFrame.next, BoneFrameData);
+			var nextFrame:BoneFrameData = cast currentFrame.next;
 			var nextTransform:Transform = nextFrame.transform;
 			
 			// Transform.

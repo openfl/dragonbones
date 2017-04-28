@@ -110,7 +110,7 @@ import starling.styles.MeshStyle;
 	 */
 	override private function _onUpdateDisplay():Void
 	{
-		_renderDisplay = cast(_display != null ? _display : _rawDisplay, DisplayObject);
+		_renderDisplay = _display != null ? _display : _rawDisplay;
 	}
 	/**
 	 * @private
@@ -207,12 +207,12 @@ import starling.styles.MeshStyle;
 	override private function _updateFrame():Void
 	{
 		var isMeshDisplay:Bool = _meshData != null && _renderDisplay == _meshDisplay;
-		var currentTextureData:StarlingTextureData = _textureData != null ? cast (_textureData, StarlingTextureData) : null;
+		var currentTextureData:StarlingTextureData = _textureData != null ? cast _textureData : null;
 		var normalDisplay:Image;
 		
 		if (_displayIndex >= 0 && _display != null && currentTextureData != null)
 		{
-			var currentTextureAtlasData:StarlingTextureAtlasData = currentTextureData.parent != null ? cast(currentTextureData.parent, StarlingTextureAtlasData) : null;
+			var currentTextureAtlasData:StarlingTextureAtlasData = currentTextureData.parent != null ? cast currentTextureData.parent : null;
 			
 			// Update replaced texture atlas.
 			if (_armature.replacedTexture != null && _displayData != null && currentTextureAtlasData == _displayData.texture.parent) 

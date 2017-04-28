@@ -715,7 +715,7 @@ import dragonBones.textures.TextureData;
 								fromDisplayData = displays[iA];
 								if (fromDisplayData.type == DisplayType.Armature)
 								{
-									copyAnimationsToArmature(cast(toDisplayObject, Armature), fromDisplayData.path, fromSkinName, fromDragonBonesDataName, ifRemoveOriginalAnimationList);
+									copyAnimationsToArmature(cast toDisplayObject, fromDisplayData.path, fromSkinName, fromDragonBonesDataName, ifRemoveOriginalAnimationList);
 								}
 							}
 						}

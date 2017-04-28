@@ -214,7 +214,7 @@ import dragonBones.textures.TextureAtlasData;
 	 */
 	public function getTextureDisplay(textureName:String, textureAtlasName:String = null):Shape 
 	{
-		var textureData:OpenFLTextureData = cast(_getTextureData(textureAtlasName, textureName), OpenFLTextureData);
+		var textureData:OpenFLTextureData = cast _getTextureData(textureAtlasName, textureName);
 		if (textureData != null)
 		{
 			var width:Float = 0;

@@ -148,7 +148,7 @@ class Hero
 	
 	private function _armEventHandler(event: Event): Void
 	{
-		var eventObject: EventObject = cast(event.data, EventObject);
+		var eventObject: EventObject = event.data;
 		switch (event.type)
 		{
 			case EventObject.COMPLETE:

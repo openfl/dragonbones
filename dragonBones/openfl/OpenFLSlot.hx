@@ -59,14 +59,14 @@ import dragonBones.enums.BlendMode;
 	 */
 	override private function _onUpdateDisplay():Void
 	{
-		_renderDisplay = cast((_display? _display : _rawDisplay), DisplayObject);
+		_renderDisplay = _display != null? _display : _rawDisplay;
 	}
 	/**
 	 * @private
 	 */
 	override private function _addDisplay():Void
 	{
-		var container:OpenFLArmatureDisplay = cast(_armature.display, OpenFLArmatureDisplay);
+		var container:OpenFLArmatureDisplay = cast _armature.display;
 		container.addChild(_renderDisplay);
 	}
 	/**
@@ -74,7 +74,7 @@ import dragonBones.enums.BlendMode;
 	 */
 	override private function _replaceDisplay(prevDisplay:Dynamic):Void
 	{
-		var container:OpenFLArmatureDisplay = cast(_armature.display, OpenFLArmatureDisplay);
+		var container:OpenFLArmatureDisplay = cast _armature.display;
 		var displayObject:DisplayObject = cast(prevDisplay, DisplayObject);
 		container.addChild(_renderDisplay);
 		container.swapChildren(_renderDisplay, displayObject);
@@ -92,7 +92,7 @@ import dragonBones.enums.BlendMode;
 	 */
 	override private function _updateZOrder():Void
 	{
-		var container:OpenFLArmatureDisplay = cast(_armature.display, OpenFLArmatureDisplay);
+		var container:OpenFLArmatureDisplay = cast _armature.display;
 		var index:Int = container.getChildIndex(_renderDisplay);
 		if (index == _zOrder) 
 		{
@@ -173,7 +173,7 @@ import dragonBones.enums.BlendMode;
 	override private function _updateFrame():Void
 	{
 		var isMeshDisplay:Bool = _meshData != null && _renderDisplay == _meshDisplay;
-		var currentTextureData:OpenFLTextureData = cast(_textureData, OpenFLTextureData);
+		var currentTextureData:OpenFLTextureData = cast _textureData;
 		var meshDisplay:Shape, normalDisplay:Shape;
 		
 		if (_displayIndex >= 0 && _display != null && currentTextureData != null)
@@ -183,16 +183,16 @@ import dragonBones.enums.BlendMode;
 			// Update replaced texture atlas.
 			if (_armature.replacedTexture != null && _displayData != null && currentTextureAtlasData == _displayData.texture.parent) 
 			{
-				currentTextureAtlasData = cast(_armature._replaceTextureAtlasData, OpenFLTextureAtlasData);
+				currentTextureAtlasData = cast _armature._replaceTextureAtlasData;
 				if (currentTextureAtlasData == null) 
 				{
 					currentTextureAtlasData = cast BaseObject.borrowObject(OpenFLTextureAtlasData);
 					currentTextureAtlasData.copyFrom(_textureData.parent);
-					currentTextureAtlasData.texture = cast(_armature.replacedTexture, BitmapData);
+					currentTextureAtlasData.texture = cast _armature.replacedTexture;
 					_armature._replaceTextureAtlasData = currentTextureAtlasData;
 				}
 				
-				currentTextureData = cast(currentTextureAtlasData.getTexture(currentTextureData.name), OpenFLTextureData);
+				currentTextureData = cast currentTextureAtlasData.getTexture(currentTextureData.name);
 			}
 			
 			var currentTextureAtlas:BitmapData = currentTextureAtlasData.texture;
@@ -203,7 +203,7 @@ import dragonBones.enums.BlendMode;
 				
 				if (isMeshDisplay) // Mesh.
 				{
-					meshDisplay = cast(_renderDisplay, Shape);
+					meshDisplay = cast _renderDisplay;
 					
 					if (_path != null)
 					{
@@ -300,7 +300,7 @@ import dragonBones.enums.BlendMode;
 						Slot._helpMatrix.ty = -_pivotY - currentTextureData.region.y;
 					}
 					
-					normalDisplay = cast(_renderDisplay, Shape);
+					normalDisplay = cast _renderDisplay;
 					
 					normalDisplay.graphics.clear();
 					

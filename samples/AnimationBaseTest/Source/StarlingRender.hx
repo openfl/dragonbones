@@ -106,7 +106,7 @@ class StarlingRender extends Sprite
 
 	private function _animationEventHandler(event: Event): Void
 	{
-		var eventObject: EventObject = cast(event.data, EventObject);
+		var eventObject: EventObject = event.data;
 
 		trace(eventObject.animationState.name, event.type, eventObject.name != null ? eventObject.name : "");
 	}

@@ -167,7 +167,7 @@ class Mecha
 
 	private function _animationEventHandler(event: Event): Void
 	{
-		var eventObject: EventObject = cast(event.data, EventObject);
+		var eventObject: EventObject = event.data;
 		switch (event.type)
 		{
 			case EventObject.FADE_IN_COMPLETE:
@@ -196,7 +196,7 @@ class Mecha
 
 	private function _frameEventHandler(event: Event): Void
 	{
-		var eventObject: EventObject = cast(event.data, EventObject);
+		var eventObject: EventObject = event.data;
 		if (eventObject.name == "onFire")
 		{
 			var firePointBone: Bone = eventObject.armature.getBone("firePoint");

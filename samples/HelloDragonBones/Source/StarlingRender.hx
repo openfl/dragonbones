@@ -147,7 +147,7 @@ class StarlingRender extends starling.display.Sprite
 	 */
 	private function _animationHandler(event:starling.events.Event): Void 
 	{
-		var eventObject:EventObject = cast(event.data, EventObject);
+		var eventObject:EventObject = event.data;
 		trace(event.type, eventObject.animationState.name);
 	}
 
@@ -156,7 +156,7 @@ class StarlingRender extends starling.display.Sprite
 	 */
 	private function _frameEventHandler(event: starling.events.Event): Void 
 	{
-		var eventObject:EventObject = cast(event.data, EventObject);
+		var eventObject:EventObject = event.data;
 		trace(event.type, eventObject.animationState.name, eventObject.name);
 	}
 }
