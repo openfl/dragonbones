@@ -4,7 +4,7 @@
 	"license": "MIT",
 	"tags": [],
 	"description": "DragonBones Haxe Runtime",
-	"version": "1.0.0",
+	"version": "5.0.0",
 	"releasenote": "Initial release",
 	"contributors": [ "singmajesty" ]
 }
