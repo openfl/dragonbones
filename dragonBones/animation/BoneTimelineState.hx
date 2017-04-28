@@ -12,9 +12,9 @@ import dragonBones.objects.TimelineData;
 /**
  * @private
  */
-@:allow(dragonBones) @:final class BoneTimelineState extends TweenTimelineState
+@:allow(dragonBones) @:final class BoneTimelineState<TDisplay, TTexture> extends TweenTimelineState<TDisplay, TTexture>
 {
-	public var bone:Bone;
+	public var bone:Bone<TDisplay, TTexture>;
 	
 	private var _transformDirty:Bool;
 	private var _tweenTransform:Int;
@@ -50,7 +50,7 @@ import dragonBones.objects.TimelineData;
 	{
 		super._onArriveAtFrame();
 		
-		var currentFrame:BoneFrameData = cast(_currentFrame, BoneFrameData);
+		var currentFrame:BoneFrameData = cast _currentFrame;
 		
 		_tweenTransform = TweenTimelineState.TWEEN_TYPE_ONCE;
 		_tweenRotate = TweenTimelineState.TWEEN_TYPE_ONCE;
@@ -59,7 +59,7 @@ import dragonBones.objects.TimelineData;
 		if (_keyFrameCount > 1 && (_tweenEasing != DragonBones.NO_TWEEN || _curve != null))
 		{
 			var currentTransform:Transform = currentFrame.transform;
-			var nextFrame:BoneFrameData = cast(currentFrame.next, BoneFrameData);
+			var nextFrame:BoneFrameData = cast currentFrame.next;
 			var nextTransform:Transform = nextFrame.transform;
 			
 			// Transform.
@@ -214,7 +214,7 @@ import dragonBones.objects.TimelineData;
 		}
 	}
 	
-	override public function _init(armature: Armature, animationState: AnimationState, timelineData: TimelineData):Void 
+	override public function _init(armature: Armature<TDisplay, TTexture>, animationState: AnimationState<TDisplay, TTexture>, timelineData: TimelineData):Void 
 	{
 		super._init(armature, animationState, timelineData);
 		

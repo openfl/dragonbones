@@ -1,6 +1,7 @@
 ﻿package dragonBones.openfl;
 
 import openfl.display.BitmapData;
+import openfl.display.DisplayObject;
 import openfl.display.Shape;
 import openfl.events.Event;
 import openfl.geom.Matrix;
@@ -28,7 +29,7 @@ import dragonBones.textures.TextureAtlasData;
  * 基于 Flash 传统显示列表的工厂。
  * @version DragonBones 3.0
  */
-@:allow(dragonBones) class OpenFLFactory extends BaseFactory
+@:allow(dragonBones) class OpenFLFactory extends BaseFactory<DisplayObject, BitmapData>
 {
 	/**
 	 * @private
@@ -85,7 +86,7 @@ import dragonBones.textures.TextureAtlasData;
 	/**
 	 * @private
 	 */
-	override private function _generateArmature(dataPackage:BuildArmaturePackage):Armature
+	override private function _generateArmature(dataPackage:BuildArmaturePackage):Armature<DisplayObject, BitmapData>
 	{
 		if (!_eventManager.hasEventListener(Event.ENTER_FRAME))
 		{
@@ -93,7 +94,7 @@ import dragonBones.textures.TextureAtlasData;
 			_eventManager.addEventListener(Event.ENTER_FRAME, _clockHandler, false, -999999);
 		}
 		
-		var armature:Armature = cast BaseObject.borrowObject(Armature);
+		var armature:Armature<DisplayObject, BitmapData> = cast BaseObject.borrowObject(Armature);
 		var armatureDisplay:OpenFLArmatureDisplay = new OpenFLArmatureDisplay();
 		armatureDisplay._armature = armature;
 		
@@ -107,7 +108,7 @@ import dragonBones.textures.TextureAtlasData;
 	/**
 	 * @private
 	 */
-	override private function _generateSlot(dataPackage:BuildArmaturePackage, skinSlotData:SkinSlotData, armature:Armature):Slot
+	override private function _generateSlot(dataPackage:BuildArmaturePackage, skinSlotData:SkinSlotData, armature:Armature<DisplayObject, BitmapData>):Slot<DisplayObject, BitmapData>
 	{
 		var slot:OpenFLSlot = cast BaseObject.borrowObject(OpenFLSlot);
 		var slotData:SlotData = skinSlotData.slot;
@@ -117,7 +118,7 @@ import dragonBones.textures.TextureAtlasData;
 		slot._init(skinSlotData, slotDisplay, slotDisplay);
 		
 		var l:UInt = skinSlotData.displays.length;
-		var displayData:DisplayData, childArmature:Armature, actions:Vector<ActionData>;
+		var displayData:DisplayData, childArmature:Armature<DisplayObject, BitmapData>, actions:Vector<ActionData>;
 		for (i in 0...l)
 		{
 			displayData = skinSlotData.displays[i];
@@ -196,7 +197,7 @@ import dragonBones.textures.TextureAtlasData;
 	 */
 	public function buildArmatureDisplay(armatureName:String, dragonBonesName:String = null, skinName:String = null, textureAtlasName:String = null):OpenFLArmatureDisplay
 	{
-		var armature:Armature = buildArmature(armatureName, dragonBonesName, skinName, textureAtlasName);
+		var armature:Armature<DisplayObject, BitmapData> = buildArmature(armatureName, dragonBonesName, skinName, textureAtlasName);
 		if (armature != null)
 		{
 			_clock.add(armature);
@@ -214,7 +215,7 @@ import dragonBones.textures.TextureAtlasData;
 	 */
 	public function getTextureDisplay(textureName:String, textureAtlasName:String = null):Shape 
 	{
-		var textureData:OpenFLTextureData = cast(_getTextureData(textureAtlasName, textureName), OpenFLTextureData);
+		var textureData:OpenFLTextureData = cast _getTextureData(textureAtlasName, textureName);
 		if (textureData != null)
 		{
 			var width:Float = 0;

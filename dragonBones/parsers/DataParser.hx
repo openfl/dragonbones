@@ -461,7 +461,7 @@ import dragonBones.textures.TextureAtlasData;
 		
 		var l:UInt = 0;
 		var insertedFrame:AnimationFrameData = null;
-		var replacedFrame:AnimationFrameData = (frames.length != 0 && frames[frameStart] != null)? cast(frames[frameStart], AnimationFrameData): null;
+		var replacedFrame:AnimationFrameData = (frames.length != 0 && frames[frameStart] != null)? cast frames[frameStart]: null;
 		
 		if (replacedFrame != null && (frameStart == 0 || frames[frameStart - 1] == replacedFrame.prev)) // Key frame.
 		{
@@ -516,7 +516,7 @@ import dragonBones.textures.TextureAtlasData;
 		var currentFrame:AnimationFrameData;
 		for (i in 0...l)
 		{
-			currentFrame = frames[i] != null ? cast(frames[i], AnimationFrameData) : null;
+			currentFrame = frames[i] != null ? cast frames[i] : null;
 			if (currentFrame != null && nextFrame != currentFrame) 
 			{
 				nextFrame = currentFrame;
@@ -538,7 +538,7 @@ import dragonBones.textures.TextureAtlasData;
 		
 		nextFrame.duration = _animation.duration - nextFrame.position;
 		
-		nextFrame = frames[0] != null ? cast(frames[0], AnimationFrameData) : null;
+		nextFrame = frames[0] != null ? cast frames[0] : null;
 		prevFrame.next = nextFrame;
 		nextFrame.prev = prevFrame;
 		

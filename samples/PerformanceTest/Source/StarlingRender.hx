@@ -12,6 +12,7 @@ import dragonBones.objects.DragonBonesData;
 import dragonBones.starling.StarlingArmatureDisplay;
 import dragonBones.starling.StarlingFactory;
 
+import starling.display.DisplayObject;
 import starling.display.Sprite;
 import starling.events.EnterFrameEvent;
 import starling.events.Event;
@@ -19,13 +20,14 @@ import starling.events.Touch;
 import starling.events.TouchEvent;
 import starling.events.TouchPhase;
 import starling.text.TextField;
+import starling.textures.Texture;
 
 class StarlingRender extends Sprite
 {
 	private var _addingArmature: Bool = false;
 	private var _removingArmature: Bool = false;
 	private var _text:TextField = null;
-	private var _armatures: Vector<Armature> = new Vector<Armature>();
+	private var _armatures: Vector<Armature<DisplayObject, Texture>> = new Vector<Armature<DisplayObject, Texture>>();
 
 	public function new()
 	{
@@ -122,7 +124,7 @@ class StarlingRender extends Sprite
 			);
 		}
 		
-		var armature: Armature = StarlingFactory.factory.buildArmature("DragonBoy");
+		var armature: Armature<DisplayObject, Texture> = StarlingFactory.factory.buildArmature("DragonBoy");
 		var armatureDisplay: StarlingArmatureDisplay = cast armature.display;
 
 		armatureDisplay.scaleX = armatureDisplay.scaleY = 0.7;
@@ -144,7 +146,7 @@ class StarlingRender extends Sprite
 			return;
 		}
 			
-		var armature: Armature = _armatures.pop();
+		var armature: Armature<DisplayObject, Texture> = _armatures.pop();
 		var armatureDisplay: StarlingArmatureDisplay = cast armature.display;
 		this.removeChild(armatureDisplay);
 		WorldClock.clock.remove(armature);
@@ -176,7 +178,7 @@ class StarlingRender extends Sprite
 		var dX: Float = (this.stage.stageWidth - paddingH * 2) / columnNum;
 		var dY: Float = (this.stage.stageHeight - paddingV * 2) / Math.ceil(count / columnNum);
 
-		var armature:Armature, armatureDisplay:StarlingArmatureDisplay, lineY:UInt;
+		var armature:Armature<DisplayObject, Texture>, armatureDisplay:StarlingArmatureDisplay, lineY:UInt;
 		var l:UInt = _armatures.length;
 		for (i in 0...l)
 		{

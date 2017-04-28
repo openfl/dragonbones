@@ -17,7 +17,7 @@ import dragonBones.objects.BoneData;
  * @see dragonBones.Slot
  * @version DragonBones 3.0
  */
-@:allow(dragonBones) @:final class Bone extends TransformObject
+@:allow(dragonBones) @:final class Bone<TDisplay, TTexture> extends TransformObject<TDisplay, TTexture>
 {
 	/**
 	 * @language zh_CN
@@ -79,10 +79,10 @@ import dragonBones.objects.BoneData;
 	 * @private
 	 */
 	private var _animationPose:Transform = new Transform();
-	private var _bones:Vector<Bone> = new Vector<Bone>();
-	private var _slots:Vector<Slot> = new Vector<Slot>();
+	private var _bones:Vector<Bone<TDisplay, TTexture>> = new Vector<Bone<TDisplay, TTexture>>();
+	private var _slots:Vector<Slot<TDisplay, TTexture>> = new Vector<Slot<TDisplay, TTexture>>();
 	private var _boneData:BoneData;
-	private var _ik:Bone;
+	private var _ik:Bone<TDisplay, TTexture>;
 	/**
 	 * @private
 	 */
@@ -320,7 +320,7 @@ import dragonBones.objects.BoneData;
 	/**
 	 * @private
 	 */
-	override private function _setArmature(value:Armature):Void
+	override private function _setArmature(value:Armature<TDisplay, TTexture>):Void
 	{
 		_armature = value;
 		_armature._addBoneToBoneList(this);
@@ -328,13 +328,13 @@ import dragonBones.objects.BoneData;
 	/**
 	 * @private
 	 */
-	private function _setIK(value:Bone, chain:UInt, chainIndex:UInt):Void
+	private function _setIK(value:Bone<TDisplay, TTexture>, chain:UInt, chainIndex:UInt):Void
 	{
 		if (value != null)
 		{
 			if (chain == chainIndex)
 			{
-				var chainEnd:Bone = _parent;
+				var chainEnd:Bone<TDisplay, TTexture> = _parent;
 				if (chain > 0 && chainEnd != null)
 				{
 					chain = 1;
@@ -354,7 +354,7 @@ import dragonBones.objects.BoneData;
 				}
 				else
 				{
-					var ancestor:Bone = value;
+					var ancestor:Bone<TDisplay, TTexture> = value;
 					while(ancestor._ik != null && ancestor._ikChain != 0)
 					{
 						if (chainEnd.contains(ancestor._ik))
@@ -478,7 +478,7 @@ import dragonBones.objects.BoneData;
 	 * @see dragonBones.core.TransformObject
 	 * @version DragonBones 3.0
 	 */
-	public function contains(child:TransformObject):Bool
+	public function contains(child:TransformObject<TDisplay, TTexture>):Bool
 	{
 		if (child != null)
 		{
@@ -487,7 +487,7 @@ import dragonBones.objects.BoneData;
 				return false;
 			}
 			
-			var ancestor:TransformObject = child;
+			var ancestor:TransformObject<TDisplay, TTexture> = child;
 			while(ancestor != this && ancestor != null)
 			{
 				ancestor = ancestor.parent;
@@ -503,13 +503,13 @@ import dragonBones.objects.BoneData;
 	 * 所有的子骨骼。
 	 * @version DragonBones 3.0
 	 */
-	public function getBones():Vector<Bone>
+	public function getBones():Vector<Bone<TDisplay, TTexture>>
 	{
 		_bones.length = 0;
 		
-		var bones:Vector<Bone> = _armature.getBones();
+		var bones:Vector<Bone<TDisplay, TTexture>> = _armature.getBones();
 		var l:UInt = bones.length;
-		var bone:Bone;
+		var bone:Bone<TDisplay, TTexture>;
 		for (i in 0...l) 
 		{
 			bone = bones[i];
@@ -527,13 +527,13 @@ import dragonBones.objects.BoneData;
 	 * @see dragonBones.Slot
 	 * @version DragonBones 3.0
 	 */
-	public function getSlots():Vector<Slot>
+	public function getSlots():Vector<Slot<TDisplay, TTexture>>
 	{
 		_slots.length = 0;
 		
-		var slots:Vector<Slot> = _armature.getSlots();
+		var slots:Vector<Slot<TDisplay, TTexture>> = _armature.getSlots();
 		var l:UInt = slots.length;
-		var slot:Slot;
+		var slot:Slot<TDisplay, TTexture>;
 		for (i in 0...l)
 		{
 			slot = slots[i];
@@ -574,9 +574,9 @@ import dragonBones.objects.BoneData;
 		
 		_visible = value;
 		
-		var slots:Vector<Slot> = _armature.getSlots();
+		var slots:Vector<Slot<TDisplay, TTexture>> = _armature.getSlots();
 		var l:UInt = slots.length;
-		var slot:Slot;
+		var slot:Slot<TDisplay, TTexture>;
 		for (i in 0...l)
 		{
 			slot = slots[i];
@@ -608,8 +608,8 @@ import dragonBones.objects.BoneData;
 	/**
 	 * @deprecated
 	 */
-	@:deprecated public var ik(get, never):Bone;
-	private function get_ik():Bone
+	@:deprecated public var ik(get, never):Bone<TDisplay, TTexture>;
+	private function get_ik():Bone<TDisplay, TTexture>
 	{
 		return _ik;
 	}

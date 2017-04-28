@@ -1069,7 +1069,7 @@ import dragonBones.textures.TextureData;
 	 */
 	private function _parseFFDFrame(rawData:Dynamic, frameStart:UInt, frameCount:UInt):ExtensionFrameData
 	{
-		var ffdTimeline:FFDTimelineData = cast(_timeline, FFDTimelineData);
+		var ffdTimeline:FFDTimelineData = cast _timeline;
 		var mesh:MeshData = ffdTimeline.display.mesh;
 		var frame:ExtensionFrameData = cast BaseObject.borrowObject(ExtensionFrameData);
 		
@@ -1269,7 +1269,7 @@ import dragonBones.textures.TextureData;
 			actionData.bone = bone;
 			actionData.slot = slot;
 			actionData.animationConfig = cast BaseObject.borrowObject(AnimationConfig);
-			actionData.animationConfig.animationName = cast rawActions;
+			actionData.animationConfig.animationName = (rawActions:String);
 			actions.push(actionData);
 		}
 		else if (Std.is(rawActions, Array))
@@ -1292,7 +1292,7 @@ import dragonBones.textures.TextureData;
 					} 
 					else 
 					{
-						actionData.type = cast(actionType, Int);
+						actionData.type = Std.parseInt(Std.string(actionType));
 					}
 				} 
 				else 

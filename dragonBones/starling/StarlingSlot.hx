@@ -28,7 +28,7 @@ import starling.styles.MeshStyle;
  * Starling 插槽。
  * @version DragonBones 3.0
  */
-@:allow(dragonBones) @:final class StarlingSlot extends Slot
+@:allow(dragonBones) @:final class StarlingSlot extends Slot<DisplayObject, Texture>
 {
 	#if (starling < "2.0")
 	private static var _emptyEtexture:Texture = null;
@@ -212,12 +212,12 @@ import starling.styles.MeshStyle;
 		
 		if (_displayIndex >= 0 && _display != null && currentTextureData != null)
 		{
-			var currentTextureAtlasData:StarlingTextureAtlasData = currentTextureData.parent != null ? cast(currentTextureData.parent, StarlingTextureAtlasData) : null;
+			var currentTextureAtlasData:StarlingTextureAtlasData = currentTextureData.parent != null ? cast currentTextureData.parent : null;
 			
 			// Update replaced texture atlas.
 			if (_armature.replacedTexture != null && _displayData != null && currentTextureAtlasData == _displayData.texture.parent) 
 			{
-				currentTextureAtlasData = _armature._replaceTextureAtlasData != null ? cast(_armature._replaceTextureAtlasData, StarlingTextureAtlasData) : null;
+				currentTextureAtlasData = _armature._replaceTextureAtlasData != null ? cast _armature._replaceTextureAtlasData : null;
 				if (currentTextureAtlasData == null) 
 				{
 					currentTextureAtlasData = cast BaseObject.borrowObject(StarlingTextureAtlasData);

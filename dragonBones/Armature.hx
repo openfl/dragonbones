@@ -31,9 +31,9 @@ import dragonBones.textures.TextureAtlasData;
  * @see dragonBones.animation.Animation
  * @version DragonBones 3.0
  */
-@:allow(dragonBones) @:final class Armature extends BaseObject implements IAnimateble
+@:allow(dragonBones) @:final class Armature<TDisplay, TTexture> extends BaseObject implements IAnimateble
 {
-	private static function _onSortSlots(a:Slot, b:Slot):Int 
+	private static function _onSortSlots<TDisplay, TTexture> (a:Slot<TDisplay, TTexture>, b:Slot<TDisplay, TTexture>):Int 
 	{
 		return a._zOrder > b._zOrder ? 1 : -1;
 	}
@@ -64,10 +64,10 @@ import dragonBones.textures.TextureAtlasData;
 	private var _bonesDirty:Bool;
 	private var _slotsDirty:Bool;
 	private var _zOrderDirty:Bool;
-	private var _bones:Vector<Bone> = new Vector<Bone>();
-	private var _slots:Vector<Slot> = new Vector<Slot>();
+	private var _bones:Vector<Bone<TDisplay, TTexture>> = new Vector<Bone<TDisplay, TTexture>>();
+	private var _slots:Vector<Slot<TDisplay, TTexture>> = new Vector<Slot<TDisplay, TTexture>>();
 	private var _actions:Vector<ActionData> = new Vector<ActionData>();
-	private var _events:Vector<EventObject> = new Vector<EventObject>();
+	private var _events:Vector<EventObject<TDisplay, TTexture>> = new Vector<EventObject<TDisplay, TTexture>>();
 	/**
 	 * @private
 	 */
@@ -76,20 +76,20 @@ import dragonBones.textures.TextureAtlasData;
 	 * @private
 	 */
 	private var _skinData:SkinData;
-	private var _animation:Animation;
-	private var _proxy:IArmatureProxy;
-	private var _display:Dynamic;
-	private var _eventManager:IEventDispatcher;
+	private var _animation:Animation<TDisplay, TTexture>;
+	private var _proxy:IArmatureProxy<TDisplay, TTexture>;
+	private var _display:TDisplay;
+	private var _eventManager:IEventDispatcher<TDisplay, TTexture>;
 	/**
 	 * @private Slot
 	 */
-	private var _parent:Slot;
+	private var _parent:Slot<TDisplay, TTexture>;
 	private var __clock:WorldClock;
 	/**
 	 * @private
 	 */
 	private var _replaceTextureAtlasData:TextureAtlasData;
-	private var _replacedTexture:Dynamic;
+	private var _replacedTexture:TTexture;
 	/**
 	 * @private
 	 */
@@ -176,12 +176,12 @@ import dragonBones.textures.TextureAtlasData;
 			return;
 		}
 		
-		var sortHelper:Vector<Bone> = _bones.concat();
+		var sortHelper:Vector<Bone<TDisplay, TTexture>> = _bones.concat();
 		var index:UInt = 0;
 		var count:UInt = 0;
 		
 		_bones.length = 0;
-		var bone:Bone;
+		var bone:Bone<TDisplay, TTexture>;
 		
 		while(count < total)
 		{
@@ -241,7 +241,7 @@ import dragonBones.textures.TextureAtlasData;
 	 */
 	private function _init(
 		armatureData: ArmatureData, skinData: SkinData,
-		display:Dynamic, proxy: IArmatureProxy, eventManager: IEventDispatcher
+		display:TDisplay, proxy: IArmatureProxy<TDisplay, TTexture>, eventManager: IEventDispatcher<TDisplay, TTexture>
 	):Void 
 	{
 		if (_armatureData != null) 
@@ -262,7 +262,7 @@ import dragonBones.textures.TextureAtlasData;
 	/**
 	 * @private
 	 */
-	private function _addBoneToBoneList(value:Bone):Void
+	private function _addBoneToBoneList(value:Bone<TDisplay, TTexture>):Void
 	{
 		if (_bones.indexOf(value) < 0)
 		{
@@ -276,7 +276,7 @@ import dragonBones.textures.TextureAtlasData;
 	/**
 	 * @private
 	 */
-	private function _removeBoneFromBoneList(value: Bone):Void 
+	private function _removeBoneFromBoneList(value: Bone<TDisplay, TTexture>):Void 
 	{
 		var index:Int = _bones.indexOf(value);
 		if (index >= 0) 
@@ -292,7 +292,7 @@ import dragonBones.textures.TextureAtlasData;
 	/**
 	 * @private
 	 */
-	private function _addSlotToSlotList(value:Slot):Void
+	private function _addSlotToSlotList(value:Slot<TDisplay, TTexture>):Void
 	{
 		if (_slots.indexOf(value) < 0)
 		{
@@ -307,7 +307,7 @@ import dragonBones.textures.TextureAtlasData;
 	 * @internal
 	 * @private
 	 */
-	private function _removeSlotFromSlotList(value: Slot):Void 
+	private function _removeSlotFromSlotList(value: Slot<TDisplay, TTexture>):Void 
 	{
 		var index:Int = _slots.indexOf(value);
 		if (index >= 0) 
@@ -328,7 +328,7 @@ import dragonBones.textures.TextureAtlasData;
 		var sortedSlots:Vector<SlotData> = _armatureData.sortedSlots;
 		var isOriginal:Bool = slotIndices == null || slotIndices.length < 1;
 		
-		var l, slotIndex:Int, slotData:SlotData, slot:Slot;
+		var l, slotIndex:Int, slotData:SlotData, slot:Slot<TDisplay, TTexture>;
 		
 		if (_zOrderDirty || !isOriginal)
 		{
@@ -362,7 +362,7 @@ import dragonBones.textures.TextureAtlasData;
 	/**
 	 * @private
 	 */
-	private function _bufferEvent(value:EventObject, type:String):Void
+	private function _bufferEvent(value:EventObject<TDisplay, TTexture>, type:String):Void
 	{
 		value.type = type;
 		value.armature = this;
@@ -462,7 +462,7 @@ import dragonBones.textures.TextureAtlasData;
 			l = _events.length;
 			if (l > 0) 
 			{
-				var eventObject:EventObject;
+				var eventObject:EventObject<TDisplay, TTexture>;
 				for (i in 0...l) 
 				{
 					eventObject = _events[i];
@@ -483,7 +483,7 @@ import dragonBones.textures.TextureAtlasData;
 			l = _actions.length;
 			if (l > 0) 
 			{
-				var action:ActionData, slot:Slot, childArmature:Armature, lA:UInt;
+				var action:ActionData, slot:Slot<TDisplay, TTexture>, childArmature:Armature<TDisplay, TTexture>, lA:UInt;
 				for (i in 0...l) 
 				{
 					action = _actions[i];
@@ -541,7 +541,7 @@ import dragonBones.textures.TextureAtlasData;
 	{
 		if (boneName != null)
 		{
-			var bone:Bone = getBone(boneName);
+			var bone:Bone<TDisplay, TTexture> = getBone(boneName);
 			if (bone != null)
 			{
 				bone.invalidUpdate();
@@ -549,7 +549,7 @@ import dragonBones.textures.TextureAtlasData;
 				if (updateSlotDisplay)
 				{
 					var l:UInt = _slots.length;
-					var slot:Slot;
+					var slot:Slot<TDisplay, TTexture>;
 					for (i in 0...l)
 					{
 						slot = _slots[i];
@@ -586,10 +586,10 @@ import dragonBones.textures.TextureAtlasData;
 	 * @param y 点的垂直坐标。（骨架内坐标系）
 	 * @version DragonBones 5.0
 	 */
-	public function containsPoint(x:Float, y:Float):Slot 
+	public function containsPoint(x:Float, y:Float):Slot<TDisplay, TTexture> 
 	{
 		var l:UInt = _slots.length;
-		var slot:Slot;
+		var slot:Slot<TDisplay, TTexture>;
 		for (i in 0...l)
 		{
 			slot = _slots[i];
@@ -619,7 +619,7 @@ import dragonBones.textures.TextureAtlasData;
 		intersectionPointA:Point = null,
 		intersectionPointB:Point = null,
 		normalRadians:Point = null
-	):Slot 
+	):Slot<TDisplay, TTexture> 
 	{
 		var isV:Bool = xA == xB;
 		var dMin:Float = 0.0;
@@ -630,11 +630,11 @@ import dragonBones.textures.TextureAtlasData;
 		var intYB:Float = 0.0;
 		var intAN:Float = 0.0;
 		var intBN:Float = 0.0;
-		var intSlotA:Slot = null;
-		var intSlotB:Slot = null;
+		var intSlotA:Slot<TDisplay, TTexture> = null;
+		var intSlotB:Slot<TDisplay, TTexture> = null;
 		
 		var l:UInt = _slots.length;
-		var slot:Slot, intersectionCount:Int, d:Float;
+		var slot:Slot<TDisplay, TTexture>, intersectionCount:Int, d:Float;
 		for (i in 0...l)
 		{
 			slot = _slots[i];
@@ -727,10 +727,10 @@ import dragonBones.textures.TextureAtlasData;
 	 * @see dragonBones.Bone
 	 * @version DragonBones 3.0
 	 */
-	public function getBone(name:String):Bone
+	public function getBone(name:String):Bone<TDisplay, TTexture>
 	{
 		var l:UInt = _bones.length;
-		var bone:Bone;
+		var bone:Bone<TDisplay, TTexture>;
 		for (i in 0...l)
 		{
 			bone = _bones[i];
@@ -750,9 +750,9 @@ import dragonBones.textures.TextureAtlasData;
 	 * @see dragonBones.Bone
 	 * @version DragonBones 3.0
 	 */
-	public function getBoneByDisplay(display:Dynamic):Bone
+	public function getBoneByDisplay(display:TDisplay):Bone<TDisplay, TTexture>
 	{
-		var slot:Slot = getSlotByDisplay(display);
+		var slot:Slot<TDisplay, TTexture> = getSlotByDisplay(display);
 		
 		return slot != null? slot.parent: null;
 	}
@@ -764,10 +764,10 @@ import dragonBones.textures.TextureAtlasData;
 	 * @see dragonBones.Slot
 	 * @version DragonBones 3.0
 	 */
-	public function getSlot(name:String):Slot
+	public function getSlot(name:String):Slot<TDisplay, TTexture>
 	{
 		var l:UInt = _slots.length;
-		var slot:Slot;
+		var slot:Slot<TDisplay, TTexture>;
 		for (i in 0...l)
 		{
 			slot = _slots[i];
@@ -787,12 +787,12 @@ import dragonBones.textures.TextureAtlasData;
 	 * @see dragonBones.Slot
 	 * @version DragonBones 3.0
 	 */
-	public function getSlotByDisplay(display:Dynamic):Slot
+	public function getSlotByDisplay(display:TDisplay):Slot<TDisplay, TTexture>
 	{
 		if (display != null)
 		{
 			var l:UInt = _slots.length;
-			var slot:Slot;
+			var slot:Slot<TDisplay, TTexture>;
 			for (i in 0...l)
 			{
 				slot = _slots[i];
@@ -808,7 +808,7 @@ import dragonBones.textures.TextureAtlasData;
 	/**
 	 * @private
 	 */
-	private function _addBone(value:Bone, parentName:String = null):Void
+	private function _addBone(value:Bone<TDisplay, TTexture>, parentName:String = null):Void
 	{
 		if (value != null)
 		{
@@ -819,9 +819,9 @@ import dragonBones.textures.TextureAtlasData;
 	/**
 	 * @private
 	 */
-	private function _addSlot(value:Slot, parentName:String):Void
+	private function _addSlot(value:Slot<TDisplay, TTexture>, parentName:String):Void
 	{
-		var bone:Bone = getBone(parentName);
+		var bone:Bone<TDisplay, TTexture> = getBone(parentName);
 		if (bone != null)
 		{
 			value._setArmature(this);
@@ -834,7 +834,7 @@ import dragonBones.textures.TextureAtlasData;
      * @param texture 贴图。
 	 * @version DragonBones 4.5
 	 */
-	public function replaceTexture(texture:Dynamic):Void
+	public function replaceTexture(texture:TTexture):Void
 	{
 		replacedTexture = texture;
 	}
@@ -844,7 +844,7 @@ import dragonBones.textures.TextureAtlasData;
 	 * @see dragonBones.Bone
 	 * @version DragonBones 3.0
 	 */
-	public function getBones():Vector<Bone>
+	public function getBones():Vector<Bone<TDisplay, TTexture>>
 	{
 		return _bones;
 	}
@@ -854,7 +854,7 @@ import dragonBones.textures.TextureAtlasData;
 	 * @see dragonBones.Slot
 	 * @version DragonBones 3.0
 	 */
-	public function getSlots():Vector<Slot>
+	public function getSlots():Vector<Slot<TDisplay, TTexture>>
 	{
 		return _slots;
 	}
@@ -886,8 +886,8 @@ import dragonBones.textures.TextureAtlasData;
 	 * @see dragonBones.animation.Animation
 	 * @version DragonBones 3.0
 	 */
-	public var animation(get, never):Animation;
-	private function get_animation():Animation	
+	public var animation(get, never):Animation<TDisplay, TTexture>;
+	private function get_animation():Animation<TDisplay, TTexture>	
 	{
 		return _animation;
 	}
@@ -896,8 +896,8 @@ import dragonBones.textures.TextureAtlasData;
 	 * 获取事件监听器。
 	 * @version DragonBones 5.0
 	 */
-	public var eventDispatcher(get, never):IEventDispatcher;
-	private function get_eventDispatcher():IEventDispatcher
+	public var eventDispatcher(get, never):IEventDispatcher<TDisplay, TTexture>;
+	private function get_eventDispatcher():IEventDispatcher<TDisplay, TTexture>
 	{
 		return _proxy;
 	}
@@ -906,8 +906,8 @@ import dragonBones.textures.TextureAtlasData;
 	 * 获取显示容器，插槽的显示对象都会以此显示容器为父级，根据渲染平台的不同，类型会不同，通常是 DisplayObjectContainer 类型。
 	 * @version DragonBones 3.0
 	 */
-	public var display(get, never):Dynamic;
-	private function get_display():Dynamic
+	public var display(get, never):TDisplay;
+	private function get_display():TDisplay
 	{
 		return _display;
 	}
@@ -917,8 +917,8 @@ import dragonBones.textures.TextureAtlasData;
 	 * @see dragonBones.Slot
 	 * @version DragonBones 4.5
 	 */
-	public var parent(get, never):Slot;
-	private function get_parent():Slot
+	public var parent(get, never):Slot<TDisplay, TTexture>;
+	private function get_parent():Slot<TDisplay, TTexture>
 	{
 		return _parent;
 	}
@@ -945,7 +945,7 @@ import dragonBones.textures.TextureAtlasData;
 			
 			// Set child armature frameRate.
 			var l:UInt = _slots.length;
-			var childArmature:Armature;
+			var childArmature:Armature<TDisplay, TTexture>;
 			for (i in 0...l)
 			{
 				childArmature = _slots[i].childArmature;
@@ -987,7 +987,7 @@ import dragonBones.textures.TextureAtlasData;
 		
 		// Update childArmature clock.
 		var l:UInt = _slots.length;
-		var childArmature:Armature;
+		var childArmature:Armature<TDisplay, TTexture>;
 		for (i in 0...l)
 		{
 			childArmature = _slots[i].childArmature;
@@ -1003,12 +1003,12 @@ import dragonBones.textures.TextureAtlasData;
 	 * 替换骨架的主贴图，根据渲染引擎的不同，提供不同的贴图数据。
 	 * @version DragonBones 4.5
 	 */
-	public var replacedTexture(get, set):Dynamic;
-	private function get_replacedTexture():Dynamic 
+	public var replacedTexture(get, set):TTexture;
+	private function get_replacedTexture():TTexture 
 	{
 		return _replacedTexture;
 	}
-	private function set_replacedTexture(value:Dynamic):Dynamic
+	private function set_replacedTexture(value:TTexture):TTexture
 	{
 		if (_replacedTexture == value)
 		{
@@ -1024,7 +1024,7 @@ import dragonBones.textures.TextureAtlasData;
 		_replacedTexture = value;
 		
 		var l:UInt = _slots.length;
-		var slot:Slot;
+		var slot:Slot<TDisplay, TTexture>;
 		for (i in 0...l)
 		{
 			slot = _slots[i];
@@ -1039,24 +1039,24 @@ import dragonBones.textures.TextureAtlasData;
 	 * @deprecated
 	 * @see dragonBones.Armature#eventDispatcher
 	 */
-	public function hasEventListener(type:String):Void
+	@:deprecated public function hasEventListener(type:String):Void
 	{
-		_display.hasEvent(type);
+		(_display:Dynamic).hasEvent(type); // OpenFLArmatureDisplay, StarlingArmatureDisplay
 	}
 	/**
 	 * @deprecated
 	 * @see dragonBones.Armature#eventDispatcher
 	 */
-	public function addEventListener(type:String, listener:Function):Void
+	@:deprecated public function addEventListener(type:String, listener:Function):Void
 	{
-		_display.addEvent(type, listener);
+		(_display:Dynamic).addEvent(type, listener); // OpenFLArmatureDisplay, StarlingArmatureDisplay
 	}
 	/**
 	 * @deprecated
 	 * @see dragonBones.Armature#eventDispatcher
 	 */
-	public function removeEventListener(type:String, listener:Function):Void
+	@:deprecated public function removeEventListener(type:String, listener:Function):Void
 	{
-		_display.removeEvent(type, listener);
+		(_display:Dynamic).removeEvent(type, listener); // OpenFLArmatureDisplay, StarlingArmatureDisplay
 	}
 }

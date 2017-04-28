@@ -9,7 +9,7 @@ import dragonBones.events.IEventDispatcher;
  * 骨架代理接口。
  * @version DragonBones 5.0
  */
-@:allow(dragonBones) interface IArmatureProxy extends IEventDispatcher
+@:allow(dragonBones) interface IArmatureProxy<TDisplay, TTexture> extends IEventDispatcher<TDisplay, TTexture>
 {
 	/**
 	 * @private
@@ -31,12 +31,12 @@ import dragonBones.events.IEventDispatcher;
 	 * @see dragonBones.Armature
 	 * @version DragonBones 4.5
 	 */
-	var armature(get, never):Armature;
+	var armature(get, never):Armature<TDisplay, TTexture>;
 	/**
 	 * @language zh_CN
      * 获取动画控制器。
 	 * @see dragonBones.animation.Animation
 	 * @version DragonBones 4.5
 	 */
-	var animation(get, never):Animation;
+	var animation(get, never):Animation<TDisplay, TTexture>;
 }

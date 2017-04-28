@@ -31,7 +31,7 @@ import dragonBones.textures.TextureData;
  * @see dragonBones.objects.SlotData
  * @version DragonBones 3.0
  */
-@:allow(dragonBones) class Slot extends TransformObject
+@:allow(dragonBones) class Slot<TDisplay, TTexture> extends TransformObject<TDisplay, TTexture>
 {
 	/**
 	 * @private
@@ -134,7 +134,7 @@ import dragonBones.textures.TextureData;
 	/**
 	 * @private
 	 */
-	private var _meshBones:Vector<Bone> = new Vector<Bone>();
+	private var _meshBones:Vector<Bone<TDisplay, TTexture>> = new Vector<Bone<TDisplay, TTexture>>();
 	/**
 	 * @private
 	 */
@@ -162,19 +162,19 @@ import dragonBones.textures.TextureData;
 	/**
 	 * @private
 	 */
-	private var _rawDisplay:Dynamic;
+	private var _rawDisplay:TDisplay;
 	/**
 	 * @private
 	 */
-	private var _meshDisplay:Dynamic;
+	private var _meshDisplay:TDisplay;
 	/**
 	 * @private
 	 */
-	private var _display:Dynamic;
+	private var _display:TDisplay;
 	/**
 	 * @private
 	 */
-	private var _childArmature:Armature;
+	private var _childArmature:Armature<TDisplay, TTexture>;
 	/**
 	 * @private BoneTimelineState
 	 */
@@ -214,7 +214,7 @@ import dragonBones.textures.TextureData;
 			eachDisplay = disposeDisplayList[i];
 			if (Std.is(eachDisplay, Armature))
 			{
-				cast(eachDisplay, Armature).dispose();
+				(eachDisplay:Armature<TDisplay, TTexture>).dispose();
 			}
 			else
 			{
@@ -276,14 +276,14 @@ import dragonBones.textures.TextureData;
 	/**
 	 * @private
 	 */
-	private function _initDisplay(value:Dynamic):Void
+	private function _initDisplay(value:TDisplay):Void
 	{
 		throw new Error(DragonBones.ABSTRACT_METHOD_ERROR);
 	}
 	/**
 	 * @private
 	 */
-	private function _disposeDisplay(value:Dynamic):Void
+	private function _disposeDisplay(value:TDisplay):Void
 	{
 		throw new Error(DragonBones.ABSTRACT_METHOD_ERROR);
 	}
@@ -304,7 +304,7 @@ import dragonBones.textures.TextureData;
 	/**
 	 * @private
 	 */
-	private function _replaceDisplay(value:Dynamic):Void
+	private function _replaceDisplay(value:TDisplay):Void
 	{
 		throw new Error(DragonBones.ABSTRACT_METHOD_ERROR);
 	}
@@ -396,7 +396,7 @@ import dragonBones.textures.TextureData;
 		var prevReplaceDisplayData:DisplayData = _replacedDisplayData;
 		var prevTextureData:TextureData = _textureData;
 		var prevMeshData:MeshData = _meshData;
-		var currentDisplay:Dynamic = _displayIndex >= 0 && _displayIndex < _displayList.length ? _displayList[_displayIndex] : null;
+		var currentDisplay:TDisplay = _displayIndex >= 0 && _displayIndex < _displayList.length ? _displayList[_displayIndex] : null;
 		
 		if (_displayIndex >= 0 && _displayIndex < _skinSlotData.displays.length) 
 		{
@@ -599,20 +599,21 @@ import dragonBones.textures.TextureData;
 	 */
 	private function _updateDisplay():Void
 	{	
-		var prevDisplay:Dynamic = _display != null ? _display : _rawDisplay;
-		var prevChildArmature:Armature = _childArmature;
+		var prevDisplay:TDisplay = _display != null ? _display : _rawDisplay;
+		var prevChildArmature:Armature<TDisplay, TTexture> = _childArmature;
 		
 		if (_displayIndex >= 0 && _displayIndex < _displayList.length)
 		{
-			_display = _displayList[_displayIndex];
-			if (Std.is(_display, Armature))
+			var display:Dynamic = _displayList[_displayIndex];
+			if (Std.is(display, Armature))
 			{
-				_childArmature = cast _display;
+				_childArmature = display;
 				_display = _childArmature.display;
 			}
 			else
 			{
 				_childArmature = null;
+				_display = display;
 			}
 		}
 		else
@@ -621,7 +622,7 @@ import dragonBones.textures.TextureData;
 			_childArmature = null;
 		}
 		
-		var currentDisplay:Dynamic = _display != null ? _display : _rawDisplay;
+		var currentDisplay:TDisplay = _display != null ? _display : _rawDisplay;
 		if (currentDisplay != prevDisplay)
 		{
 			_onUpdateDisplay();
@@ -715,7 +716,7 @@ import dragonBones.textures.TextureData;
 	/**
 	 * @private
 	 */
-	private function _init(skinSlotData: SkinSlotData, rawDisplay:Dynamic, meshDisplay:Dynamic):Void {
+	private function _init(skinSlotData: SkinSlotData, rawDisplay:TDisplay, meshDisplay:TDisplay):Void {
 		if (_skinSlotData != null) 
 		{
 			return;
@@ -747,7 +748,7 @@ import dragonBones.textures.TextureData;
 	/**
 	 * @private
 	 */
-	override private function _setArmature(value:Armature):Void
+	override private function _setArmature(value:Armature<TDisplay, TTexture>):Void
 	{
 		if (_armature == value) 
 		{
@@ -1133,16 +1134,16 @@ import dragonBones.textures.TextureData;
 	/**
 	 * @private
 	 */
-	private var rawDisplay(get, never):Dynamic;
-	private function get_rawDisplay():Dynamic
+	private var rawDisplay(get, never):TDisplay;
+	private function get_rawDisplay():TDisplay
 	{
 		return _rawDisplay;
 	}
 	/**
 	 * @private
 	 */
-	private var meshDisplay(get, never):Dynamic;
-	private function get_meshDisplay():Dynamic
+	private var meshDisplay(get, never):TDisplay;
+	private function get_meshDisplay():TDisplay
 	{
 		return _meshDisplay;
 	}
@@ -1204,7 +1205,7 @@ import dragonBones.textures.TextureData;
 			eachDisplay = disposeDisplayList[i];
 			if (Std.is(eachDisplay, Armature))
 			{
-				cast(eachDisplay, Armature).dispose();
+				(eachDisplay:Armature<TDisplay, TTexture>).dispose();
 			}
 			else
 			{
@@ -1218,12 +1219,12 @@ import dragonBones.textures.TextureData;
 	 * 此时显示的显示对象。
 	 * @version DragonBones 3.0
 	 */
-	public var display(get, set):Dynamic;
-	private function get_display():Dynamic
+	public var display(get, set):TDisplay;
+	private function get_display():TDisplay
 	{
 		return _display;
 	}
-	private function set_display(value:Dynamic):Dynamic
+	private function set_display(value:Dynamic):TDisplay
 	{
 		if (_display == value)
 		{
@@ -1259,19 +1260,19 @@ import dragonBones.textures.TextureData;
 	 * @see dragonBones.Armature
 	 * @version DragonBones 3.0
 	 */
-	public var childArmature(get, set):Armature;
-	private function get_childArmature():Armature
+	public var childArmature(get, set):Armature<TDisplay, TTexture>;
+	private function get_childArmature():Armature<TDisplay, TTexture>
 	{
 		return _childArmature;
 	}
-	private function set_childArmature(value:Armature):Armature
+	private function set_childArmature(value:Armature<TDisplay, TTexture>):Armature<TDisplay, TTexture>
 	{
 		if (_childArmature == value)
 		{
 			return value;
 		}
 
-		display = value;
+		set_display(value);
 		return value;
 	}
 }

@@ -8,7 +8,9 @@ import dragonBones.animation.WorldClock;
 import dragonBones.events.EventObject;
 import dragonBones.starling.StarlingArmatureDisplay;
 
+import starling.display.DisplayObject;
 import starling.events.Event;
+import starling.textures.Texture;
 
 class Hero
 {
@@ -28,9 +30,9 @@ class Hero
 	private var _speedX: Float = 0;
 	private var _speedY: Float = 0;
 
-	private var _armature: Armature = null;
+	private var _armature: Armature<DisplayObject, Texture> = null;
 	private var _armatureDisplay: StarlingArmatureDisplay = null;
-	private var _armArmature: Armature = null;
+	private var _armArmature: Armature<DisplayObject, Texture> = null;
 
 	public function new()
 	{
@@ -148,7 +150,7 @@ class Hero
 	
 	private function _armEventHandler(event: Event): Void
 	{
-		var eventObject: EventObject = cast(event.data, EventObject);
+		var eventObject: EventObject<DisplayObject, Texture> = event.data;
 		switch (event.type)
 		{
 			case EventObject.COMPLETE:
@@ -165,21 +167,21 @@ class Hero
 				}
 				else if (eventObject.name == "fire")
 				{
-					var firePointBone: Bone = eventObject.armature.getBone("bow");
+					var firePointBone: Bone<DisplayObject, Texture> = eventObject.armature.getBone("bow");
 
 					_localPoint.x = firePointBone.global.x;
 					_localPoint.y = firePointBone.global.y;
 
-					(eventObject.armature.display:StarlingArmatureDisplay).localToGlobal(_localPoint, _globalPoint);
+					cast(eventObject.armature.display, StarlingArmatureDisplay).localToGlobal(_localPoint, _globalPoint);
 					
 					var radian:Float = 0;
 					if(_faceDir > 0)
 					{
-						radian = firePointBone.global.rotation + (eventObject.armature.display:StarlingArmatureDisplay).rotation;
+						radian = firePointBone.global.rotation + cast(eventObject.armature.display, StarlingArmatureDisplay).rotation;
 					}
 					else
 					{
-						radian = Math.PI - (firePointBone.global.rotation + (eventObject.armature.display:StarlingArmatureDisplay).rotation);
+						radian = Math.PI - (firePointBone.global.rotation + cast(eventObject.armature.display, StarlingArmatureDisplay).rotation);
 					}
 					
 					switch (_weaponsLevel[_weaponIndex])

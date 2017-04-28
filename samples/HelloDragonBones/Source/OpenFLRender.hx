@@ -145,7 +145,7 @@ class OpenFLRender extends openfl.display.Sprite
 	 */
 	private function _animationHandler(event:OpenFLEvent): Void 
 	{
-		var eventObject:EventObject = event.eventObject;
+		var eventObject = event.eventObject;
 		trace(event.type, eventObject.animationState.name);
 	}
 
@@ -154,7 +154,7 @@ class OpenFLRender extends openfl.display.Sprite
 	 */
 	private function _frameEventHandler(event:OpenFLEvent): Void 
 	{
-		var eventObject:EventObject = event.eventObject;
+		var eventObject = event.eventObject;
 		trace(event.type, eventObject.animationState.name, eventObject.name);
 	}
 }

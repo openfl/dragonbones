@@ -22,7 +22,7 @@ import dragonBones.objects.SlotTimelineData;
  * @see dragonBones.objects.AnimationData
  * @version DragonBones 3.0
  */
-@:allow(dragonBones) @:final class AnimationState extends BaseObject
+@:allow(dragonBones) @:final class AnimationState<TDisplay, TTexture> extends BaseObject
 {
 	/**
 	 * @language zh_CN
@@ -127,15 +127,15 @@ import dragonBones.objects.SlotTimelineData;
 	/**
 	 * @private
 	 */
-	private var _boneTimelines:Vector<BoneTimelineState> = new Vector<BoneTimelineState>();
+	private var _boneTimelines:Vector<BoneTimelineState<TDisplay, TTexture>> = new Vector<BoneTimelineState<TDisplay, TTexture>>();
 	/**
 	 * @private
 	 */
-	private var _slotTimelines:Vector<SlotTimelineState> = new Vector<SlotTimelineState>();
+	private var _slotTimelines:Vector<SlotTimelineState<TDisplay, TTexture>> = new Vector<SlotTimelineState<TDisplay, TTexture>>();
 	/**
 	 * @private
 	 */
-	private var _ffdTimelines:Vector<FFDTimelineState> = new Vector<FFDTimelineState>();
+	private var _ffdTimelines:Vector<FFDTimelineState<TDisplay, TTexture>> = new Vector<FFDTimelineState<TDisplay, TTexture>>();
 	/**
 	 * @private
 	 */
@@ -143,15 +143,15 @@ import dragonBones.objects.SlotTimelineData;
 	/**
 	 * @private
 	 */
-	private var _armature:Armature;
+	private var _armature:Armature<TDisplay, TTexture>;
 	/**
 	 * @private
 	 */
-	private var _timeline:AnimationTimelineState;
+	private var _timeline:AnimationTimelineState<TDisplay, TTexture>;
 	/**
 	 * @private
 	 */
-	private var _zOrderTimeline: ZOrderTimelineState;
+	private var _zOrderTimeline: ZOrderTimelineState<TDisplay, TTexture>;
 	/**
 	 * @private
 	 */
@@ -230,7 +230,7 @@ import dragonBones.objects.SlotTimelineData;
 	private function _advanceFadeTime(passedTime:Float):Void
 	{
 		var isFadeOut:Bool = _fadeState > 0;
-		var eventType:String, eventObject:EventObject;
+		var eventType:String, eventObject:EventObject<TDisplay, TTexture>;
 		
 		if (_subFadeState < 0) // Fade start event.
 		{
@@ -286,7 +286,7 @@ import dragonBones.objects.SlotTimelineData;
 	/**
 	 * @private
 	 */
-	private function _init(armature: Armature, animationData: AnimationData, animationConfig: AnimationConfig):Void 
+	private function _init(armature: Armature<TDisplay, TTexture>, animationData: AnimationData, animationConfig: AnimationConfig):Void 
 	{
 		_armature = armature;
 		_animationData = animationData;
@@ -364,21 +364,21 @@ import dragonBones.objects.SlotTimelineData;
 		_slotTimelines.fixed = false;
 		_ffdTimelines.fixed = false;
 		
-		var boneTimelineStates = new Map<String, BoneTimelineState>();
-		var slotTimelineStates = new Map<String, SlotTimelineState>();
-		var ffdTimelineStates = new Map<String, FFDTimelineState>();
+		var boneTimelineStates = new Map<String, BoneTimelineState<TDisplay, TTexture>>();
+		var slotTimelineStates = new Map<String, SlotTimelineState<TDisplay, TTexture>>();
+		var ffdTimelineStates = new Map<String, FFDTimelineState<TDisplay, TTexture>>();
 		
 		var l:UInt = _boneTimelines.length;
-		var boneTimelineState:BoneTimelineState;
+		var boneTimelineState:BoneTimelineState<TDisplay, TTexture>;
 		for (i in 0...l) // Create bone timelines map.
 		{
 			boneTimelineState = _boneTimelines[i];
 			boneTimelineStates[boneTimelineState.bone.name] = boneTimelineState;
 		}
 		
-		var bones:Vector<Bone> = _armature.getBones();
+		var bones:Vector<Bone<TDisplay, TTexture>> = _armature.getBones();
 		l = bones.length;
-		var bone:Bone, boneTimelineName:String, boneTimelineData:BoneTimelineData;
+		var bone:Bone<TDisplay, TTexture>, boneTimelineName:String, boneTimelineData:BoneTimelineData;
 		for (i in 0...l)
 		{
 			bone = bones[i];
@@ -411,7 +411,7 @@ import dragonBones.objects.SlotTimelineData;
 		}
 		
 		l = _slotTimelines.length;
-		var slotTimelineState:SlotTimelineState;
+		var slotTimelineState:SlotTimelineState<TDisplay, TTexture>;
 		for (i in 0...l) // Create slot timelines map.
 		{ 
 			slotTimelineState = _slotTimelines[i];
@@ -419,7 +419,7 @@ import dragonBones.objects.SlotTimelineData;
 		}
 		
 		l = _ffdTimelines.length;
-		var ffdTimelineState:FFDTimelineState, display:DisplayData, meshName:String;
+		var ffdTimelineState:FFDTimelineState<TDisplay, TTexture>, display:DisplayData, meshName:String;
 		for (i in 0...l) // Create ffd timelines map.
 		{ 
 			ffdTimelineState = _ffdTimelines[i];
@@ -428,9 +428,9 @@ import dragonBones.objects.SlotTimelineData;
 			ffdTimelineStates[meshName] = ffdTimelineState;
 		}
 		
-		var slots:Vector<Slot> = _armature.getSlots();
+		var slots:Vector<Slot<TDisplay, TTexture>> = _armature.getSlots();
 		l = slots.length;
-		var slot:Slot, slotTimelineName:String, parentTimelineName:String, resetFFDVertices:Bool, slotTimelineData:SlotTimelineData, ffdTimelineDatas:Map<String, FFDTimelineData>;
+		var slot:Slot<TDisplay, TTexture>, slotTimelineName:String, parentTimelineName:String, resetFFDVertices:Bool, slotTimelineData:SlotTimelineData, ffdTimelineDatas:Map<String, FFDTimelineData>;
 		for (i in 0...l)
 		{
 			slot = slots[i];
@@ -629,7 +629,7 @@ import dragonBones.objects.SlotTimelineData;
 	/**
 	 * @private
 	 */
-	private function _isDisabled(slot:Slot):Bool
+	private function _isDisabled(slot:Slot<TDisplay, TTexture>):Bool
 	{
 		if (
 			displayControl &&
@@ -648,7 +648,7 @@ import dragonBones.objects.SlotTimelineData;
 	/**
 	 * @private
 	 */
-	private function _getBoneTimelineState(name:String):BoneTimelineState
+	private function _getBoneTimelineState(name:String):BoneTimelineState<TDisplay, TTexture>
 	{
 		for (boneTimelineState in _boneTimelines)
 		{
@@ -756,7 +756,7 @@ import dragonBones.objects.SlotTimelineData;
 	 */
 	public function addBoneMask(name:String, recursive:Bool = true):Void
 	{
-		var currentBone: Bone = _armature.getBone(name);
+		var currentBone: Bone<TDisplay, TTexture> = _armature.getBone(name);
 		if (currentBone == null) 
 		{
 			return;
@@ -771,9 +771,9 @@ import dragonBones.objects.SlotTimelineData;
 		
 		if (recursive) // Add recursive mixing.
 		{
-			var bones:Vector<Bone> = _armature.getBones();
+			var bones:Vector<Bone<TDisplay, TTexture>> = _armature.getBones();
 			var l:UInt = bones.length;
-			var bone:Bone;
+			var bone:Bone<TDisplay, TTexture>;
 			for (i in 0...l)
 			{
 				bone = bones[i];
@@ -807,11 +807,11 @@ import dragonBones.objects.SlotTimelineData;
 		
 		if (recursive) 
 		{
-			var currentBone:Bone = _armature.getBone(name);
+			var currentBone:Bone<TDisplay, TTexture> = _armature.getBone(name);
 			if (currentBone != null) 
 			{
-				var bones:Vector<Bone> = _armature.getBones();
-				var l:UInt = bones.length, bone:Bone;
+				var bones:Vector<Bone<TDisplay, TTexture>> = _armature.getBones();
+				var l:UInt = bones.length, bone:Bone<TDisplay, TTexture>;
 				if (_boneMask.length > 0) // Remove recursive mixing.
 				{
 					for (i in 0...l)

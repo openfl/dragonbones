@@ -237,9 +237,9 @@ import dragonBones.core.BaseObject;
 		return boneMask.length == 0 || boneMask.indexOf(name) >= 0;
 	}
 	
-	public function addBoneMask(armature: Armature, name: String, recursive:Bool = true):Void 
+	public function addBoneMask<TDisplay, TTexture>(armature: Armature<TDisplay, TTexture>, name: String, recursive:Bool = true):Void 
 	{
-		var currentBone: Bone = armature.getBone(name);
+		var currentBone: Bone<TDisplay, TTexture> = armature.getBone(name);
 		if (currentBone == null) 
 		{
 			return;
@@ -252,9 +252,9 @@ import dragonBones.core.BaseObject;
 		
 		if (recursive) // Add recursive mixing.
 		{
-			var bones:Vector<Bone> = armature.getBones();
+			var bones:Vector<Bone<TDisplay, TTexture>> = armature.getBones();
 			var l:UInt = bones.length;
-			var bone:Bone;
+			var bone:Bone<TDisplay, TTexture>;
 			for (i in 0...l)
 			{
 				bone = bones[i];
@@ -266,7 +266,7 @@ import dragonBones.core.BaseObject;
 		}
 	}
 	
-	public function removeBoneMask(armature: Armature, name: String, recursive:Bool = true):Void 
+	public function removeBoneMask<TDisplay, TTexture>(armature: Armature<TDisplay, TTexture>, name: String, recursive:Bool = true):Void 
 	{
 		var index:Int = boneMask.indexOf(name);
 		if (index >= 0)  // Remove mixing.
@@ -276,11 +276,11 @@ import dragonBones.core.BaseObject;
 		
 		if (recursive) 
 		{
-			var currentBone:Bone = armature.getBone(name);
+			var currentBone:Bone<TDisplay, TTexture> = armature.getBone(name);
 			if (currentBone != null) 
 			{
-				var bones:Vector<Bone> = armature.getBones();
-				var l:UInt, bone:Bone;
+				var bones:Vector<Bone<TDisplay, TTexture>> = armature.getBones();
+				var l:UInt, bone:Bone<TDisplay, TTexture>;
 				if (boneMask.length > 0) // Remove recursive mixing.
 				{
 					l = bones.length;

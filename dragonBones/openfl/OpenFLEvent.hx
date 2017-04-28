@@ -1,14 +1,16 @@
 package dragonBones.openfl;
 
+import openfl.display.BitmapData;
+import openfl.display.DisplayObject;
 import openfl.events.Event;
 
 import dragonBones.events.EventObject;
 
 @:final class OpenFLEvent extends Event
 {
-	public var eventObject:EventObject = null;
+	public var eventObject:EventObject<DisplayObject, BitmapData> = null;
 	
-	public function new(type:String, data:EventObject)
+	public function new(type:String, data:EventObject<DisplayObject, BitmapData>)
 	{
 		super(type);
 		

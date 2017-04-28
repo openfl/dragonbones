@@ -10,7 +10,9 @@ import dragonBones.animation.WorldClock;
 import dragonBones.events.EventObject;
 import dragonBones.starling.StarlingArmatureDisplay;
 
+import starling.display.DisplayObject;
 import starling.events.Event;
+import starling.textures.Texture;
 
 class Mecha
 {
@@ -37,13 +39,13 @@ class Mecha
 	private var _aimRadian: Float = 0;
 	private var _speedX: Float = 0;
 	private var _speedY: Float = 0;
-	private var _armature: Armature = null;
+	private var _armature: Armature<DisplayObject, Texture> = null;
 	private var _armatureDisplay: StarlingArmatureDisplay = null;
-	private var _weaponR: Armature = null;
-	private var _weaponL: Armature = null;
-	private var _aimState: AnimationState = null;
-	private var _walkState: AnimationState = null;
-	private var _attackState: AnimationState = null;
+	private var _weaponR: Armature<DisplayObject, Texture> = null;
+	private var _weaponL: Armature<DisplayObject, Texture> = null;
+	private var _aimState: AnimationState<DisplayObject, Texture> = null;
+	private var _walkState: AnimationState<DisplayObject, Texture> = null;
+	private var _attackState: AnimationState<DisplayObject, Texture> = null;
 	private var _target: Point = new Point();
 
 	public function new()
@@ -167,7 +169,7 @@ class Mecha
 
 	private function _animationEventHandler(event: Event): Void
 	{
-		var eventObject: EventObject = cast(event.data, EventObject);
+		var eventObject: EventObject<DisplayObject, Texture> = event.data;
 		switch (event.type)
 		{
 			case EventObject.FADE_IN_COMPLETE:
@@ -196,10 +198,10 @@ class Mecha
 
 	private function _frameEventHandler(event: Event): Void
 	{
-		var eventObject: EventObject = cast(event.data, EventObject);
+		var eventObject: EventObject<DisplayObject, Texture> = event.data;
 		if (eventObject.name == "onFire")
 		{
-			var firePointBone: Bone = eventObject.armature.getBone("firePoint");
+			var firePointBone: Bone<DisplayObject, Texture> = eventObject.armature.getBone("firePoint");
 
 			_localPoint.x = firePointBone.global.x;
 			_localPoint.y = firePointBone.global.y;

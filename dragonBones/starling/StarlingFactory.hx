@@ -18,6 +18,7 @@ import dragonBones.parsers.DataParser;
 import dragonBones.textures.TextureAtlasData;
 
 import starling.core.Starling;
+import starling.display.DisplayObject;
 import starling.display.Image;
 import starling.events.EnterFrameEvent;
 import starling.textures.SubTexture;
@@ -35,7 +36,7 @@ import starling.rendering.VertexData;
  * Starling 工厂。
  * @version DragonBones 3.0
  */
-@:allow(dragonBones) @:final class StarlingFactory extends BaseFactory
+@:allow(dragonBones) @:final class StarlingFactory extends BaseFactory<DisplayObject, Texture>
 {
 	/**
 	 * @private
@@ -107,14 +108,14 @@ import starling.rendering.VertexData;
 	/**
 	 * @private
 	 */
-	override private function _generateArmature(dataPackage:BuildArmaturePackage):Armature
+	override private function _generateArmature(dataPackage:BuildArmaturePackage):Armature<DisplayObject, Texture>
 	{
 		if (Starling.current != null && !Starling.current.stage.hasEventListener(EnterFrameEvent.ENTER_FRAME))
 		{
 			Starling.current.stage.addEventListener(EnterFrameEvent.ENTER_FRAME, _clockHandler);
 		}
 		
-		var armature:Armature = cast BaseObject.borrowObject(Armature);
+		var armature:Armature<DisplayObject, Texture> = cast BaseObject.borrowObject(Armature);
 		var armatureDisplay:StarlingArmatureDisplay = new StarlingArmatureDisplay();
 		armatureDisplay._armature = armature;
 		
@@ -128,7 +129,7 @@ import starling.rendering.VertexData;
 	/**
 	 * @private
 	 */
-	override private function _generateSlot(dataPackage:BuildArmaturePackage, skinSlotData:SkinSlotData, armature:Armature):Slot
+	override private function _generateSlot(dataPackage:BuildArmaturePackage, skinSlotData:SkinSlotData, armature:Armature<DisplayObject, Texture>):Slot<DisplayObject, Texture>
 	{
 		var slot:StarlingSlot = cast BaseObject.borrowObject(StarlingSlot);
 		var slotData:SlotData = skinSlotData.slot;
@@ -144,7 +145,7 @@ import starling.rendering.VertexData;
 		#end
 		
 		var l:UInt = skinSlotData.displays.length;
-		var displayData:DisplayData, childArmature:Armature, actions:Vector<ActionData>;
+		var displayData:DisplayData, childArmature:Armature<DisplayObject, Texture>, actions:Vector<ActionData>;
 		for (i in 0...l)
 		{
 			displayData = skinSlotData.displays[i];
@@ -214,7 +215,7 @@ import starling.rendering.VertexData;
 	 */
 	public function buildArmatureDisplay(armatureName:String, dragonBonesName:String = null, skinName:String = null, textureAtlasName:String = null):StarlingArmatureDisplay
 	{
-		var armature:Armature = buildArmature(armatureName, dragonBonesName, skinName, textureAtlasName);
+		var armature:Armature<DisplayObject, Texture> = buildArmature(armatureName, dragonBonesName, skinName, textureAtlasName);
 		if (armature != null)
 		{
 			_clock.add(armature);

@@ -13,7 +13,7 @@ import dragonBones.objects.CustomData;
  * 事件数据。
  * @version DragonBones 4.5
  */
-@:allow(dragonBones) class EventObject extends BaseObject
+@:allow(dragonBones) class EventObject<TDisplay, TTexture> extends BaseObject
 {
 	/**
 	 * @language zh_CN
@@ -98,25 +98,25 @@ import dragonBones.objects.CustomData;
 	 * 发出事件的骨架。
 	 * @version DragonBones 4.5
 	 */
-	public var armature:Armature;
+	public var armature:Armature<TDisplay, TTexture>;
 	/**
 	 * @language zh_CN
 	 * 发出事件的骨骼。
 	 * @version DragonBones 4.5
 	 */
-	public var bone:Bone;
+	public var bone:Bone<TDisplay, TTexture>;
 	/**
 	 * @language zh_CN
 	 * 发出事件的插槽。
 	 * @version DragonBones 4.5
 	 */
-	public var slot:Slot;
+	public var slot:Slot<TDisplay, TTexture>;
 	/**
 	 * @language zh_CN
 	 * 发出事件的动画状态。
 	 * @version DragonBones 4.5
 	 */
-	public var animationState:AnimationState;
+	public var animationState:AnimationState<TDisplay, TTexture>;
 	/**
 	 * @private
 	 */

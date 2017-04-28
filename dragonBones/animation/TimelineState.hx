@@ -9,7 +9,7 @@ import dragonBones.objects.TimelineData;
 /**
  * @private
  */
-@:allow(dragonBones) class TimelineState extends BaseObject
+@:allow(dragonBones) class TimelineState<TDisplay, TTexture> extends BaseObject
 {
 	private var _playState:Int; // -1 start 0 play 1 complete
 	private var _currentPlayTimes:UInt;
@@ -25,9 +25,9 @@ import dragonBones.objects.TimelineData;
 	private var _timeScale:Float;
 	private var _timeOffset:Float;
 	private var _currentFrame:FrameData;
-	private var _armature:Armature;
-	private var _animationState:AnimationState;
-	private var _mainTimeline:AnimationTimelineState;
+	private var _armature:Armature<TDisplay, TTexture>;
+	private var _animationState:AnimationState<TDisplay, TTexture>;
+	private var _mainTimeline:AnimationTimelineState<TDisplay, TTexture>;
 	
 	private function new()
 	{
@@ -148,7 +148,7 @@ import dragonBones.objects.TimelineData;
 		return true;
 	}
 	
-	public function _init(armature: Armature, animationState: AnimationState, timelineData: TimelineData):Void 
+	public function _init(armature: Armature<TDisplay, TTexture>, animationState: AnimationState<TDisplay, TTexture>, timelineData: TimelineData):Void 
 	{
 		_armature = armature;
 		_animationState = animationState;

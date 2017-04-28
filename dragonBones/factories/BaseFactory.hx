@@ -51,7 +51,7 @@ import dragonBones.textures.TextureData;
  * @see dragonBones.Armature
  * @version DragonBones 3.0
  */
-@:allow(dragonBones) class BaseFactory extends EventDispatcher
+@:allow(dragonBones) class BaseFactory<TDisplay, TTexture> extends EventDispatcher
 {
 	/**
 	 * @private
@@ -184,11 +184,11 @@ import dragonBones.textures.TextureData;
 	/** 
 	 * @private
 	 */
-	private function _buildBones(dataPackage:BuildArmaturePackage, armature:Armature):Void
+	private function _buildBones(dataPackage:BuildArmaturePackage, armature:Armature<TDisplay, TTexture>):Void
 	{
 		var bones:Vector<BoneData> = dataPackage.armature.sortedBones;
 		var l:UInt = bones.length;
-		var boneData:BoneData, bone:Bone;
+		var boneData:BoneData, bone:Bone<TDisplay, TTexture>;
 		for (i in 0...l)
 		{
 			boneData = bones[i];
@@ -215,7 +215,7 @@ import dragonBones.textures.TextureData;
 	/**
 	 * @private
 	 */
-	private function _buildSlots(dataPackage:BuildArmaturePackage, armature:Armature):Void
+	private function _buildSlots(dataPackage:BuildArmaturePackage, armature:Armature<TDisplay, TTexture>):Void
 	{
 		var currentSkin:SkinData = dataPackage.skin;
 		var defaultSkin:SkinData = dataPackage.armature.defaultSkin;
@@ -236,7 +236,7 @@ import dragonBones.textures.TextureData;
 		
 		var slots:Vector<SlotData> = dataPackage.armature.sortedSlots;
 		var l:UInt = slots.length;
-		var slotData:SlotData, skinSlotData:SkinSlotData, slot:Slot;
+		var slotData:SlotData, skinSlotData:SkinSlotData, slot:Slot<TDisplay, TTexture>;
 		for (i in 0...l)
 		{
 			slotData = slots[i];
@@ -257,7 +257,7 @@ import dragonBones.textures.TextureData;
 	/**
 	 * @private
 	 */
-	private function _replaceSlotDisplay(dataPackage:BuildArmaturePackage, displayData:DisplayData, slot:Slot, displayIndex:Int):Void
+	private function _replaceSlotDisplay(dataPackage:BuildArmaturePackage, displayData:DisplayData, slot:Slot<TDisplay, TTexture>, displayIndex:Int):Void
 	{
 		if (displayIndex < 0) 
 		{
@@ -281,7 +281,7 @@ import dragonBones.textures.TextureData;
 			
 			if (displayData.type == DisplayType.Armature) 
 			{
-				var childArmature:Armature = buildArmature(displayData.path, dataPackage.dataName, null, dataPackage.textureAtlasName);
+				var childArmature:Armature<TDisplay, TTexture> = buildArmature(displayData.path, dataPackage.dataName, null, dataPackage.textureAtlasName);
 				displayList[displayIndex] = childArmature;
 			}
 			else 
@@ -319,7 +319,7 @@ import dragonBones.textures.TextureData;
 	/**
 	 * @private
 	 */
-	private function _generateArmature(dataPackage:BuildArmaturePackage):Armature
+	private function _generateArmature(dataPackage:BuildArmaturePackage):Armature<TDisplay, TTexture>
 	{
 		throw new Error(DragonBones.ABSTRACT_METHOD_ERROR);
 		return null;
@@ -327,7 +327,7 @@ import dragonBones.textures.TextureData;
 	/** 
 	 * @private
 	 */
-	private function _generateSlot(dataPackage:BuildArmaturePackage, slotDisplayDataSet:SkinSlotData, armature:Armature):Slot
+	private function _generateSlot(dataPackage:BuildArmaturePackage, slotDisplayDataSet:SkinSlotData, armature:Armature<TDisplay, TTexture>):Slot<TDisplay, TTexture>
 	{
 		throw new Error(DragonBones.ABSTRACT_METHOD_ERROR);
 		return null;
@@ -350,7 +350,7 @@ import dragonBones.textures.TextureData;
 		var isComplete:Bool = true;
 		if (Std.is(rawData, ByteArrayData))
 		{
-			var decodeData:DecodedData = DecodedData.decode(cast rawData);
+			var decodeData:DecodedData = DecodedData.decode((rawData:ByteArray));
 			if (decodeData != null)
 			{
 				_decodeDataList.push(decodeData);
@@ -406,11 +406,11 @@ import dragonBones.textures.TextureData;
 		
 		if (Std.is(textureAtlas, Bitmap))
 		{
-			textureAtlas = cast(textureAtlas, Bitmap).bitmapData;
+			textureAtlas = (textureAtlas:Bitmap).bitmapData;
 		}
 		else if (Std.is(textureAtlas, DisplayObject))
 		{
-			var displayObject:DisplayObject = cast textureAtlas;
+			var displayObject:DisplayObject = (textureAtlas:DisplayObject);
 			var rect:Rectangle = displayObject.getRect(displayObject);
 			var matrix:Matrix = new Matrix();
 			matrix.scale(textureAtlasData.scale, textureAtlasData.scale);
@@ -636,12 +636,12 @@ import dragonBones.textures.TextureData;
 	 * @see dragonBones.Armature
 	 * @version DragonBones 3.0
 	 */
-	public function buildArmature(armatureName:String, dragonBonesName:String = null, skinName:String = null, textureAtlasName:String = null):Armature
+	public function buildArmature(armatureName:String, dragonBonesName:String = null, skinName:String = null, textureAtlasName:String = null):Armature<TDisplay, TTexture>
 	{
 		var dataPackage:BuildArmaturePackage = new BuildArmaturePackage();
 		if (_fillBuildArmaturePackage(dataPackage, dragonBonesName, armatureName, skinName, textureAtlasName))
 		{
-			var armature:Armature = _generateArmature(dataPackage);
+			var armature:Armature<TDisplay, TTexture> = _generateArmature(dataPackage);
 			_buildBones(dataPackage, armature);
 			_buildSlots(dataPackage, armature);
 			
@@ -665,7 +665,7 @@ import dragonBones.textures.TextureData;
 	 * @version DragonBones 4.5
 	 */
 	public function copyAnimationsToArmature(
-		toArmature:Armature, fromArmatreName:String, fromSkinName:String = null,
+		toArmature:Armature<TDisplay, TTexture>, fromArmatreName:String, fromSkinName:String = null,
 		fromDragonBonesDataName:String = null, ifRemoveOriginalAnimationList:Bool = true
 	):Bool
 	{
@@ -696,9 +696,9 @@ import dragonBones.textures.TextureData;
 			
 			if (dataPackage.skin != null)
 			{
-				var slots:Vector<Slot> = toArmature.getSlots();
+				var slots:Vector<Slot<TDisplay, TTexture>> = toArmature.getSlots();
 				var l:UInt = slots.length;
-				var toSlot:Slot, toSlotDisplayList:Vector<Dynamic>, lA:UInt, toDisplayObject:Dynamic, displays:Vector<DisplayData>, fromDisplayData:DisplayData;
+				var toSlot:Slot<TDisplay, TTexture>, toSlotDisplayList:Vector<Dynamic>, lA:UInt, toDisplayObject:Dynamic, displays:Vector<DisplayData>, fromDisplayData:DisplayData;
 				for (i in 0...l)
 				{
 					toSlot = slots[i];
@@ -715,7 +715,7 @@ import dragonBones.textures.TextureData;
 								fromDisplayData = displays[iA];
 								if (fromDisplayData.type == DisplayType.Armature)
 								{
-									copyAnimationsToArmature(cast(toDisplayObject, Armature), fromDisplayData.path, fromSkinName, fromDragonBonesDataName, ifRemoveOriginalAnimationList);
+									copyAnimationsToArmature((toDisplayObject:Armature<TDisplay, TTexture>), fromDisplayData.path, fromSkinName, fromDragonBonesDataName, ifRemoveOriginalAnimationList);
 								}
 							}
 						}
@@ -739,7 +739,7 @@ import dragonBones.textures.TextureData;
 	 * @param displayIndex 要替换的显示对象的索引，如果未设置，则替换当前正在显示的显示对象。
 	 * @version DragonBones 4.5
 	 */
-	public function replaceSlotDisplay(dragonBonesName:String, armatureName:String, slotName:String, displayName:String, slot:Slot, displayIndex:Int = -1):Void
+	public function replaceSlotDisplay(dragonBonesName:String, armatureName:String, slotName:String, displayName:String, slot:Slot<TDisplay, TTexture>, displayIndex:Int = -1):Void
 	{
 		var dataPackage:BuildArmaturePackage = new BuildArmaturePackage();
 		if (_fillBuildArmaturePackage(dataPackage, dragonBonesName, armatureName, null, null))
@@ -770,7 +770,7 @@ import dragonBones.textures.TextureData;
 	 * @param slot 指定的插槽实例。
 	 * @version DragonBones 4.5
 	 */
-	public function replaceSlotDisplayList(dragonBonesName:String, armatureName:String, slotName:String, slot:Slot):Void
+	public function replaceSlotDisplayList(dragonBonesName:String, armatureName:String, slotName:String, slot:Slot<TDisplay, TTexture>):Void
 	{
 		var dataPackage:BuildArmaturePackage = new BuildArmaturePackage();
 		if (_fillBuildArmaturePackage(dataPackage, dragonBonesName, armatureName, null, null))
@@ -823,8 +823,8 @@ import dragonBones.textures.TextureData;
 	private var _decodeDataList:Vector<DecodedData> = new Vector<DecodedData>();
 	private function _loadTextureAtlasHandler(event:Event):Void
 	{
-		var loaderInfo:LoaderInfo = cast(event.target, LoaderInfo);
-		var decodeData:DecodedData = cast(loaderInfo.loader, DecodedData);
+		var loaderInfo:LoaderInfo = cast event.target;
+		var decodeData:DecodedData = cast loaderInfo.loader;
 		loaderInfo.removeEventListener(Event.COMPLETE, _loadTextureAtlasHandler);
 		parseTextureAtlasData(decodeData.textureAtlasData, decodeData.content, decodeData.name, scaleForTexture, 1);
 		decodeData.dispose();

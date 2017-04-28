@@ -7,8 +7,10 @@ import openfl.Assets;
 import openfl.Vector;
 
 // Starling render
+import starling.display.DisplayObject;
 import starling.display.Sprite;
 import starling.events.Event;
+import starling.textures.Texture;
 
 import dragonBones.events.EventObject;
 import dragonBones.objects.DragonBonesData;
@@ -147,7 +149,7 @@ class StarlingRender extends starling.display.Sprite
 	 */
 	private function _animationHandler(event:starling.events.Event): Void 
 	{
-		var eventObject:EventObject = cast(event.data, EventObject);
+		var eventObject:EventObject<DisplayObject, Texture> = event.data;
 		trace(event.type, eventObject.animationState.name);
 	}
 
@@ -156,7 +158,7 @@ class StarlingRender extends starling.display.Sprite
 	 */
 	private function _frameEventHandler(event: starling.events.Event): Void 
 	{
-		var eventObject:EventObject = cast(event.data, EventObject);
+		var eventObject:EventObject<DisplayObject, Texture> = event.data;
 		trace(event.type, eventObject.animationState.name, eventObject.name);
 	}
 }

@@ -17,9 +17,9 @@ import dragonBones.objects.AnimationData;
  * @see dragonBones.animation.AnimationState
  * @version DragonBones 3.0
  */
-@:allow(dragonBones) class Animation extends BaseObject
+@:allow(dragonBones) class Animation<TDisplay, TTexture> extends BaseObject
 {
-	private static function _sortAnimationState(a:AnimationState, b:AnimationState):Int
+	private static function _sortAnimationState<TDisplay, TTexture>(a:AnimationState<TDisplay, TTexture>, b:AnimationState<TDisplay, TTexture>):Int
 	{
 		return a.layer > b.layer? -1: 1;
 	}
@@ -43,9 +43,9 @@ import dragonBones.objects.AnimationData;
 	private var _cacheFrameIndex:Int;
 	private var _animationNames:Vector<String> = new Vector<String>();
 	private var _animations:Map<String, AnimationData> = new Map<String, AnimationData>();
-	private var _animationStates:Vector<AnimationState> = new Vector<AnimationState>();
-	private var _armature:Armature;
-	private var _lastAnimationState:AnimationState;
+	private var _animationStates:Vector<AnimationState<TDisplay, TTexture>> = new Vector<AnimationState<TDisplay, TTexture>>();
+	private var _armature:Armature<TDisplay, TTexture>;
+	private var _lastAnimationState:AnimationState<TDisplay, TTexture>;
 	private var _animationConfig:AnimationConfig;
 	/**
 	 * @private
@@ -89,7 +89,7 @@ import dragonBones.objects.AnimationData;
 	private function _fadeOut(animationConfig:AnimationConfig):Void
 	{
 		var l:UInt = _animationStates.length;
-		var animationState:AnimationState = null;
+		var animationState:AnimationState<TDisplay, TTexture> = null;
 		
 		switch (animationConfig.fadeOutMode)
 		{
@@ -140,7 +140,7 @@ import dragonBones.objects.AnimationData;
 	/**
 	 * @private
 	 */
-	private function _init(armature:Armature):Void 
+	private function _init(armature:Armature<TDisplay, TTexture>):Void 
 	{
 		if (_armature != null) 
 		{
@@ -175,7 +175,7 @@ import dragonBones.objects.AnimationData;
 			passedTime *= timeScale;
 		}
 		
-		var animationState:AnimationState = null;
+		var animationState:AnimationState<TDisplay, TTexture> = null;
 		
 		var animationStateCount:Int = _animationStates.length;
 		if (animationStateCount == 1)
@@ -197,18 +197,18 @@ import dragonBones.objects.AnimationData;
 				{
 					_animationStateDirty = false;
 					
-					var bones:Vector<Bone> = _armature.getBones();
+					var bones:Vector<Bone<TDisplay, TTexture>> = _armature.getBones();
 					var l:UInt = bones.length;
-					var bone:Bone;
+					var bone:Bone<TDisplay, TTexture>;
 					for (i in 0...l)
 					{
 						bone = bones[i];
 						bone._cachedFrameIndices = animationData.getBoneCachedFrameIndices(bone.name);
 					}
 					
-					var slots:Vector<Slot> = _armature.getSlots();
+					var slots:Vector<Slot<TDisplay, TTexture>> = _armature.getSlots();
 					l = slots.length;
-					var slot:Slot;
+					var slot:Slot<TDisplay, TTexture>;
 					for (i in 0...l)
 					{
 						slot = slots[i];
@@ -309,7 +309,7 @@ import dragonBones.objects.AnimationData;
 	{
 		if (animationName != null)
 		{
-			var animationState:AnimationState = getState(animationName);
+			var animationState:AnimationState<TDisplay, TTexture> = getState(animationName);
 			if (animationState != null)
 			{
 				animationState.stop();
@@ -330,7 +330,7 @@ import dragonBones.objects.AnimationData;
 	 * @see dragonBones.animation.AnimationState
 	 * @version DragonBones 5.0
 	 */
-	public function playConfig(animationConfig:AnimationConfig):AnimationState 
+	public function playConfig(animationConfig:AnimationConfig):AnimationState<TDisplay, TTexture> 
 	{
 		if (animationConfig == null) 
 		{
@@ -434,9 +434,9 @@ import dragonBones.objects.AnimationData;
 		}
 		
 		// Child armature play same name animation.
-		var slots:Vector<Slot> = _armature.getSlots();
+		var slots:Vector<Slot<TDisplay, TTexture>> = _armature.getSlots();
 		var l:UInt = slots.length;
-		var childArmature:Armature;
+		var childArmature:Armature<TDisplay, TTexture>;
 		for (i in 0...l)
 		{
 			childArmature = slots[i].childArmature;
@@ -479,7 +479,7 @@ import dragonBones.objects.AnimationData;
 	public function fadeIn(
 		animationName:String, fadeInTime:Float = -1.0, playTimes:Int = -1,
 		layer:Int = 0, group:String = null, fadeOutMode:Int = AnimationFadeOutMode.SameLayerAndGroup
-	):AnimationState
+	):AnimationState<TDisplay, TTexture>
 	{
 		_animationConfig.clear();
 		_animationConfig.fadeOutMode = fadeOutMode;
@@ -500,7 +500,7 @@ import dragonBones.objects.AnimationData;
 	 * @see dragonBones.animation.AnimationState
 	 * @version DragonBones 3.0
 	 */
-	public function play(animationName:String = null, playTimes:Int = -1):AnimationState
+	public function play(animationName:String = null, playTimes:Int = -1):AnimationState<TDisplay, TTexture>
 	{
 		_animationConfig.clear();
 		_animationConfig.playTimes = playTimes;
@@ -543,7 +543,7 @@ import dragonBones.objects.AnimationData;
 	 * @see dragonBones.animation.AnimationState
 	 * @version DragonBones 4.5
 	 */
-	public function gotoAndPlayByTime(animationName:String, time:Float = 0.0, playTimes:Int = -1):AnimationState
+	public function gotoAndPlayByTime(animationName:String, time:Float = 0.0, playTimes:Int = -1):AnimationState<TDisplay, TTexture>
 	{
 		_animationConfig.clear();
 		_animationConfig.playTimes = playTimes;
@@ -563,7 +563,7 @@ import dragonBones.objects.AnimationData;
 	 * @see dragonBones.animation.AnimationState
 	 * @version DragonBones 4.5
 	 */
-	public function gotoAndPlayByFrame(animationName:String, frame:UInt = 0, playTimes:Int = -1):AnimationState
+	public function gotoAndPlayByFrame(animationName:String, frame:UInt = 0, playTimes:Int = -1):AnimationState<TDisplay, TTexture>
 	{
 		_animationConfig.clear();
 		_animationConfig.playTimes = playTimes;
@@ -588,7 +588,7 @@ import dragonBones.objects.AnimationData;
 	 * @see dragonBones.animation.AnimationState
 	 * @version DragonBones 4.5
 	 */
-	public function gotoAndPlayByProgress(animationName:String, progress:Float = 0.0, playTimes:Int = -1):AnimationState
+	public function gotoAndPlayByProgress(animationName:String, progress:Float = 0.0, playTimes:Int = -1):AnimationState<TDisplay, TTexture>
 	{
 		_animationConfig.clear();
 		_animationConfig.playTimes = playTimes;
@@ -612,9 +612,9 @@ import dragonBones.objects.AnimationData;
 	 * @see dragonBones.animation.AnimationState
 	 * @version DragonBones 4.5
 	 */
-	public function gotoAndStopByTime(animationName:String, time:Float = 0.0):AnimationState
+	public function gotoAndStopByTime(animationName:String, time:Float = 0.0):AnimationState<TDisplay, TTexture>
 	{
-		var animationState:AnimationState = gotoAndPlayByTime(animationName, time, 1);
+		var animationState:AnimationState<TDisplay, TTexture> = gotoAndPlayByTime(animationName, time, 1);
 		if (animationState != null) 
 		{
 			animationState.stop();
@@ -631,9 +631,9 @@ import dragonBones.objects.AnimationData;
 	 * @see dragonBones.animation.AnimationState
 	 * @version DragonBones 4.5
 	 */
-	public function gotoAndStopByFrame(animationName:String, frame:UInt = 0):AnimationState
+	public function gotoAndStopByFrame(animationName:String, frame:UInt = 0):AnimationState<TDisplay, TTexture>
 	{
-		var animationState:AnimationState = gotoAndPlayByFrame(animationName, frame, 1);
+		var animationState:AnimationState<TDisplay, TTexture> = gotoAndPlayByFrame(animationName, frame, 1);
 		if (animationState != null)
 		{
 			animationState.stop();
@@ -650,9 +650,9 @@ import dragonBones.objects.AnimationData;
 	 * @see dragonBones.animation.AnimationState
 	 * @version DragonBones 4.5
 	 */
-	public function gotoAndStopByProgress(animationName:String, progress:Float = 0):AnimationState
+	public function gotoAndStopByProgress(animationName:String, progress:Float = 0):AnimationState<TDisplay, TTexture>
 	{
-		var animationState:AnimationState = gotoAndPlayByProgress(animationName, progress, 1);
+		var animationState:AnimationState<TDisplay, TTexture> = gotoAndPlayByProgress(animationName, progress, 1);
 		if (animationState != null)
 		{
 			animationState.stop();
@@ -667,10 +667,10 @@ import dragonBones.objects.AnimationData;
 	 * @see dragonBones.animation.AnimationState
 	 * @version DragonBones 3.0
 	 */
-	public function getState(animationName:String):AnimationState
+	public function getState(animationName:String):AnimationState<TDisplay, TTexture>
 	{
 		var l:UInt = _animationStates.length;
-		var animationState:AnimationState;
+		var animationState:AnimationState<TDisplay, TTexture>;
 		for (i in 0...l)
 		{
 			animationState = _animationStates[i];
@@ -759,8 +759,8 @@ import dragonBones.objects.AnimationData;
 	 * @see dragonBones.animation.AnimationState
 	 * @version DragonBones 3.0
 	 */
-	public var lastAnimationState(get, never):AnimationState;
-	private function get_lastAnimationState():AnimationState
+	public var lastAnimationState(get, never):AnimationState<TDisplay, TTexture>;
+	private function get_lastAnimationState():AnimationState<TDisplay, TTexture>
 	{
 		return _lastAnimationState;
 	}

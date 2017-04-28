@@ -2,6 +2,8 @@
 
 import haxe.Constraints;
 
+import openfl.display.BitmapData;
+import openfl.display.DisplayObject;
 import openfl.display.Shape;
 import openfl.display.Sprite;
 import openfl.Vector;
@@ -19,12 +21,12 @@ import dragonBones.objects.BoundingBoxData;
 /**
  * @inheritDoc
  */
-@:allow(dragonBones) class OpenFLArmatureDisplay extends Sprite implements IArmatureDisplay
+@:allow(dragonBones) class OpenFLArmatureDisplay extends Sprite implements IArmatureDisplay<DisplayObject, BitmapData>
 {
 	/**
 	 * @private
 	 */
-	private var _armature:Armature;
+	private var _armature:Armature<DisplayObject, BitmapData>;
 	
 	private var _debugDrawer:Sprite;
 	/**
@@ -45,7 +47,7 @@ import dragonBones.objects.BoundingBoxData;
 	/**
 	 * @private
 	 */
-	private function _dispatchEvent(type:String, eventObject:EventObject):Void
+	private function _dispatchEvent(type:String, eventObject:EventObject<DisplayObject, BitmapData>):Void
 	{
 		var event:OpenFLEvent = new OpenFLEvent(type, eventObject);
 		dispatchEvent(event);
@@ -65,9 +67,9 @@ import dragonBones.objects.BoundingBoxData;
 			addChild(_debugDrawer);
 			_debugDrawer.graphics.clear();
 			
-			var bones:Vector<Bone> = _armature.getBones();
+			var bones:Vector<Bone<DisplayObject, BitmapData>> = _armature.getBones();
 			var l:UInt = bones.length;
-			var bone:Bone, boneLength:Float, startX:Float, startY:Float, endX:Float, endY:Float;
+			var bone:Bone<DisplayObject, BitmapData>, boneLength:Float, startX:Float, startY:Float, endX:Float, endY:Float;
 			for (i in 0...l)
 			{
 				bone = bones[i];
@@ -86,9 +88,9 @@ import dragonBones.objects.BoundingBoxData;
 				_debugDrawer.graphics.endFill();
 			}
 			
-			var slots:Vector<Slot> = _armature.getSlots();
+			var slots:Vector<Slot<DisplayObject, BitmapData>> = _armature.getSlots();
 			l = slots.length;
-			var slot:Slot, boundingBoxData:BoundingBoxData, child:Shape, vertices:Vector<Float>;
+			var slot:Slot<DisplayObject, BitmapData>, boundingBoxData:BoundingBoxData, child:Shape, vertices:Vector<Float>;
 			var iA:UInt, lA:UInt;
 			for (i in 0...l)
 			{
@@ -142,7 +144,7 @@ import dragonBones.objects.BoundingBoxData;
 				}
 				else
 				{
-					child = cast (_debugDrawer.getChildByName(slot.name), Shape);
+					child = cast(_debugDrawer.getChildByName(slot.name), Shape);
 					if (child != null) 
 					{
 						_debugDrawer.removeChild(child);
@@ -190,16 +192,16 @@ import dragonBones.objects.BoundingBoxData;
 	/**
 	 * @inheritDoc
 	 */
-	public var armature(get, never):Armature;
-	private function get_armature():Armature
+	public var armature(get, never):Armature<DisplayObject, BitmapData>;
+	private function get_armature():Armature<DisplayObject, BitmapData>
 	{
 		return _armature;
 	}
 	/**
 	 * @inheritDoc
 	 */
-	public var animation(get, never):Animation;
-	private function get_animation():Animation
+	public var animation(get, never):Animation<DisplayObject, BitmapData>;
+	private function get_animation():Animation<DisplayObject, BitmapData>
 	{
 		return _armature.animation;
 	}

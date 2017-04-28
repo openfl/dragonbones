@@ -15,7 +15,7 @@ import dragonBones.objects.FrameData;
 /**
  * @private
  */
-@:allow(dragonBones) @:final class AnimationTimelineState extends TimelineState
+@:allow(dragonBones) @:final class AnimationTimelineState<TDisplay, TTexture> extends TimelineState<TDisplay, TTexture>
 {
 	private function new()
 	{
@@ -34,10 +34,10 @@ import dragonBones.objects.FrameData;
 			}
 		}
 		
-		var eventDispatcher:IEventDispatcher = _armature.eventDispatcher;
+		var eventDispatcher:IEventDispatcher<TDisplay, TTexture> = _armature.eventDispatcher;
 		var events:Vector<EventData> = cast(frame, AnimationFrameData).events;
 		var l = events.length;
-		var eventData:EventData, eventType:String, eventObject:EventObject;
+		var eventData:EventData, eventType:String, eventObject:EventObject<TDisplay, TTexture>;
 		for (i in 0...l)
 		{
 			eventData = events[i];
@@ -56,7 +56,7 @@ import dragonBones.objects.FrameData;
 			{
 				eventObject = cast BaseObject.borrowObject(EventObject);
 				eventObject.name = eventData.name;
-				eventObject.frame = cast(frame, AnimationFrameData);
+				eventObject.frame = cast frame;
 				eventObject.data = eventData.data;
 				eventObject.animationState = _animationState;
 				
@@ -80,11 +80,11 @@ import dragonBones.objects.FrameData;
 		var prevState:Int = _playState;
 		var prevPlayTimes:UInt = _currentPlayTimes;
 		var prevTime:Float = _currentTime;
-		var eventObject:EventObject;
+		var eventObject:EventObject<TDisplay, TTexture>;
 		
 		if (_playState <= 0 && _setCurrentTime(passedTime)) 
 		{
-			var eventDispatcher:IEventDispatcher = _armature.eventDispatcher;
+			var eventDispatcher:IEventDispatcher<TDisplay, TTexture> = _armature.eventDispatcher;
 			
 			if (prevState < 0 && _playState != prevState) 
 			{

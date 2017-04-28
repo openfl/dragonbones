@@ -13,9 +13,9 @@ import dragonBones.objects.TimelineData;
 /**
  * @private
  */
-@:allow(dragonBones) @:final class FFDTimelineState extends TweenTimelineState
+@:allow(dragonBones) @:final class FFDTimelineState<TDisplay, TTexture> extends TweenTimelineState<TDisplay, TTexture>
 {
-	public var slot:Slot;
+	public var slot:Slot<TDisplay, TTexture>;
 	
 	private var _ffdDirty:Bool;
 	private var _tweenFFD:Int;
@@ -116,7 +116,7 @@ import dragonBones.objects.TimelineData;
 		}
 	}
 	
-	override public function _init(armature:Armature, animationState:AnimationState, timelineData:TimelineData):Void
+	override public function _init(armature:Armature<TDisplay, TTexture>, animationState:AnimationState<TDisplay, TTexture>, timelineData:TimelineData):Void
 	{
 		super._init(armature, animationState, timelineData);
 		

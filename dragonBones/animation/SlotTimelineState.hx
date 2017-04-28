@@ -12,9 +12,9 @@ import dragonBones.objects.TimelineData;
 /**
  * @private
  */
-@:allow(dragonBones) @:final class SlotTimelineState extends TweenTimelineState
+@:allow(dragonBones) @:final class SlotTimelineState<TDisplay, TTexture> extends TweenTimelineState<TDisplay, TTexture>
 {
-	public var slot:Slot;
+	public var slot:Slot<TDisplay, TTexture>;
 	
 	private var _colorDirty:Bool;
 	private var _tweenColor:Int;
@@ -66,7 +66,7 @@ import dragonBones.objects.TimelineData;
 			return;
 		}
 		
-		var currentFrame:SlotFrameData = cast(_currentFrame, SlotFrameData);
+		var currentFrame:SlotFrameData = cast _currentFrame;
 		var displayIndex:Int = currentFrame.displayIndex;
 		if (_playState >= 0 && slot.displayIndex != displayIndex) 
 		{
@@ -169,7 +169,7 @@ import dragonBones.objects.TimelineData;
 		}
 	}
 	
-	override public function _init(armature:Armature, animationState:AnimationState, timelineData:TimelineData):Void
+	override public function _init(armature:Armature<TDisplay, TTexture>, animationState:AnimationState<TDisplay, TTexture>, timelineData:TimelineData):Void
 	{
 		super._init(armature, animationState, timelineData);
 		

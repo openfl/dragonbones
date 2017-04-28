@@ -6,12 +6,15 @@ import dragonBones.Armature;
 import dragonBones.animation.WorldClock;
 import dragonBones.starling.StarlingArmatureDisplay;
 
+import starling.display.DisplayObject;
+import starling.textures.Texture;
+
 class Bullet
 {
 	private var _speedX: Float = 0;
 	private var _speedY: Float = 0;
 
-	private var _armature: Armature = null;
+	private var _armature: Armature<DisplayObject, Texture> = null;
 	private var _armatureDisplay: StarlingArmatureDisplay = null;
 
 	public function new(armatureName: String, radian: Float, speed: Float, position: Point)

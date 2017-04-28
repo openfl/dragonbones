@@ -9,7 +9,7 @@ import dragonBones.objects.TweenFrameData;
 /**
  * @private
  */
-@:allow(dragonBones) class TweenTimelineState extends TimelineState
+@:allow(dragonBones) class TweenTimelineState<TDisplay, TTexture> extends TimelineState<TDisplay, TTexture>
 {
 	private static inline var TWEEN_TYPE_NONE:Int = 0;
 	private static inline var TWEEN_TYPE_ONCE:Int = 1;
@@ -107,7 +107,7 @@ import dragonBones.objects.TweenFrameData;
 			)
 		) 
 		{
-			var currentFrame:TweenFrameData = cast(_currentFrame, TweenFrameData);
+			var currentFrame:TweenFrameData = cast _currentFrame;
 			_tweenEasing = currentFrame.tweenEasing;
 			_curve = currentFrame.curve;
 		}

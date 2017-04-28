@@ -12,7 +12,7 @@ import dragonBones.geom.Transform;
  * 基础变换对象。
  * @version DragonBones 4.5
  */
-@:allow(dragonBones) class TransformObject extends BaseObject
+@:allow(dragonBones) class TransformObject<TDisplay, TTexture> extends BaseObject
 {
 	/**
 	 * @language zh_CN
@@ -60,11 +60,11 @@ import dragonBones.geom.Transform;
 	/**
 	 * @private
 	 */
-	private var _armature:Armature;
+	private var _armature:Armature<TDisplay, TTexture>;
 	/**
 	 * @private
 	 */
-	private var _parent:Bone;
+	private var _parent:Bone<TDisplay, TTexture>;
 	/**
 	 * @private
 	 */
@@ -90,14 +90,14 @@ import dragonBones.geom.Transform;
 	/**
 	 * @private
 	 */
-	private function _setArmature(value:Armature):Void
+	private function _setArmature(value:Armature<TDisplay, TTexture>):Void
 	{
 		_armature = value;
 	}
 	/**
 	 * @private
 	 */
-	private function _setParent(value:Bone):Void
+	private function _setParent(value:Bone<TDisplay, TTexture>):Void
 	{
 		_parent = value;
 	}
@@ -107,8 +107,8 @@ import dragonBones.geom.Transform;
 	 * @see dragonBones.Armature
 	 * @version DragonBones 3.0
 	 */
-	public var armature(get, never):Armature;
-	private function get_armature():Armature
+	public var armature(get, never):Armature<TDisplay, TTexture>;
+	private function get_armature():Armature<TDisplay, TTexture>
 	{
 		return _armature;
 	}
@@ -118,8 +118,8 @@ import dragonBones.geom.Transform;
 	 * @see dragonBones.Bone
 	 * @version DragonBones 3.0
 	 */
-	public var parent(get, never):Bone;
-	private function get_parent():Bone
+	public var parent(get, never):Bone<TDisplay, TTexture>;
+	private function get_parent():Bone<TDisplay, TTexture>
 	{
 		return _parent;
 	}

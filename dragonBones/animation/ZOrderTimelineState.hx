@@ -6,7 +6,7 @@ import dragonBones.objects.ZOrderFrameData;
 /**
  * @private
  */
-@:allow(dragonBones) @:final class ZOrderTimelineState extends TimelineState
+@:allow(dragonBones) @:final class ZOrderTimelineState<TDisplay, TTexture> extends TimelineState<TDisplay, TTexture>
 {
 	private function new()
 	{

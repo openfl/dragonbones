@@ -7,19 +7,21 @@ import dragonBones.animation.Animation;
 import dragonBones.core.IArmatureDisplay;
 import dragonBones.events.EventObject;
 
+import starling.display.DisplayObject;
 import starling.display.Sprite;
+import starling.textures.Texture;
 
 
 /**
  * @inheritDoc
  */
-@:allow(dragonBones) @:final class StarlingArmatureDisplay extends Sprite implements IArmatureDisplay
+@:allow(dragonBones) @:final class StarlingArmatureDisplay extends Sprite implements IArmatureDisplay<DisplayObject, Texture>
 {
 	public static var useDefaultStarlingEvent:Bool = false;
 	/**
 	 * @private
 	 */
-	private var _armature:Armature;
+	private var _armature:Armature<DisplayObject, Texture>;
 	/**
 	 * @private
 	 */
@@ -37,7 +39,7 @@ import starling.display.Sprite;
 	/**
 	 * @private
 	 */
-	private function _dispatchEvent(type:String, eventObject:EventObject):Void
+	private function _dispatchEvent(type:String, eventObject:EventObject<DisplayObject, Texture>):Void
 	{
 		if (useDefaultStarlingEvent)
 		{
@@ -92,16 +94,16 @@ import starling.display.Sprite;
 	/**
 	 * @inheritDoc
 	 */
-	public var armature(get, never):Armature;
-	private function get_armature():Armature
+	public var armature(get, never):Armature<DisplayObject, Texture>;
+	private function get_armature():Armature<DisplayObject, Texture>
 	{
 		return _armature;
 	}
 	/**
 	 * @inheritDoc
 	 */
-	public var animation(get, never):Animation;
-	private function get_animation():Animation
+	public var animation(get, never):Animation<DisplayObject, Texture>;
+	private function get_animation():Animation<DisplayObject, Texture>
 	{
 		return _armature.animation;
 	}

@@ -6,11 +6,13 @@ import openfl.errors.Error;
 import openfl.Assets;
 
 // Starling render
+import starling.display.DisplayObject;
 import starling.display.Sprite;
 import starling.events.Touch;
 import starling.events.TouchEvent;
 import starling.events.TouchPhase;
 import starling.events.Event;
+import starling.textures.Texture;
 
 import dragonBones.objects.DragonBonesData;
 import dragonBones.starling.StarlingFactory;
@@ -106,7 +108,7 @@ class StarlingRender extends Sprite
 
 	private function _animationEventHandler(event: Event): Void
 	{
-		var eventObject: EventObject = cast(event.data, EventObject);
+		var eventObject: EventObject<DisplayObject, Texture> = event.data;
 
 		trace(eventObject.animationState.name, event.type, eventObject.name != null ? eventObject.name : "");
 	}
