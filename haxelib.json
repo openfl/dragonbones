@@ -5,6 +5,6 @@
 	"tags": [],
 	"description": "DragonBones Haxe Runtime",
 	"version": "5.0.0",
-	"releasenote": "Initial release",
+	"releasenote": "Update for parity with version 5 AS runtime",
 	"contributors": [ "singmajesty" ]
 }
