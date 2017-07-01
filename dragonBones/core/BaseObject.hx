@@ -1,36 +1,39 @@
 ﻿package dragonBones.core;
 
 import openfl.errors.Error;
-import openfl.utils.Dictionary;
-import openfl.Vector;
-
+import dragonBones.utils.ClassMap;
 /**
  * @language zh_CN
  * 基础对象。
  * @version DragonBones 4.5
  */
+ 
+/*
+@:coreType abstract ClassKey from Class<Dynamic> to {} {
+}
+*/
 @:allow(dragonBones) class BaseObject
 {
 	private static var _hashCode:UInt = 0;
 	private static var _defaultMaxCount:UInt = 5000;
-	private static var _maxCountMap:Dictionary<Class<Dynamic>, Int> = new Dictionary<Class<Dynamic>, Int>();
-	private static var _poolsMap:Dictionary<Class<Dynamic>, Vector<BaseObject>> = new Dictionary<Class<Dynamic>, Vector<BaseObject>>();
+	private static var _maxCountMap:ClassMap<Class<Dynamic>, Int> = new ClassMap<Class<Dynamic>, Int>();
+	private static var _poolsMap:ClassMap<Class<Dynamic>, Array<BaseObject>> = new ClassMap<Class<Dynamic>, Array<BaseObject>>();
 	
 	private static function _returnObject(object:BaseObject):Void
 	{
 		//var objectConstructor:Class<Dynamic> = getDefinitionByName(getQualifiedClassName(object));
 		var objectConstructor:Class<Dynamic> = Type.getClass(object);
-		var maxCount:Int = _maxCountMap.exists(objectConstructor) ? _maxCountMap[objectConstructor] : _defaultMaxCount;
-		var pool:Vector<BaseObject>;
+		var maxCount:Int = _maxCountMap.exists(objectConstructor) ? _maxCountMap.get(objectConstructor) : _defaultMaxCount;
+		var pool:Array<BaseObject>;
 		
 		if (_poolsMap.exists(objectConstructor))
 		{
-			pool = _poolsMap[objectConstructor];
+			pool = _poolsMap.get(objectConstructor);
 		}
 		else
 		{
-			pool = new Vector<BaseObject>();
-			_poolsMap[objectConstructor] = pool;
+			pool = new Array<BaseObject>();
+			_poolsMap.set(objectConstructor, pool);
 		}
 		
 		if (pool.length < maxCount)
@@ -55,18 +58,18 @@ import openfl.Vector;
 	 */
 	public static function setMaxCount(objectConstructor:Class<Dynamic>, maxCount:Int):Void
 	{
-		var pool:Vector<BaseObject>;
+		var pool:Array<BaseObject>;
 		
 		if (objectConstructor != null)
 		{
-			_maxCountMap[objectConstructor] = maxCount;
+			_maxCountMap.set(objectConstructor, maxCount);
 			
 			if (_poolsMap.exists(objectConstructor))
 			{
-				pool = _poolsMap[objectConstructor];
+				pool = _poolsMap.get(objectConstructor);
 				if (pool.length > maxCount)
 				{
-					pool.length = maxCount;
+					//pool.length = maxCount;
 				}
 			}
 		}
@@ -74,17 +77,17 @@ import openfl.Vector;
 		{
 			_defaultMaxCount = maxCount;
 			
-			for (classType in _poolsMap)
+			for (classType in _poolsMap.keys())
 			{
 				if (!_maxCountMap.exists(classType))
 				{
 					continue;
 				}
 				
-				pool = _poolsMap[classType];
+				pool = _poolsMap.get(classType);
 				if (pool.length > maxCount)
 				{
-					pool.length = maxCount;
+					//pool.length = maxCount;
 				}
 			}
 		}
@@ -101,18 +104,18 @@ import openfl.Vector;
 		{
 			if (_poolsMap.exists(objectConstructor))
 			{
-				var pool:Vector<BaseObject> = _poolsMap[objectConstructor];
+				var pool:Array<BaseObject> = _poolsMap.get(objectConstructor);
 				if (pool.length > 0)
 				{
-					pool.length = 0;
+					pool = [];
 				}
 			}
 		}
 		else
 		{
-			for (k in _poolsMap)
+			for (k in _poolsMap.keys())
 			{
-				_poolsMap[k].length = 0;
+				_poolsMap.set(k, []);
 			}
 		}
 	}
@@ -123,7 +126,7 @@ import openfl.Vector;
 	 */
 	public static function borrowObject(objectConstructor:Class<Dynamic>):BaseObject
 	{
-		var pool:Vector<BaseObject> = _poolsMap.exists(objectConstructor) ? _poolsMap[objectConstructor] : null;
+		var pool:Array<BaseObject> = _poolsMap.exists(objectConstructor) ? _poolsMap.get(objectConstructor) : null;
 		if (pool != null && pool.length > 0)
 		{
 			var object = pool.pop();

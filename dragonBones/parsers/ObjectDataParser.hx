@@ -162,7 +162,7 @@ import dragonBones.textures.TextureData;
 		}
 		
 		_armature = armature;
-		_rawBones.length = 0;
+		_rawBones = [];
 		
 		if (Reflect.hasField(rawData, DataParser.BONE))
 		{
@@ -219,7 +219,7 @@ import dragonBones.textures.TextureData;
 		}
 		
 		_armature = null;
-		_rawBones.length = 0;
+		_rawBones = [];
 		
 		return armature;
 	}
