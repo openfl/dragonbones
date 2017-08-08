@@ -70,7 +70,7 @@ import dragonBones.geom.Transform;
 	/**
 	 * @private
 	 */
-	private function new()
+	@:keep private function new()
 	{
 		super();
 	}

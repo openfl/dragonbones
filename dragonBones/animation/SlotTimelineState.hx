@@ -22,7 +22,7 @@ import dragonBones.objects.TimelineData;
 	private var _durationColor:ColorTransform = new ColorTransform();
 	private var _slotColor:ColorTransform;
 	
-	private function new()
+	@:keep private function new()
 	{
 		super();
 	}

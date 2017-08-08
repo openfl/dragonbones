@@ -23,7 +23,7 @@ import dragonBones.objects.TimelineData;
 	private var _durationFFDVertices:Vector<Float> = new Vector<Float>();
 	private var _slotFFDVertices:Vector<Float>;
 	
-	private function new()
+	@:keep private function new()
 	{
 		super();
 	}
