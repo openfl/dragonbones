@@ -1,7 +1,7 @@
 ﻿package dragonBones;
 
 import openfl.geom.Matrix;
-import openfl.Vector;
+
 
 import dragonBones.core.TransformObject;
 import dragonBones.geom.Transform;
@@ -79,14 +79,14 @@ import dragonBones.objects.BoneData;
 	 * @private
 	 */
 	private var _animationPose:Transform = new Transform();
-	private var _bones:Vector<Bone> = new Vector<Bone>();
-	private var _slots:Vector<Slot> = new Vector<Slot>();
+	private var _bones:Array<Bone> = new Array<Bone>();
+	private var _slots:Array<Slot> = new Array<Slot>();
 	private var _boneData:BoneData;
 	private var _ik:Bone;
 	/**
 	 * @private
 	 */
-	private var _cachedFrameIndices:Vector<Int>;
+	private var _cachedFrameIndices:Array<Int>;
 	/**
 	 * @private
 	 */
@@ -118,8 +118,8 @@ import dragonBones.objects.BoneData;
 		_blendLeftWeight = 1.0;
 		_blendTotalWeight = 0.0;
 		_animationPose.identity();
-		_bones.length = 0;
-		_slots.length = 0;
+		_bones = [];
+		_slots = [];
 		_boneData = null;
 		_ik = null;
 		_cachedFrameIndices = null;
@@ -503,11 +503,11 @@ import dragonBones.objects.BoneData;
 	 * 所有的子骨骼。
 	 * @version DragonBones 3.0
 	 */
-	public function getBones():Vector<Bone>
+	public function getBones():Array<Bone>
 	{
-		_bones.length = 0;
+		_bones = [];
 		
-		var bones:Vector<Bone> = _armature.getBones();
+		var bones:Array<Bone> = _armature.getBones();
 		var l:UInt = bones.length;
 		var bone:Bone;
 		for (i in 0...l) 
@@ -527,11 +527,11 @@ import dragonBones.objects.BoneData;
 	 * @see dragonBones.Slot
 	 * @version DragonBones 3.0
 	 */
-	public function getSlots():Vector<Slot>
+	public function getSlots():Array<Slot>
 	{
-		_slots.length = 0;
+		_slots = [];
 		
-		var slots:Vector<Slot> = _armature.getSlots();
+		var slots:Array<Slot> = _armature.getSlots();
 		var l:UInt = slots.length;
 		var slot:Slot;
 		for (i in 0...l)
@@ -574,7 +574,7 @@ import dragonBones.objects.BoneData;
 		
 		_visible = value;
 		
-		var slots:Vector<Slot> = _armature.getSlots();
+		var slots:Array<Slot> = _armature.getSlots();
 		var l:UInt = slots.length;
 		var slot:Slot;
 		for (i in 0...l)

@@ -244,9 +244,9 @@ import dragonBones.geom.Transform;
 		
 		cacheFrameRate = frameRate;
 		
-		for (animation in animations) 
+		for (animations in animations) 
 		{
-			animation.cacheFrames(cacheFrameRate);
+			animations.cacheFrames(cacheFrameRate);
 		}
 	}
 	/**
