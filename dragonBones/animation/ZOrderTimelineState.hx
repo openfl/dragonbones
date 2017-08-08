@@ -8,7 +8,7 @@ import dragonBones.objects.ZOrderFrameData;
  */
 @:allow(dragonBones) @:final class ZOrderTimelineState extends TimelineState
 {
-	private function new()
+	@:keep private function new()
 	{
 		super();
 	}

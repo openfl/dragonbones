@@ -63,7 +63,7 @@ import starling.styles.MeshStyle;
 	/**
 	 * @private
 	 */
-	private function new()
+	@:keep private function new()
 	{
 		super();
 	}

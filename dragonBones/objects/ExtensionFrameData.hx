@@ -9,7 +9,7 @@ import openfl.Vector;
 {
 	public var tweens:Vector<Float> = new Vector<Float>();
 	
-	private function new()
+	@:keep private function new()
 	{
 		super();
 	}

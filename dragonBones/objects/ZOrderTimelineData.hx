@@ -2,7 +2,7 @@ package dragonBones.objects;
 
 @:allow(dragonBones) @:final class ZOrderTimelineData extends TimelineData
 {
-	private function new()
+	@:keep private function new()
 	{
 		super();
 	}

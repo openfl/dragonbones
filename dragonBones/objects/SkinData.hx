@@ -12,7 +12,7 @@ import dragonBones.core.BaseObject;
 	public var name:String;
 	public var slots:Map<String, SkinSlotData> = new Map<String, SkinSlotData>();
 	
-	private function new()
+	@:keep private function new()
 	{
 		super();
 	}
