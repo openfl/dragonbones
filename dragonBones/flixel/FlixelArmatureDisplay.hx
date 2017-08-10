@@ -33,6 +33,8 @@ import dragonBones.objects.BoundingBoxData;
 
 	public var worldX:Float = 0;
 	public var worldY:Float = 0;
+	public var gScaleX:Float = 1;
+	public var gScaleY:Float = 1;
 
 	/**
 	 * @private

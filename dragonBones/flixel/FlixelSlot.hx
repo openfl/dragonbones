@@ -146,6 +146,7 @@ import openfl.geom.Matrix;
 
 		normalDisplay = cast _renderDisplay;
 		normalDisplay.loadGraphic(cast bitmapCrop);
+		
 
 		this._flxSpriteGroup.add(normalDisplay);
 		_updateVisible();
@@ -153,90 +154,7 @@ import openfl.geom.Matrix;
 
 	override private function _updateMesh():Void
 	{
-		/*
-		var meshDisplay:Shape = cast _renderDisplay;
 		
-		if (_meshTexture == null)
-		{
-			return;	
-		}
-		
-		var hasFFD:Bool = _ffdVertices.length > 0;
-		
-		var i:UInt = 0, iH:UInt = 0, iF:UInt = 0, l:UInt = _meshData.vertices.length;
-		var xG:Float = 0, yG:Float = 0;
-		if (_meshData.skinned)
-		{
-			meshDisplay.graphics.clear();
-			
-			var boneIndices:Vector<UInt>, boneVertices:Vector<Float>, weights:Vector<Float>;
-			var lB:UInt, bone:Bone, matrix:Matrix, weight:Float, xL:Float, yL:Float;
-			
-			while (i < l)
-			{
-				iH = Std.int(i / 2);
-				
-				boneIndices = _meshData.boneIndices[iH];
-				boneVertices = _meshData.boneVertices[iH];
-				weights = _meshData.weights[iH];
-				
-				xG = 0;
-				yG = 0;
-				lB = boneIndices.length;
-				
-				for (iB in 0...lB)
-				{
-					bone = _meshBones[boneIndices[iB]];
-					matrix = bone.globalTransformMatrix;
-					weight = weights[iB];
-					
-					xL = 0;
-					yL = 0;
-					if (hasFFD)
-					{
-						xL = boneVertices[iB * 2] + _ffdVertices[iF];
-						yL = boneVertices[iB * 2 + 1] + _ffdVertices[iF + 1];
-					}
-					else
-					{
-						xL = boneVertices[iB * 2];
-						yL = boneVertices[iB * 2 + 1];
-					}
-					
-					
-					xG += (matrix.a * xL + matrix.c * yL + matrix.tx) * weight;
-					yG += (matrix.b * xL + matrix.d * yL + matrix.ty) * weight;
-					
-					iF += 2;
-				}
-				
-				_path.vertices[i] = xG - _pivotX;
-				_path.vertices[i + 1] = yG - _pivotY;
-				
-				i += 2;
-			}
-			
-			meshDisplay.graphics.beginBitmapFill(_meshTexture, null, false, true);
-			meshDisplay.graphics.drawTriangles(_path.vertices, _path.indices, _path.uvtData);
-		}
-		else if (hasFFD)
-		{
-			meshDisplay.graphics.clear();
-			
-			var vertices:Vector<Float> = _meshData.vertices;
-			while (i < l)
-			{
-				xG = vertices[i] + _ffdVertices[i];
-				yG = vertices[i + 1] + _ffdVertices[i + 1];
-				_path.vertices[i] = xG - _pivotX;
-				_path.vertices[i + 1] = yG - _pivotY;
-				i += 2;
-			}
-			
-			meshDisplay.graphics.beginBitmapFill(_meshTexture, null, true, true);
-			meshDisplay.graphics.drawTriangles(_path.vertices, _path.indices, _path.uvtData);
-		}
-		*/
 	}
 
 	/**
@@ -278,20 +196,37 @@ import openfl.geom.Matrix;
 		return rotationInDegree;
 	}
 
+	private function getGlobalScaleX(scalable:Float) {
+		return scalable * _renderDisplay.gScaleY;
+	}
+
+	private function getGlobalScaleY(scalable:Float) {
+		return scalable * _renderDisplay.gScaleY;
+	}
+
 	override private function _updateTransform(isSkinnedMesh:Bool):Void
 	{
-		_renderDisplay.x = _renderDisplay.worldX + -(_pivotX) + globalTransformMatrix.tx;
-		_renderDisplay.y = _renderDisplay.worldY + -(_pivotY) + globalTransformMatrix.ty;
+		_renderDisplay.x = (_renderDisplay.worldX + -(_pivotX) + this.getGlobalScaleX(globalTransformMatrix.tx));
+		_renderDisplay.y = (_renderDisplay.worldY + -(_pivotY) + this.getGlobalScaleY(globalTransformMatrix.ty));
 		_renderDisplay.angle = this.getAngle(globalTransformMatrix);
 		_renderDisplay.scale.set( 
-			Math.sqrt(Math.pow(globalTransformMatrix.a, 2) + Math.pow(globalTransformMatrix.c, 2)),  
-			Math.sqrt(Math.pow(globalTransformMatrix.b, 2) + Math.pow(globalTransformMatrix.d, 2))
+			this.getGlobalScaleX(Math.sqrt(Math.pow(globalTransformMatrix.a, 2) + Math.pow(globalTransformMatrix.c, 2))),  
+			this.getGlobalScaleY(Math.sqrt(Math.pow(globalTransformMatrix.b, 2) + Math.pow(globalTransformMatrix.d, 2)))
 		);
 	}
 
 	override private function _updateColor():Void
 	{
-
+		_renderDisplay.setColorTransform(
+			_colorTransform.redMultiplier, 
+			_colorTransform.greenMultiplier, 
+			_colorTransform.blueMultiplier, 
+			_colorTransform.alphaMultiplier, 
+			Std.int(_colorTransform.redOffset), 
+			Std.int(_colorTransform.greenOffset), 
+			Std.int(_colorTransform.blueOffset), 
+			Std.int(_colorTransform.alphaOffset)
+		);
 	}
 
 }
