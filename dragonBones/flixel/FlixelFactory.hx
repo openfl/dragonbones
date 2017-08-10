@@ -26,7 +26,7 @@ import flixel.group.FlxGroup;
 
 @:allow(dragonBones) @:final class FlixelFactory extends BaseFactory {
 
-	private static var _eventManager:EventDispatcher = new FlixelArmatureDisplay()._eventManager;
+	private static var _eventManager:EventDispatcher = new EventDispatcher();
 	private static var _clock:WorldClock = new WorldClock();
 
 	public static var factory:FlixelFactory = new FlixelFactory();

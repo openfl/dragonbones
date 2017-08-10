@@ -42,7 +42,6 @@ import dragonBones.objects.BoundingBoxData;
 	private function new()
 	{
 		super();
-		//FlxSprite already has a eventdispatcher in it probably.
 		_eventManager = new EventDispatcher();
 	}
 	/**
