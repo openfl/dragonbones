@@ -17,12 +17,18 @@ import openfl.geom.Matrix;
  {
 	private var _renderDisplay:FlixelArmatureDisplay = null;
 	private var _meshTexture:BitmapData = null;
+	private var _flxSpriteGroup:FlxTypedGroup<FlixelArmatureDisplay> = null;
 	private var _path:FlixelArmatureDisplay;
-
+	
 	private function new() 
 	{
 		super();
 
+	}
+
+	private function _initFlxSpriteGroup(flxSpriteGroup:FlxTypedGroup<FlixelArmatureDisplay>):Void 
+	{
+		this._flxSpriteGroup = flxSpriteGroup;
 	}
 
 	override private function _onClear():Void 

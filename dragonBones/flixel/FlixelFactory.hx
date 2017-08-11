@@ -30,7 +30,6 @@ import flixel.group.FlxGroup;
 	private static var _clock:WorldClock = new WorldClock();
 
 	public static var factory:FlixelFactory = new FlixelFactory();
-	
 	public static var _flxSpriteGroup:FlxTypedGroup<FlixelArmatureDisplay> = new FlxTypedGroup<FlixelArmatureDisplay>();
 
 	private static function _clockHandler(event:Event):Void 
@@ -92,7 +91,8 @@ import flixel.group.FlxGroup;
 		var slotData:SlotData = skinSlotData.slot;
 		var displayList:Array<Dynamic> = new Array<Dynamic>();
 		
-		slot._init(skinSlotData, null, null, _flxSpriteGroup);
+		slot._initFlxSpriteGroup(_flxSpriteGroup);
+		slot._init(skinSlotData, null, null);
 		var l:UInt = skinSlotData.displays.length;
 		var displayData:DisplayData, childArmature:Armature, actions:Array<ActionData>;
 		for (i in 0...l)
@@ -108,7 +108,17 @@ import flixel.group.FlxGroup;
 					
 					displayList[i] = slot.rawDisplay;
 				case DisplayType.Mesh:
-					trace("MESHIN");
+					if (displayData.texture == null)
+					{
+						displayData.texture = _getTextureData(dataPackage.dataName, displayData.path);
+					}
+					
+					if (dataPackage.textureAtlasName != null)
+					{
+						slot._textureDatas[i] = _getTextureData(dataPackage.textureAtlasName, displayData.path);
+					}
+					
+					displayList[i] = slot.meshDisplay;
 				case DisplayType.Armature:
 					childArmature = buildArmature(displayData.name, dataPackage.dataName, null, dataPackage.textureAtlasName);
 					if (childArmature != null) 
@@ -149,6 +159,7 @@ import flixel.group.FlxGroup;
 		if (armature != null)
 		{
 			_clock.add(armature);
+			trace(_flxSpriteGroup.members);
 			return cast _flxSpriteGroup;
 		}
 		

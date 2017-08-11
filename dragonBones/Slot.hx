@@ -180,7 +180,6 @@ import dragonBones.textures.TextureData;
 	 */
 	private var _cachedFrameIndices:Vector<Int>;
 
-	private var _flxSpriteGroup:Dynamic;
 	/**
 	 * @private
 	 */
@@ -717,8 +716,7 @@ import dragonBones.textures.TextureData;
 	/**
 	 * @private
 	 */
-	private function _init(skinSlotData: SkinSlotData, rawDisplay:Dynamic, meshDisplay:Dynamic, flxSpriteGroup:Dynamic):Void {
-		this._flxSpriteGroup = flxSpriteGroup;
+	private function _init(skinSlotData: SkinSlotData, rawDisplay:Dynamic, meshDisplay:Dynamic):Void {
 		if (_skinSlotData != null) 
 		{
 			return;
