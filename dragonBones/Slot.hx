@@ -795,7 +795,10 @@ import dragonBones.textures.TextureData;
 		
 		if (_display == null) 
 		{
-			//return;
+			#if (openfl > 3)
+			return;
+			#else
+			#end
 		}
 		
 		if (_blendModeDirty) 

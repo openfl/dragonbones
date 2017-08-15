@@ -35,7 +35,7 @@ typedef GraphicsTrianglePath = {
 
 	private function _initFlxSpriteGroup(flxSpriteGroup:FlxTypedGroup<FlixelMeshDisplay>):Void 
 	{
-		this._flxSpriteGroup = flxSpriteGroup;
+		_flxSpriteGroup = flxSpriteGroup;
 	}
 
 	override private function _onClear():Void 
@@ -58,36 +58,28 @@ typedef GraphicsTrianglePath = {
 
 	override private function _addDisplay():Void
 	{
-		this._flxSpriteGroup.add(_renderDisplay);
 	}
 
 	override private function _replaceDisplay(prevDisplay:Dynamic):Void
 	{
 		var displayObject:FlixelMeshDisplay = cast prevDisplay;
-		this._flxSpriteGroup.add(_renderDisplay);
-		this._flxSpriteGroup.replace(_renderDisplay, displayObject);
-		this._flxSpriteGroup.remove(displayObject);
+		_flxSpriteGroup.add(_renderDisplay);
+		_flxSpriteGroup.replace(_renderDisplay, displayObject);
+		_flxSpriteGroup.remove(displayObject);
 	}
 
 	override private function _removeDisplay():Void
 	{
-		this._flxSpriteGroup.remove(_renderDisplay);
+		_flxSpriteGroup.remove(_renderDisplay);
 	}
 
 	override private function _updateZOrder():Void
-	{
-		var container:FlixelMeshDisplay = cast _armature.display;
-
-		for(i in 0...this._flxSpriteGroup.members.length) {
-			if(this._flxSpriteGroup.members[i] == _renderDisplay) {
-				if (i == _zOrder) 
-				{
-					return;
-				}
+	{	
+		for (i in 0...this._armature._armatureData._sortedSlots.length) {
+			if(this.name == this._armature._armatureData._sortedSlots[i].name) {
+				_flxSpriteGroup.insert(i, _renderDisplay);
 			}
 		}
-
-		this._flxSpriteGroup.insert(_zOrder, _renderDisplay);
 	}
 
 	override private function _updateVisible():Void
@@ -177,8 +169,8 @@ typedef GraphicsTrianglePath = {
 			{
 				u = _meshData.uvs[i];
 				v = _meshData.uvs[i + 1];
-				_path.uvtData[i] = (currentTextureData.region.x + u * currentTextureData.region.width) / textureAtlasWidth;
-				_path.uvtData[i + 1] = (currentTextureData.region.y + v * currentTextureData.region.height) / textureAtlasHeight;
+				_path.uvtData[i] = u;
+				_path.uvtData[i + 1] = v;
 				i += 2;
 			}
 			
@@ -200,20 +192,21 @@ typedef GraphicsTrianglePath = {
 			_renderDisplay.vertices = _path.vertices;
 			_renderDisplay.indices = _path.indices;
 			_renderDisplay.uvtData = _path.uvtData;
-
-			_renderDisplay.loadGraphic(cast bitmapCrop);
 			
-			this._flxSpriteGroup.add(cast _renderDisplay);
-			_renderDisplay.draw();
+			_renderDisplay.loadGraphic(cast bitmapCrop);
+
+			_flxSpriteGroup.add(cast _renderDisplay);
+			
 		} else 
 		{ 
 			_renderDisplay = cast (new FlixelArmatureDisplay());
 			_renderDisplay._armature = _armature;
 			
 			_renderDisplay.loadGraphic(cast bitmapCrop);
-			this._flxSpriteGroup.add(cast _renderDisplay);
-		}
 
+			_flxSpriteGroup.add(cast _renderDisplay);
+		}
+		trace(this._zOrder);
 		_updateVisible();
 	}
 
@@ -226,11 +219,6 @@ typedef GraphicsTrianglePath = {
 		var i:Int = 0, iH:Int = 0, iF:Int = 0, l:Int = _meshData.vertices.length;
 		var xG:Float = 0, yG:Float = 0;
 
-		_renderDisplay.scale.set( 
-			_renderDisplay.gScaleY,  
-			_renderDisplay.gScaleY
-		);
-
 		if (hasFFD)
 		{
 			var vertices:Array<Float> = _meshData.vertices;
@@ -238,8 +226,8 @@ typedef GraphicsTrianglePath = {
 			{
 				xG = vertices[i] + _ffdVertices[i];
 				yG = vertices[i + 1] + _ffdVertices[i + 1];
-				_path.vertices[i] = xG - _pivotX;
-				_path.vertices[i + 1] = yG - _pivotY;
+				_path.vertices[i] = getGlobalScaleX(xG - _pivotX);
+				_path.vertices[i + 1] = getGlobalScaleY(yG - _pivotY);
 				i += 2;
 			}
 			
@@ -248,6 +236,7 @@ typedef GraphicsTrianglePath = {
 			meshDisplay.uvtData = _path.uvtData;
 			meshDisplay.draw();
 		}	
+		
 	}
 
 	/**
@@ -255,7 +244,7 @@ typedef GraphicsTrianglePath = {
 	 */
 	
 	private function getGlobalScaleX(scalable:Float) {
-		return scalable * _renderDisplay.gScaleY;
+		return scalable * _renderDisplay.gScaleX;
 	}
 
 	private function getGlobalScaleY(scalable:Float) {
@@ -264,12 +253,12 @@ typedef GraphicsTrianglePath = {
 
 	override private function _updateTransform(isSkinnedMesh:Bool):Void
 	{
-		_renderDisplay.x = (_renderDisplay.worldX + -(_pivotX) + this.getGlobalScaleX(globalTransformMatrix.tx));
-		_renderDisplay.y = (_renderDisplay.worldY + -(_pivotY) + this.getGlobalScaleY(globalTransformMatrix.ty));
+		_renderDisplay.x = (_renderDisplay.worldX + -(_pivotX) + getGlobalScaleX(globalTransformMatrix.tx));
+		_renderDisplay.y = (_renderDisplay.worldY + -(_pivotY) + getGlobalScaleY(globalTransformMatrix.ty));
 		_renderDisplay.angle = Utility.getAngle(globalTransformMatrix);
 		_renderDisplay.scale.set( 
-			this.getGlobalScaleX(Math.sqrt(Math.pow(globalTransformMatrix.a, 2) + Math.pow(globalTransformMatrix.c, 2))),  
-			this.getGlobalScaleY(Math.sqrt(Math.pow(globalTransformMatrix.b, 2) + Math.pow(globalTransformMatrix.d, 2)))
+			getGlobalScaleX(Math.sqrt(Math.pow(globalTransformMatrix.a, 2) + Math.pow(globalTransformMatrix.c, 2))),  
+			getGlobalScaleY(Math.sqrt(Math.pow(globalTransformMatrix.b, 2) + Math.pow(globalTransformMatrix.d, 2)))
 		);
 	}
 
