@@ -3,6 +3,7 @@ package dragonBones.flixel;
 import dragonBones.Slot;
 import dragonBones.core.BaseObject;
 import dragonBones.enums.BlendMode;
+import dragonBones.utils.Utility;
 
 import flixel.FlxSprite;
 import flixel.group.FlxGroup;
@@ -12,21 +13,27 @@ import flixel.system.FlxAssets.FlxGraphicAsset;
 import openfl.display.BitmapData;
 import openfl.geom.Rectangle;
 import openfl.geom.Matrix;
+import openfl.Vector;
+
+typedef GraphicsTrianglePath = {
+	uvtData:Vector<Float>,
+	indices:Vector<Int>,
+	vertices:Vector<Float>
+}
 
 @:allow(dragonBones) @:final class FlixelSlot extends Slot
  {
-	private var _renderDisplay:FlixelArmatureDisplay = null;
+	private var _renderDisplay:FlixelMeshDisplay = null;
 	private var _meshTexture:BitmapData = null;
-	private var _flxSpriteGroup:FlxTypedGroup<FlixelArmatureDisplay> = null;
-	private var _path:FlixelArmatureDisplay;
+	private var _flxSpriteGroup:FlxTypedGroup<FlixelMeshDisplay> = null;
+	private var _path:GraphicsTrianglePath;
 	
 	private function new() 
 	{
 		super();
-
 	}
 
-	private function _initFlxSpriteGroup(flxSpriteGroup:FlxTypedGroup<FlixelArmatureDisplay>):Void 
+	private function _initFlxSpriteGroup(flxSpriteGroup:FlxTypedGroup<FlixelMeshDisplay>):Void 
 	{
 		this._flxSpriteGroup = flxSpriteGroup;
 	}
@@ -46,8 +53,7 @@ import openfl.geom.Matrix;
 	
 	override private function _onUpdateDisplay():Void
 	{
-		_renderDisplay = new FlixelArmatureDisplay();
-		_renderDisplay._armature = _armature;
+		_renderDisplay = _armature.display;
 	}
 
 	override private function _addDisplay():Void
@@ -57,7 +63,7 @@ import openfl.geom.Matrix;
 
 	override private function _replaceDisplay(prevDisplay:Dynamic):Void
 	{
-		var displayObject:FlixelArmatureDisplay = cast(prevDisplay, FlixelArmatureDisplay);
+		var displayObject:FlixelMeshDisplay = cast prevDisplay;
 		this._flxSpriteGroup.add(_renderDisplay);
 		this._flxSpriteGroup.replace(_renderDisplay, displayObject);
 		this._flxSpriteGroup.remove(displayObject);
@@ -70,7 +76,7 @@ import openfl.geom.Matrix;
 
 	override private function _updateZOrder():Void
 	{
-		var container:FlixelArmatureDisplay = cast _armature.display;
+		var container:FlixelMeshDisplay = cast _armature.display;
 
 		for(i in 0...this._flxSpriteGroup.members.length) {
 			if(this._flxSpriteGroup.members[i] == _renderDisplay) {
@@ -141,67 +147,113 @@ import openfl.geom.Matrix;
 
 	override private function _updateFrame():Void
 	{
-		var isMeshDisplay:Bool = _meshData != null && _renderDisplay == _meshDisplay;
+		var isMeshDisplay:Bool = _meshData != null;
 		var currentTextureData:FlixelTextureData = _textureData != null ? cast _textureData : null;
-		var normalDisplay:FlixelArmatureDisplay;
-		
+		var currentTextureAtlasData:FlixelTextureAtlasData = cast(currentTextureData.parent, FlixelTextureAtlasData);
+
 		var imageData:BitmapData = cast(currentTextureData.parent, FlixelTextureAtlasData).texture;
-		
+			
 		var bitmapCrop = new BitmapData(Std.int(currentTextureData.region.width), Std.int(currentTextureData.region.height));
 		bitmapCrop.copyPixels(imageData, currentTextureData.region, new openfl.geom.Point(0, 0));
 
-		normalDisplay = cast _renderDisplay;
-		normalDisplay.loadGraphic(cast bitmapCrop);
-		
+		if (isMeshDisplay) // Mesh.
+		{
+			_renderDisplay = new FlixelMeshDisplay();
+			_renderDisplay._armature = _armature;
 
-		this._flxSpriteGroup.add(normalDisplay);
+			var currentTextureAtlas:BitmapData = currentTextureAtlasData.texture;
+			var textureAtlasWidth:Float = currentTextureAtlasData.width > 0.0 ? currentTextureAtlasData.width : currentTextureAtlas.width;
+			var textureAtlasHeight:Float = currentTextureAtlasData.height > 0.0 ? currentTextureAtlasData.height : currentTextureAtlas.height;
+
+			_path = {
+				uvtData : new Vector<Float>(_meshData.uvs.length, true),
+				indices : new Vector<Int>(_meshData.vertexIndices.length, true),
+				vertices : new Vector<Float>(_meshData.vertices.length, true)
+			};
+
+			var i:Int = 0, l:Int = _path.uvtData.length;
+			var u:Float, v:Float;
+			while (i < l)
+			{
+				u = _meshData.uvs[i];
+				v = _meshData.uvs[i + 1];
+				_path.uvtData[i] = (currentTextureData.region.x + u * currentTextureData.region.width) / textureAtlasWidth;
+				_path.uvtData[i + 1] = (currentTextureData.region.y + v * currentTextureData.region.height) / textureAtlasHeight;
+				i += 2;
+			}
+			
+			i = 0;
+			l = _path.vertices.length;
+			while (i < l)
+			{
+				_path.vertices[i] = _meshData.vertices[i] - _pivotX;
+				_path.vertices[i + 1] = _meshData.vertices[i + 1] - _pivotY;
+				i += 2;
+			}
+			
+			l = _path.indices.length;
+			for (i in 0...l)
+			{
+				_path.indices[i] = _meshData.vertexIndices[i];
+			}
+
+			_renderDisplay.vertices = _path.vertices;
+			_renderDisplay.indices = _path.indices;
+			_renderDisplay.uvtData = _path.uvtData;
+
+			_renderDisplay.loadGraphic(cast bitmapCrop);
+			
+			this._flxSpriteGroup.add(cast _renderDisplay);
+			_renderDisplay.draw();
+		} else 
+		{ 
+			_renderDisplay = cast (new FlixelArmatureDisplay());
+			_renderDisplay._armature = _armature;
+			
+			_renderDisplay.loadGraphic(cast bitmapCrop);
+			this._flxSpriteGroup.add(cast _renderDisplay);
+		}
+
 		_updateVisible();
 	}
 
 	override private function _updateMesh():Void
 	{
 		
+		var meshDisplay:FlixelMeshDisplay = cast _renderDisplay;
+		var hasFFD:Bool = _ffdVertices.length > 0;
+		
+		var i:Int = 0, iH:Int = 0, iF:Int = 0, l:Int = _meshData.vertices.length;
+		var xG:Float = 0, yG:Float = 0;
+
+		_renderDisplay.scale.set( 
+			_renderDisplay.gScaleY,  
+			_renderDisplay.gScaleY
+		);
+
+		if (hasFFD)
+		{
+			var vertices:Array<Float> = _meshData.vertices;
+			while (i < l)
+			{
+				xG = vertices[i] + _ffdVertices[i];
+				yG = vertices[i + 1] + _ffdVertices[i + 1];
+				_path.vertices[i] = xG - _pivotX;
+				_path.vertices[i + 1] = yG - _pivotY;
+				i += 2;
+			}
+			
+			meshDisplay.vertices = _path.vertices;
+			meshDisplay.indices = _path.indices;
+			meshDisplay.uvtData = _path.uvtData;
+			meshDisplay.draw();
+		}	
 	}
 
 	/**
 	 * @private
 	 */
-	private var scaleX:Float;
-	private var rad:Float;
-	private var deg:Float;
-	private var sign:Float;
-	private var rotation:Float;
-	private var rotationInDegree:Float;
-	private static var degree:Float = (180 / Math.PI);
-	private static var radian:Float = (Math.PI / 180);
-
-	private function getAngle(matrix:Matrix):Float
-	{
-		scaleX = Math.sqrt((matrix.a * matrix.a) + (matrix.c * matrix.c));
-		//scaleY = Math.sqrt((matrix.b * matrix.b) + (matrix.d * matrix.d));
-		
-		sign = Math.atan(-matrix.c / matrix.a);
-		rad  = Math.acos(matrix.a / scaleX);
-		deg  = rad * degree;
-
-		if (deg > 90 && sign > 0)
-		{
-				rotation = (360 - deg) * radian;
-		}
-		else if (deg < 90 && sign < 0)
-		{
-				rotation = (360 - deg) * radian;
-		}
-		else
-		{
-				rotation = rad;
-		}
-
-		rotationInDegree = rotation * degree;
-
-		return rotationInDegree;
-	}
-
+	
 	private function getGlobalScaleX(scalable:Float) {
 		return scalable * _renderDisplay.gScaleY;
 	}
@@ -214,7 +266,7 @@ import openfl.geom.Matrix;
 	{
 		_renderDisplay.x = (_renderDisplay.worldX + -(_pivotX) + this.getGlobalScaleX(globalTransformMatrix.tx));
 		_renderDisplay.y = (_renderDisplay.worldY + -(_pivotY) + this.getGlobalScaleY(globalTransformMatrix.ty));
-		_renderDisplay.angle = this.getAngle(globalTransformMatrix);
+		_renderDisplay.angle = Utility.getAngle(globalTransformMatrix);
 		_renderDisplay.scale.set( 
 			this.getGlobalScaleX(Math.sqrt(Math.pow(globalTransformMatrix.a, 2) + Math.pow(globalTransformMatrix.c, 2))),  
 			this.getGlobalScaleY(Math.sqrt(Math.pow(globalTransformMatrix.b, 2) + Math.pow(globalTransformMatrix.d, 2)))

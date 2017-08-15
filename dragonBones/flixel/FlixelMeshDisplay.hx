@@ -6,7 +6,7 @@ import openfl.display.Sprite;
 import openfl.events.EventDispatcher;
 import openfl.Vector;
 
-import flixel.FlxSprite;
+import flixel.FlxStrip;
 import flixel.group.FlxGroup;
 
 import dragonBones.Armature;
@@ -18,7 +18,7 @@ import dragonBones.enums.BoundingBoxType;
 import dragonBones.events.EventObject;
 import dragonBones.objects.BoundingBoxData;
 
-@:allow(dragonBones) @:final class FlixelArmatureDisplay extends FlxSprite implements IArmatureDisplay {
+@:allow(dragonBones) @:final class FlixelMeshDisplay extends FlxStrip implements IArmatureDisplay {
 	/**
 	 * @private
 	 */

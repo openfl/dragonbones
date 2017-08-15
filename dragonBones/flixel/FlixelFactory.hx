@@ -30,7 +30,7 @@ import flixel.group.FlxGroup;
 	private static var _clock:WorldClock = new WorldClock();
 
 	public static var factory:FlixelFactory = new FlixelFactory();
-	public static var _flxSpriteGroup:FlxTypedGroup<FlixelArmatureDisplay> = new FlxTypedGroup<FlixelArmatureDisplay>();
+	public static var _flxSpriteGroup:FlxTypedGroup<FlixelMeshDisplay> = new FlxTypedGroup<FlixelMeshDisplay>();
 
 	private static function _clockHandler(event:Event):Void 
 	{
@@ -74,7 +74,7 @@ import flixel.group.FlxGroup;
 		}
 		
 		var armature:Armature = cast BaseObject.borrowObject(Armature);
-		var armatureDisplay:FlixelArmatureDisplay = new FlixelArmatureDisplay();
+		var armatureDisplay:FlixelMeshDisplay = new FlixelMeshDisplay();
 		armatureDisplay._armature = armature;
 		
 		armature._init(
@@ -159,7 +159,6 @@ import flixel.group.FlxGroup;
 		if (armature != null)
 		{
 			_clock.add(armature);
-			trace(_flxSpriteGroup.members);
 			return cast _flxSpriteGroup;
 		}
 		
