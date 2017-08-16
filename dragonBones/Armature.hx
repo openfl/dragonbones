@@ -5,9 +5,9 @@ import haxe.Constraints;
 import openfl.errors.Error;
 import openfl.geom.Point;
 
-import dragonBones.animation.Animation;
-import dragonBones.animation.IAnimateble;
-import dragonBones.animation.WorldClock;
+import dragonBones.animations.Animation;
+import dragonBones.animations.IAnimateble;
+import dragonBones.animations.WorldClock;
 import dragonBones.core.BaseObject;
 import dragonBones.core.DragonBones;
 import dragonBones.core.IArmatureProxy;
@@ -27,7 +27,7 @@ import dragonBones.textures.TextureAtlasData;
  * @see dragonBones.objects.ArmatureData
  * @see dragonBones.Bone
  * @see dragonBones.Slot
- * @see dragonBones.animation.Animation
+ * @see dragonBones.animations.Animation
  * @version DragonBones 3.0
  */
 @:allow(dragonBones) @:final class Armature extends BaseObject implements IAnimateble
@@ -75,7 +75,7 @@ import dragonBones.textures.TextureAtlasData;
 	 * @private
 	 */
 	private var _skinData:SkinData;
-	private var _animation:Animation;
+	private var _animations:Animation;
 	private var _proxy:IArmatureProxy;
 	private var _display:Dynamic;
 	private var _eventManager:IEventDispatcher;
@@ -134,9 +134,9 @@ import dragonBones.textures.TextureAtlasData;
 			_replaceTextureAtlasData.returnToPool();
 		}
 		
-		if (_animation != null) 
+		if (_animations != null) 
 		{
-			_animation.returnToPool();
+			_animations.returnToPool();
 		}
 		
 		inheritAnimation = true;
@@ -155,7 +155,7 @@ import dragonBones.textures.TextureAtlasData;
 		_events = [];
 		_armatureData = null;
 		_skinData = null;
-		_animation = null;
+		_animations = null;
 		_proxy = null;
 		_display = null;
 		_eventManager = null;
@@ -227,7 +227,7 @@ import dragonBones.textures.TextureAtlasData;
 		switch (value.type) 
 		{
 			case ActionType.Play:
-				_animation.playConfig(value.animationConfig);
+				_animations.playConfig(value.animationConfig);
 			
 			default:
 		}
@@ -247,13 +247,13 @@ import dragonBones.textures.TextureAtlasData;
 		
 		_armatureData = armatureData;
 		_skinData = skinData;
-		_animation = cast BaseObject.borrowObject(Animation);
+		_animations = cast BaseObject.borrowObject(Animation);
 		_proxy = proxy;
 		_display = display;
 		_eventManager = eventManager;
 		
-		_animation._init(this);
-		_animation.animations = _armatureData.animations;
+		_animations._init(this);
+		_animations.animations = _armatureData.animations;
 	}
 	/**
 	 * @private
@@ -262,11 +262,9 @@ import dragonBones.textures.TextureAtlasData;
 	{
 		if (_bones.indexOf(value) < 0)
 		{
-			_bones = [];
-			
 			_bonesDirty = true;
 			_bones.push(value);
-			_animation._timelineStateDirty = true;
+			_animations._timelineStateDirty = true;
 		}
 	}
 	/**
@@ -279,7 +277,7 @@ import dragonBones.textures.TextureAtlasData;
 		{
 			
 			_bones.splice(index, 1);
-			_animation._timelineStateDirty = true;
+			_animations._timelineStateDirty = true;
 			
 		}
 	}
@@ -293,7 +291,7 @@ import dragonBones.textures.TextureAtlasData;
 
 			_slotsDirty = true;
 			_slots.push(value);
-			_animation._timelineStateDirty = true;
+			_animations._timelineStateDirty = true;
 		}
 	}
 	/**
@@ -307,7 +305,7 @@ import dragonBones.textures.TextureAtlasData;
 		{
 			
 			_slots.splice(index, 1);
-			_animation._timelineStateDirty = true;
+			_animations._timelineStateDirty = true;
 			
 		}
 	}
@@ -382,8 +380,8 @@ import dragonBones.textures.TextureAtlasData;
 	 * @language zh_CN
 	 * 更新骨架和动画。
      * @param passedTime 两帧之间的时间间隔。 (以秒为单位)
-	 * @see dragonBones.animation.IAnimateble
-	 * @see dragonBones.animation.WorldClock
+	 * @see dragonBones.animations.IAnimateble
+	 * @see dragonBones.animations.WorldClock
 	 * @version DragonBones 3.0
 	 */
 	public function advanceTime(passedTime:Float):Void
@@ -397,12 +395,12 @@ import dragonBones.textures.TextureAtlasData;
 			throw new Error("The armature data has been disposed.");
 		}
 		
-		var prevCacheFrameIndex:Int = _animation._cacheFrameIndex;
+		var prevCacheFrameIndex:Int = _animations._cacheFrameIndex;
 		
 		// Update nimation.
-		_animation._advanceTime(passedTime);
+		_animations._advanceTime(passedTime);
 		
-		var currentCacheFrameIndex:Int = _animation._cacheFrameIndex;
+		var currentCacheFrameIndex:Int = _animations._cacheFrameIndex;
 		
 		// Sort bones and slots.
 		if (_bonesDirty)
@@ -872,13 +870,13 @@ import dragonBones.textures.TextureAtlasData;
 	/**
 	 * @language zh_CN
 	 * 获取动画控制器。
-	 * @see dragonBones.animation.Animation
+	 * @see dragonBones.animations.Animation
 	 * @version DragonBones 3.0
 	 */
-	public var animation(get, never):Animation;
-	private function get_animation():Animation	
+	public var animations(get, never):Animation;
+	private function get_animations():Animation	
 	{
-		return _animation;
+		return _animations;
 	}
 	/**
 	 * @language zh_CN

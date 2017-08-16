@@ -240,16 +240,20 @@ import dragonBones.textures.TextureData;
 		for (i in 0...l)
 		{
 			slotData = slots[i];
-			if (!slotDisplayDataSetMap.exists(slotData.name))
+			/*
+			if (slotDisplayDataSetMap.exists(slotData.name))
 			{
 				continue;
 			}
+			*/
+			
 			
 			skinSlotData = slotDisplayDataSetMap[slotData.name];
 			slot = _generateSlot(dataPackage, skinSlotData, armature);
 			if (slot != null)
 			{
 				armature._addSlot(slot, slotData.parent.name);
+				slot._armature = armature;
 				slot._setDisplayIndex(slotData.displayIndex);
 			}
 		}
@@ -675,15 +679,15 @@ import dragonBones.textures.TextureData;
 			var fromArmatureData:ArmatureData = dataPackage.armature;
 			if (ifRemoveOriginalAnimationList)
 			{
-				toArmature.animation.animations = fromArmatureData.animations;
+				toArmature.animations.animations = fromArmatureData.animations;
 			}
 			else
 			{
 				var animations = new Map<String, AnimationData>();
 				var animationName:String = null;
-				for (animationName in toArmature.animation.animations.keys())
+				for (animationName in toArmature.animations.animations.keys())
 				{
-					animations[animationName] = toArmature.animation.animations[animationName];
+					animations[animationName] = toArmature.animations.animations[animationName];
 				}
 				
 				for (animationName in fromArmatureData.animations.keys())
@@ -691,7 +695,7 @@ import dragonBones.textures.TextureData;
 					animations[animationName] = fromArmatureData.animations[animationName];
 				}
 				
-				toArmature.animation.animations = animations;
+				toArmature.animations.animations = animations;
 			}
 			
 			if (dataPackage.skin != null)
