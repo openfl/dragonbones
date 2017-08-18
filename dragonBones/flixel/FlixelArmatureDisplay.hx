@@ -28,11 +28,6 @@ import dragonBones.objects.BoundingBoxData;
 	
 	private var _debugDrawer:Sprite;
 
-	public var globalX:Float = 0;
-	public var globalY:Float = 0;
-	public var gScaleX:Float = 1;
-	public var gScaleY:Float = 1;
-
 	/**
 	 * @private
 	 */
@@ -106,6 +101,36 @@ import dragonBones.objects.BoundingBoxData;
 	private function get_animations():Animation
 	{
 		return _armature.animations;
+	}
+
+	public var globalX(default, set):Float = 0;
+	private function set_globalX(x:Float):Float
+	{
+		return globalX = x;
+	}
+
+	public var globalY(default, set):Float = 0;
+	private function set_globalY(y:Float):Float
+	{
+		return globalY = y;
+	}
+
+	public var gScaleX(default, set):Float = 1;
+	private function set_gScaleX(x:Float):Float
+	{
+		return gScaleX = x;
+	}
+
+	public var gScaleY(default, set):Float = 1;
+	private function set_gScaleY(y:Float):Float
+	{
+		return gScaleY = y;
+	}
+
+	public var zOrder(default, set):Int = 0;
+	private function set_zOrder(order:Int):Int
+	{
+		return zOrder = order;
 	}
 	
 	/**
