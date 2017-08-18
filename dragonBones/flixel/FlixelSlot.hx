@@ -75,11 +75,14 @@ typedef GraphicsTrianglePath = {
 
 	override private function _updateZOrder():Void
 	{	
-		for (i in 0...this._armature._armatureData._sortedSlots.length) {
-			if(this.name == this._armature._armatureData._sortedSlots[i].name) {
-				_flxSpriteGroup.insert(i, _renderDisplay);
-			}
+		var index:Int = _flxSpriteGroup.members.indexOf(_renderDisplay);
+		if(index == _zOrder) {
+			return;
 		}
+		_flxSpriteGroup.members.splice(index, 1);
+		_flxSpriteGroup.members.insert(_zOrder, _renderDisplay);
+		//_flxSpriteGroup.remove(_renderDisplay, true);
+		//_flxSpriteGroup.insert(_zOrder, _renderDisplay);
 	}
 
 	override private function _updateVisible():Void
@@ -206,7 +209,6 @@ typedef GraphicsTrianglePath = {
 
 			_flxSpriteGroup.add(cast _renderDisplay);
 		}
-		trace(this._zOrder);
 		_updateVisible();
 	}
 
@@ -253,8 +255,8 @@ typedef GraphicsTrianglePath = {
 
 	override private function _updateTransform(isSkinnedMesh:Bool):Void
 	{
-		_renderDisplay.x = (_renderDisplay.worldX + -(_pivotX) + getGlobalScaleX(globalTransformMatrix.tx));
-		_renderDisplay.y = (_renderDisplay.worldY + -(_pivotY) + getGlobalScaleY(globalTransformMatrix.ty));
+		_renderDisplay.x = (_renderDisplay.globalX + -(_pivotX) + getGlobalScaleX(globalTransformMatrix.tx));
+		_renderDisplay.y = (_renderDisplay.globalY + -(_pivotY) + getGlobalScaleY(globalTransformMatrix.ty));
 		_renderDisplay.angle = Utility.getAngle(globalTransformMatrix);
 		_renderDisplay.scale.set( 
 			getGlobalScaleX(Math.sqrt(Math.pow(globalTransformMatrix.a, 2) + Math.pow(globalTransformMatrix.c, 2))),  

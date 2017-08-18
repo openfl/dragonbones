@@ -23,10 +23,11 @@ import dragonBones.flixel.FlixelTextureAtlasData;
 import dragonBones.flixel.FlixelTextureData;
 
 import flixel.group.FlxGroup;
+import flixel.FlxG;
 
 @:allow(dragonBones) @:final class FlixelFactory extends BaseFactory {
 
-	private static var _eventManager:EventDispatcher = new EventDispatcher();
+	private static var _eventManager:FlixelArmatureDisplay = new FlixelArmatureDisplay();
 	private static var _clock:WorldClock = new WorldClock();
 
 	public static var factory:FlixelFactory = new FlixelFactory();
@@ -67,10 +68,10 @@ import flixel.group.FlxGroup;
 	 //BaseFactory.hx: buildArmature(): _generateArmature()
 	override private function _generateArmature(dataPackage:BuildArmaturePackage):Armature
 	{
-		if (!_eventManager.hasEventListener(Event.ENTER_FRAME))
+		if (!FlxG.stage.hasEventListener(Event.ENTER_FRAME))
 		{
 			_clock.time = Lib.getTimer() * 0.001;
-			_eventManager.addEventListener(Event.ENTER_FRAME, _clockHandler, false, -999999);
+			FlxG.stage.addEventListener(Event.ENTER_FRAME, _clockHandler, false, -999999);
 		}
 		
 		var armature:Armature = cast BaseObject.borrowObject(Armature);

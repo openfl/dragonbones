@@ -8,6 +8,7 @@ import openfl.Vector;
 
 import flixel.FlxSprite;
 import flixel.group.FlxGroup;
+import flixel.FlxG;
 
 import dragonBones.Armature;
 import dragonBones.Bone;
@@ -27,10 +28,8 @@ import dragonBones.objects.BoundingBoxData;
 	
 	private var _debugDrawer:Sprite;
 
-	private var _eventManager:EventDispatcher;
-
-	public var worldX:Float = 0;
-	public var worldY:Float = 0;
+	public var globalX:Float = 0;
+	public var globalY:Float = 0;
 	public var gScaleX:Float = 1;
 	public var gScaleY:Float = 1;
 
@@ -40,7 +39,6 @@ import dragonBones.objects.BoundingBoxData;
 	private function new()
 	{
 		super();
-		_eventManager = new EventDispatcher();
 	}
 	/**
 	 * @private
@@ -56,7 +54,7 @@ import dragonBones.objects.BoundingBoxData;
 	private function _dispatchEvent(type:String, eventObject:EventObject):Void
 	{
 		var event:FlixelEvent = new FlixelEvent(type, eventObject);
-		_eventManager.dispatchEvent(event);
+		FlxG.stage.dispatchEvent(event);
 	}
 	/**
 	 * @private
@@ -81,21 +79,21 @@ import dragonBones.objects.BoundingBoxData;
 	 */
 	public function hasEvent(type:String):Bool
 	{
-		return _eventManager.hasEventListener(type);
+		return FlxG.stage.hasEventListener(type);
 	}
 	/**
 	 * @inheritDoc
 	 */
 	public function addEvent(type:String, listener:Function):Void
 	{
-		_eventManager.addEventListener(type, cast listener);
+		FlxG.stage.addEventListener(type, cast listener);
 	}
 	/**
 	 * @inheritDoc
 	 */
 	public function removeEvent(type:String, listener:Function):Void
 	{
-		_eventManager.removeEventListener(type, cast listener);
+		FlxG.stage.removeEventListener(type, cast listener);
 	}
 	
 	public var armature(get, never):Armature;

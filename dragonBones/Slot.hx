@@ -795,7 +795,7 @@ import dragonBones.textures.TextureData;
 		
 		if (_display == null) 
 		{
-			#if (openfl > 3)
+			#if (openfl > "3.6.1")
 			return;
 			#else
 			#end
