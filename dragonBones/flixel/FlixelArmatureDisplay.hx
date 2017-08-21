@@ -2,10 +2,6 @@ package dragonBones.flixel;
 
 import haxe.Constraints;
 
-import openfl.display.Sprite;
-import openfl.events.EventDispatcher;
-import openfl.Vector;
-
 import flixel.FlxSprite;
 import flixel.group.FlxGroup;
 import flixel.FlxG;
@@ -20,13 +16,11 @@ import dragonBones.events.EventObject;
 import dragonBones.objects.BoundingBoxData;
 
 @:allow(dragonBones) @:final class FlixelArmatureDisplay extends FlxSprite implements IArmatureDisplay {
+
 	/**
 	 * @private
 	 */
-
 	private var _armature:Armature;
-	
-	private var _debugDrawer:Sprite;
 
 	/**
 	 * @private
@@ -41,7 +35,6 @@ import dragonBones.objects.BoundingBoxData;
 	private function _onClear():Void
 	{
 		_armature = null;
-		_debugDrawer = null;
 	}
 	/**
 	 * @private
@@ -128,9 +121,9 @@ import dragonBones.objects.BoundingBoxData;
 	}
 
 	public var zOrder(default, set):Int = 0;
-	private function set_zOrder(order:Int):Int
+	private function set_zOrder(pos:Int):Int
 	{
-		return zOrder = order;
+		return zOrder = pos;
 	}
 	
 	/**

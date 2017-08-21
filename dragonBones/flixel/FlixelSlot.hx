@@ -15,6 +15,8 @@ import openfl.geom.Rectangle;
 import openfl.geom.Matrix;
 import openfl.Vector;
 
+using flixel.util.FlxArrayUtil;
+
 typedef GraphicsTrianglePath = {
 	uvtData:Vector<Float>,
 	indices:Vector<Int>,
@@ -79,10 +81,12 @@ typedef GraphicsTrianglePath = {
 		if(index == _zOrder) {
 			return;
 		}
-		_flxSpriteGroup.members.splice(index, 1);
-		_flxSpriteGroup.members.insert(_zOrder, _renderDisplay);
-		//_flxSpriteGroup.remove(_renderDisplay, true);
-		//_flxSpriteGroup.insert(_zOrder, _renderDisplay);
+
+		//_flxSpriteGroup.members.splice(index, 1);
+		_flxSpriteGroup.members.fastSplice(_renderDisplay);
+
+		//_flxSpriteGroup.members.insert(_zOrder, _renderDisplay);
+		_flxSpriteGroup.insert(_zOrder, _renderDisplay);
 	}
 
 	override private function _updateVisible():Void
