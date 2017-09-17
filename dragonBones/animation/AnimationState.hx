@@ -155,7 +155,7 @@ import dragonBones.objects.SlotTimelineData;
 	/**
 	 * @private
 	 */
-	private function new()
+	@:keep private function new()
 	{
 		super();
 	}

@@ -90,7 +90,7 @@ import dragonBones.objects.BoneData;
 	/**
 	 * @private
 	 */
-	private function new()
+	@:keep private function new()
 	{
 		super();
 	}

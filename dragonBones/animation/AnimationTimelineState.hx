@@ -17,7 +17,7 @@ import dragonBones.objects.FrameData;
  */
 @:allow(dragonBones) @:final class AnimationTimelineState extends TimelineState
 {
-	private function new()
+	@:keep private function new()
 	{
 		super();
 	}
