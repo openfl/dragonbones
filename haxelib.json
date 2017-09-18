@@ -5,6 +5,6 @@
 	"tags": [],
 	"description": "DragonBones Haxe Runtime",
 	"version": "5.0.0",
-	"releasenote": "Update for parity with version 5 AS runtime",
-	"contributors": [ "singmajesty" ]
+	"releasenote": "Add Flixel Factory and OpenFL 6 vs OpenFL 3.6.1(flixel) compiler conditionals.",
+	"contributors": [ "singmajesty", "troyedwardsjr" ]
 }

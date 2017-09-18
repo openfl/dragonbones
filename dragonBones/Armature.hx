@@ -4,11 +4,13 @@ import haxe.Constraints;
 
 import openfl.errors.Error;
 import openfl.geom.Point;
+#if (openfl > "3.6.1")
 import openfl.Vector;
+#end
 
-import dragonBones.animation.Animation;
-import dragonBones.animation.IAnimateble;
-import dragonBones.animation.WorldClock;
+import dragonBones.animations.Animation;
+import dragonBones.animations.IAnimateble;
+import dragonBones.animations.WorldClock;
 import dragonBones.core.BaseObject;
 import dragonBones.core.DragonBones;
 import dragonBones.core.IArmatureProxy;
@@ -28,7 +30,7 @@ import dragonBones.textures.TextureAtlasData;
  * @see dragonBones.objects.ArmatureData
  * @see dragonBones.Bone
  * @see dragonBones.Slot
- * @see dragonBones.animation.Animation
+ * @see dragonBones.animations.Animation
  * @version DragonBones 3.0
  */
 @:allow(dragonBones) @:final class Armature extends BaseObject implements IAnimateble
@@ -64,10 +66,17 @@ import dragonBones.textures.TextureAtlasData;
 	private var _bonesDirty:Bool;
 	private var _slotsDirty:Bool;
 	private var _zOrderDirty:Bool;
+	#if (openfl > "3.6.1")
 	private var _bones:Vector<Bone> = new Vector<Bone>();
 	private var _slots:Vector<Slot> = new Vector<Slot>();
 	private var _actions:Vector<ActionData> = new Vector<ActionData>();
 	private var _events:Vector<EventObject> = new Vector<EventObject>();
+	#else
+	private var _bones:Array<Bone> = new Array<Bone>();
+	private var _slots:Array<Slot> = new Array<Slot>();
+	private var _actions:Array<ActionData> = new Array<ActionData>();
+	private var _events:Array<EventObject> = new Array<EventObject>();
+	#end
 	/**
 	 * @private
 	 */
@@ -76,7 +85,7 @@ import dragonBones.textures.TextureAtlasData;
 	 * @private
 	 */
 	private var _skinData:SkinData;
-	private var _animation:Animation;
+	private var _animations:Animation;
 	private var _proxy:IArmatureProxy;
 	private var _display:Dynamic;
 	private var _eventManager:IEventDispatcher;
@@ -135,9 +144,9 @@ import dragonBones.textures.TextureAtlasData;
 			_replaceTextureAtlasData.returnToPool();
 		}
 		
-		if (_animation != null) 
+		if (_animations != null) 
 		{
-			_animation.returnToPool();
+			_animations.returnToPool();
 		}
 		
 		inheritAnimation = true;
@@ -150,15 +159,22 @@ import dragonBones.textures.TextureAtlasData;
 		_bonesDirty = false;
 		_slotsDirty = false;
 		_zOrderDirty = false;
+		#if (openfl > "3.6.1")
 		_bones.fixed = false;
 		_bones.length = 0;
 		_slots.fixed = false;
 		_slots.length = 0;
 		_actions.length = 0;
 		_events.length = 0;
+		#else
+		_bones = [];
+		_slots = [];
+		_actions = [];
+		_events = [];
+		#end
 		_armatureData = null;
 		_skinData = null;
-		_animation = null;
+		_animations = null;
 		_proxy = null;
 		_display = null;
 		_eventManager = null;
@@ -175,12 +191,20 @@ import dragonBones.textures.TextureAtlasData;
 		{
 			return;
 		}
-		
+		#if (openfl > "3.6.1")
 		var sortHelper:Vector<Bone> = _bones.concat();
+		#else
+		var sortHelper:Array<Bone> = _bones.copy();
+		#end
 		var index:UInt = 0;
 		var count:UInt = 0;
-		
+
+		#if (openfl > "3.6.1")
 		_bones.length = 0;
+		#else
+		_bones = [];
+		#end
+
 		var bone:Bone;
 		
 		while(count < total)
@@ -209,7 +233,7 @@ import dragonBones.textures.TextureAtlasData;
 			
 			if (bone._ik != null && bone._ikChain > 0 && bone._ikChainIndex == bone._ikChain)
 			{
-				_bones.insertAt(_bones.indexOf(bone.parent) + 1, bone); // ik, parent, bone, children
+				_bones.insert(_bones.indexOf(bone.parent) + 1, bone); // ik, parent, bone, children
 				//_bones.splice(_bones.indexOf(bone.parent) + 1, 0, bone); // ik, parent, bone, children
 			}
 			else
@@ -231,7 +255,7 @@ import dragonBones.textures.TextureAtlasData;
 		switch (value.type) 
 		{
 			case ActionType.Play:
-				_animation.playConfig(value.animationConfig);
+				_animations.playConfig(value.animationConfig);
 			
 			default:
 		}
@@ -251,13 +275,13 @@ import dragonBones.textures.TextureAtlasData;
 		
 		_armatureData = armatureData;
 		_skinData = skinData;
-		_animation = cast BaseObject.borrowObject(Animation);
+		_animations = cast BaseObject.borrowObject(Animation);
 		_proxy = proxy;
 		_display = display;
 		_eventManager = eventManager;
 		
-		_animation._init(this);
-		_animation.animations = _armatureData.animations;
+		_animations._init(this);
+		_animations.animations = _armatureData.animations;
 	}
 	/**
 	 * @private
@@ -266,11 +290,11 @@ import dragonBones.textures.TextureAtlasData;
 	{
 		if (_bones.indexOf(value) < 0)
 		{
-			_bones.fixed = false;
-			
+			#if (openfl > "3.6.1")
 			_bonesDirty = true;
+			#end
 			_bones.push(value);
-			_animation._timelineStateDirty = true;
+			_animations._timelineStateDirty = true;
 		}
 	}
 	/**
@@ -281,12 +305,14 @@ import dragonBones.textures.TextureAtlasData;
 		var index:Int = _bones.indexOf(value);
 		if (index >= 0) 
 		{
+			#if (openfl > "3.6.1")
 			_bones.fixed = false;
-			
+			#end	
 			_bones.splice(index, 1);
-			_animation._timelineStateDirty = true;
-			
-			_bones.fixed = true;
+			_animations._timelineStateDirty = true;
+			#if (openfl > "3.6.1")
+			_bones.fixed = false;
+			#end
 		}
 	}
 	/**
@@ -296,11 +322,12 @@ import dragonBones.textures.TextureAtlasData;
 	{
 		if (_slots.indexOf(value) < 0)
 		{
+			#if (openfl > "3.6.1")
 			_slots.fixed = false;
-			
+			#end
 			_slotsDirty = true;
 			_slots.push(value);
-			_animation._timelineStateDirty = true;
+			_animations._timelineStateDirty = true;
 		}
 	}
 	/**
@@ -312,20 +339,26 @@ import dragonBones.textures.TextureAtlasData;
 		var index:Int = _slots.indexOf(value);
 		if (index >= 0) 
 		{
+			#if (openfl > "3.6.1")
 			_slots.fixed = false;
-			
+			#end
 			_slots.splice(index, 1);
-			_animation._timelineStateDirty = true;
-			
-			_slots.fixed = true;
+			_animations._timelineStateDirty = true;
+			#if (openfl > "3.6.1")
+			_slots.fixed = false;
+			#end
 		}
 	}
 	/**
 	 * @private
 	 */
-	private function _sortZOrder(slotIndices: Vector<Int>):Void 
+	private function _sortZOrder(slotIndices: Array<Int>):Void 
 	{
+		#if (openfl > "3.6.1")
 		var sortedSlots:Vector<SlotData> = _armatureData.sortedSlots;
+		#else
+		var sortedSlots:Array<SlotData> = _armatureData.sortedSlots;
+		#end
 		var isOriginal:Bool = slotIndices == null || slotIndices.length < 1;
 		
 		var l, slotIndex:Int, slotData:SlotData, slot:Slot;
@@ -391,8 +424,8 @@ import dragonBones.textures.TextureAtlasData;
 	 * @language zh_CN
 	 * 更新骨架和动画。
      * @param passedTime 两帧之间的时间间隔。 (以秒为单位)
-	 * @see dragonBones.animation.IAnimateble
-	 * @see dragonBones.animation.WorldClock
+	 * @see dragonBones.animations.IAnimateble
+	 * @see dragonBones.animations.WorldClock
 	 * @version DragonBones 3.0
 	 */
 	public function advanceTime(passedTime:Float):Void
@@ -406,26 +439,30 @@ import dragonBones.textures.TextureAtlasData;
 			throw new Error("The armature data has been disposed.");
 		}
 		
-		var prevCacheFrameIndex:Int = _animation._cacheFrameIndex;
+		var prevCacheFrameIndex:Int = _animations._cacheFrameIndex;
 		
 		// Update nimation.
-		_animation._advanceTime(passedTime);
+		_animations._advanceTime(passedTime);
 		
-		var currentCacheFrameIndex:Int = _animation._cacheFrameIndex;
+		var currentCacheFrameIndex:Int = _animations._cacheFrameIndex;
 		
 		// Sort bones and slots.
 		if (_bonesDirty)
 		{
 			_bonesDirty = false;
 			_sortBones();
+			#if (openfl > "3.6.1")
 			_bones.fixed = true;
+			#end	
 		}
 		
 		if (_slotsDirty)
 		{
 			_slotsDirty = false;
 			_sortSlots();
+			#if (openfl > "3.6.1")
 			_slots.fixed = true;
+			#end	
 		}
 		
 		var l:UInt = 0;
@@ -475,8 +512,11 @@ import dragonBones.textures.TextureAtlasData;
 					
 					eventObject.returnToPool();
 				}
-				
+				#if (openfl > "3.6.1")
 				_events.length = 0;
+				#else
+				_events = [];
+				#end	
 			}
 			
 			// Actions.
@@ -516,8 +556,11 @@ import dragonBones.textures.TextureAtlasData;
 						_doAction(action);
 					}
 				}
-				
+				#if (openfl > "3.6.1")
 				_actions.length = 0;
+				#else
+				_actions = [];
+				#end	
 			}
 			
 			_lockDispose = false;
@@ -844,7 +887,11 @@ import dragonBones.textures.TextureAtlasData;
 	 * @see dragonBones.Bone
 	 * @version DragonBones 3.0
 	 */
+	#if (openfl > "3.6.1")
 	public function getBones():Vector<Bone>
+	#else
+	public function getBones():Array<Bone>
+	#end
 	{
 		return _bones;
 	}
@@ -854,7 +901,11 @@ import dragonBones.textures.TextureAtlasData;
 	 * @see dragonBones.Slot
 	 * @version DragonBones 3.0
 	 */
+	#if (openfl > "3.6.1")
 	public function getSlots():Vector<Slot>
+	#else
+	public function getSlots():Array<Slot>
+	#end
 	{
 		return _slots;
 	}
@@ -883,13 +934,13 @@ import dragonBones.textures.TextureAtlasData;
 	/**
 	 * @language zh_CN
 	 * 获取动画控制器。
-	 * @see dragonBones.animation.Animation
+	 * @see dragonBones.animations.Animation
 	 * @version DragonBones 3.0
 	 */
-	public var animation(get, never):Animation;
-	private function get_animation():Animation	
+	public var animations(get, never):Animation;
+	private function get_animations():Animation	
 	{
-		return _animation;
+		return _animations;
 	}
 	/**
 	 * @language zh_CN

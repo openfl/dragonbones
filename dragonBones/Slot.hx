@@ -45,9 +45,9 @@ import dragonBones.textures.TextureData;
 	 * @language zh_CN
      * 显示对象受到控制的动画状态或混合组名称，设置为 null 则表示受所有的动画状态控制。
      * @default null
-	 * @see dragonBones.animation.AnimationState#displayControl
-	 * @see dragonBones.animation.AnimationState#name
-	 * @see dragonBones.animation.AnimationState#group
+	 * @see dragonBones.animations.AnimationState#displayControl
+	 * @see dragonBones.animations.AnimationState#name
+	 * @see dragonBones.animations.AnimationState#group
 	 * @version DragonBones 4.5
 	 */
 	public var displayController:String;
@@ -179,6 +179,7 @@ import dragonBones.textures.TextureData;
 	 * @private BoneTimelineState
 	 */
 	private var _cachedFrameIndices:Vector<Int>;
+
 	/**
 	 * @private
 	 */
@@ -654,7 +655,7 @@ import dragonBones.textures.TextureData;
 				prevChildArmature._clock = null;
 				if (prevChildArmature.inheritAnimation)
 				{
-					prevChildArmature.animation.reset();
+					prevChildArmature.animations.reset();
 				}
 			}
 			
@@ -683,7 +684,7 @@ import dragonBones.textures.TextureData;
 					} 
 					else 
 					{
-						_childArmature.animation.play();
+						_childArmature.animations.play();
 					}
 				}
 			}
@@ -794,7 +795,9 @@ import dragonBones.textures.TextureData;
 		
 		if (_display == null) 
 		{
+			#if !flixel
 			return;
+			#end
 		}
 		
 		if (_blendModeDirty) 

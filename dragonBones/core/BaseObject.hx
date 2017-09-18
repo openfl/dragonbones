@@ -1,42 +1,69 @@
 ﻿package dragonBones.core;
 
 import openfl.errors.Error;
+#if (openfl > "3.6.1")
 import openfl.utils.Dictionary;
 import openfl.Vector;
-
+#else
+import dragonBones.utils.ClassMap;
+#end
 /**
  * @language zh_CN
  * 基础对象。
  * @version DragonBones 4.5
  */
+ 
+/*
+@:coreType abstract ClassKey from Class<Dynamic> to {} {
+}
+*/
 @:allow(dragonBones) class BaseObject
 {
 	private static var _hashCode:UInt = 0;
 	private static var _defaultMaxCount:UInt = 5000;
+	#if (openfl > "3.6.1")
 	private static var _maxCountMap:Dictionary<Class<Dynamic>, Int> = new Dictionary<Class<Dynamic>, Int>();
 	private static var _poolsMap:Dictionary<Class<Dynamic>, Vector<BaseObject>> = new Dictionary<Class<Dynamic>, Vector<BaseObject>>();
-	
+	#else
+	private static var _maxCountMap:ClassMap<Class<Dynamic>, Int> = new ClassMap<Class<Dynamic>, Int>();
+	private static var _poolsMap:ClassMap<Class<Dynamic>, Array<BaseObject>> = new ClassMap<Class<Dynamic>, Array<BaseObject>>();
+	#end
 	private static function _returnObject(object:BaseObject):Void
 	{
 		//var objectConstructor:Class<Dynamic> = getDefinitionByName(getQualifiedClassName(object));
 		var objectConstructor:Class<Dynamic> = Type.getClass(object);
+		#if (openfl > "3.6.1")
 		var maxCount:Int = _maxCountMap.exists(objectConstructor) ? _maxCountMap[objectConstructor] : _defaultMaxCount;
 		var pool:Vector<BaseObject>;
+		#else
+		var maxCount:Int = _maxCountMap.exists(objectConstructor) ? _maxCountMap.get(objectConstructor) : _defaultMaxCount;
+		var pool:Array<BaseObject>;
+		#end
 		
 		if (_poolsMap.exists(objectConstructor))
 		{
+			#if (openfl > "3.6.1")
 			pool = _poolsMap[objectConstructor];
+			#else
+			pool = _poolsMap.get(objectConstructor);
+			#end
 		}
 		else
 		{
+			#if (openfl > "3.6.1")
 			pool = new Vector<BaseObject>();
 			_poolsMap[objectConstructor] = pool;
+			#else
+			pool = new Array<BaseObject>();
+			_poolsMap.set(objectConstructor, pool);
+			#end
 		}
 		
 		if (pool.length < maxCount)
 		{
 			if (!object._isInPool)
 			{
+				
 				object._isInPool = true;
 				pool.push(object);
 			}
@@ -55,6 +82,7 @@ import openfl.Vector;
 	 */
 	public static function setMaxCount(objectConstructor:Class<Dynamic>, maxCount:Int):Void
 	{
+		#if (openfl > "3.6.1")
 		var pool:Vector<BaseObject>;
 		
 		if (objectConstructor != null)
@@ -88,6 +116,41 @@ import openfl.Vector;
 				}
 			}
 		}
+		#else
+		var pool:Array<BaseObject>;
+		
+		if (objectConstructor != null)
+		{
+			_maxCountMap.set(objectConstructor, maxCount);
+			
+			if (_poolsMap.exists(objectConstructor))
+			{
+				pool = _poolsMap.get(objectConstructor);
+				if (pool.length > maxCount)
+				{
+					//pool.length = maxCount;
+				}
+			}
+		}
+		else
+		{
+			_defaultMaxCount = maxCount;
+			
+			for (classType in _poolsMap.keys())
+			{
+				if (!_maxCountMap.exists(classType))
+				{
+					continue;
+				}
+				
+				pool = _poolsMap.get(classType);
+				if (pool.length > maxCount)
+				{
+					//pool.length = maxCount;
+				}
+			}
+		}
+		#end
 	}
 	/**
 	 * @language zh_CN
@@ -101,19 +164,34 @@ import openfl.Vector;
 		{
 			if (_poolsMap.exists(objectConstructor))
 			{
+				#if (openfl > "3.6.1")
 				var pool:Vector<BaseObject> = _poolsMap[objectConstructor];
 				if (pool.length > 0)
 				{
 					pool.length = 0;
 				}
+				#else
+				var pool:Array<BaseObject> = _poolsMap.get(objectConstructor);
+				if (pool.length > 0)
+				{
+					pool = [];
+				}
+				#end
 			}
 		}
 		else
 		{
+			#if (openfl > "3.6.1")
 			for (k in _poolsMap)
 			{
 				_poolsMap[k].length = 0;
 			}
+			#else
+			for (k in _poolsMap.keys())
+			{
+				_poolsMap.set(k, []);
+			}
+			#end
 		}
 	}
 	/**
@@ -123,7 +201,11 @@ import openfl.Vector;
 	 */
 	public static function borrowObject(objectConstructor:Class<Dynamic>):BaseObject
 	{
+		#if (openfl > "3.6.1")
 		var pool:Vector<BaseObject> = _poolsMap.exists(objectConstructor) ? _poolsMap[objectConstructor] : null;
+		#else
+		var pool:Array<BaseObject> = _poolsMap.exists(objectConstructor) ? _poolsMap.get(objectConstructor) : null;
+		#end
 		if (pool != null && pool.length > 0)
 		{
 			var object = pool.pop();

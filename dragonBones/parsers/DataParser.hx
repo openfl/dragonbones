@@ -3,9 +3,8 @@
 import openfl.errors.Error;
 import openfl.geom.Matrix;
 import openfl.geom.Point;
-import openfl.Vector;
 
-import dragonBones.animation.TweenTimelineState;
+import dragonBones.animations.TweenTimelineState;
 import dragonBones.core.BaseObject;
 import dragonBones.core.DragonBones;
 import dragonBones.enums.ActionType;
@@ -41,13 +40,13 @@ import dragonBones.textures.TextureAtlasData;
 	private static inline var DATA_VERSION_4_5:String = "4.5";
 	private static inline var DATA_VERSION_5_0:String = "5.0";
 	private static inline var DATA_VERSION:String = DATA_VERSION_5_0;
-	private static var DATA_VERSIONS:Vector<String> = Vector.ofArray([
+	private static var DATA_VERSIONS:Array<String> = [
 		DATA_VERSION_5_0,
 		DATA_VERSION_4_5,
 		DATA_VERSION_4_0,
 		DATA_VERSION_3_0,
 		DATA_VERSION_2_3
-	]);
+	];
 	
 	private static inline var TEXTURE_ATLAS:String = "TextureAtlas";
 	private static inline var SUB_TEXTURE:String = "SubTexture";
@@ -285,13 +284,13 @@ import dragonBones.textures.TextureAtlasData;
 	private var _helpTransformA:Transform = new Transform();
 	private var _helpTransformB:Transform = new Transform();
 	private var _helpMatrix:Matrix = new Matrix();
-	private var _rawBones:Vector<BoneData> = new Vector<BoneData>();
+	private var _rawBones:Array<BoneData> = new Array<BoneData>();
 	
 	private var _data:DragonBonesData = null;
 	private var _armature:ArmatureData = null;
 	private var _skin:SkinData = null;
 	private var _skinSlotData:SkinSlotData = null;
-	private var _animation:AnimationData = null;
+	private var _animations:AnimationData = null;
 	private var _timeline:TimelineData = null;
 	
 	private function new() {}
@@ -312,9 +311,9 @@ import dragonBones.textures.TextureAtlasData;
 		throw new Error(DragonBones.ABSTRACT_METHOD_ERROR);
 	}
 	
-	private function _getTimelineFrameMatrix(animation:AnimationData, timeline:BoneTimelineData, position:Float, transform:Transform):Void 
+	private function _getTimelineFrameMatrix(animations:AnimationData, timeline:BoneTimelineData, position:Float, transform:Transform):Void 
 	{
-		var frameIndex:Int = Std.int(position * animation.frameCount / animation.duration);
+		var frameIndex:Int = Std.int(position * animations.frameCount / animations.duration);
 		if (timeline.frames.length == 1 || frameIndex >= timeline.frames.length) 
 		{
 			transform.copyFrom(cast(timeline.frames[0], BoneFrameData).transform);
@@ -360,8 +359,10 @@ import dragonBones.textures.TextureAtlasData;
 	
 	private function _globalToLocal(armature:ArmatureData):Void // Support 2.x ~ 3.x data.
 	{
-		var keyFrames:Vector<BoneFrameData> = new Vector<BoneFrameData>();
-		var bones:Vector<BoneData> = armature.sortedBones.concat().reverse();
+		var keyFrames:Array<BoneFrameData> = new Array<BoneFrameData>();
+		var sortedBonesCopy = armature.sortedBones.copy();
+		sortedBonesCopy.reverse();
+		var bones:Array<BoneData> = sortedBonesCopy;
 		
 		var l:UInt = bones.length;
 		var bone:BoneData, frame:BoneFrameData, timeline:BoneTimelineData, parentTimeline:BoneTimelineData;
@@ -380,18 +381,18 @@ import dragonBones.textures.TextureAtlasData;
 			}
 			
 			frame = null;
-			for (animation in armature.animations) 
+			for (animations in armature.animations) 
 			{
-				timeline = animation.getBoneTimeline(bone.name);
+				timeline = animations.getBoneTimeline(bone.name);
 				
 				if (timeline == null)
 				{
 					continue;	
 				}
 				
-				parentTimeline = bone.parent != null? animation.getBoneTimeline(bone.parent.name): null;
+				parentTimeline = bone.parent != null? animations.getBoneTimeline(bone.parent.name): null;
 				_helpTransformB.copyFrom(timeline.originalTransform);
-				keyFrames.length = 0;
+				keyFrames = [];
 				
 				lJ = timeline.frames.length;
 				for (j in 0...lJ)
@@ -407,7 +408,7 @@ import dragonBones.textures.TextureAtlasData;
 					
 					if (parentTimeline != null)
 					{
-						_getTimelineFrameMatrix(animation, parentTimeline, frame.position, _helpTransformA);
+						_getTimelineFrameMatrix(animations, parentTimeline, frame.position, _helpTransformA);
 						frame.transform.add(_helpTransformB);
 						_helpTransformA.toMatrix(_helpMatrix);
 						_helpMatrix.invert();
@@ -437,25 +438,24 @@ import dragonBones.textures.TextureAtlasData;
 		}
 	}
 	
-	private function _mergeFrameToAnimationTimeline(framePositon:Float, actions:Vector<ActionData>, events:Vector<EventData>):Void 
+	private function _mergeFrameToAnimationTimeline(framePositon:Float, actions:Array<ActionData>, events:Array<EventData>):Void 
 	{
 		var frameStart:UInt = Math.floor(framePositon * _armature.frameRate); // uint()
-		var frames:Vector<FrameData> = _animation.frames;
+		var frames:Array<FrameData> = _animations.frames;
 		
-		frames.fixed = false;
 		
 		if (frames.length == 0) {
 			var startFrame:AnimationFrameData = cast BaseObject.borrowObject(AnimationFrameData); // Add start frame.
 			startFrame.position = 0;
 			
-			if (_animation.frameCount > 1) {
-				frames.length = _animation.frameCount + 1; // One more count for zero duration frame.
+			if (_animations.frameCount > 1) {
+				//frames.length = _animations.frameCount + 1; // One more count for zero duration frame.
 				
-				var endFrame:AnimationFrameData = cast BaseObject.borrowObject(AnimationFrameData); // Add end frame to keep animation timeline has two different frames atleast.
-				endFrame.position = _animation.frameCount / _armature.frameRate;
+				var endFrame:AnimationFrameData = cast BaseObject.borrowObject(AnimationFrameData); // Add end frame to keep animations timeline has two different frames atleast.
+				endFrame.position = _animations.frameCount / _armature.frameRate;
 				
 				frames[0] = startFrame;
-				frames[_animation.frameCount] = endFrame;
+				frames[_animations.frameCount] = endFrame;
 			}
 		}
 		
@@ -536,12 +536,11 @@ import dragonBones.textures.TextureAtlasData;
 			}
 		}
 		
-		nextFrame.duration = _animation.duration - nextFrame.position;
+		nextFrame.duration = _animations.duration - nextFrame.position;
 		
 		nextFrame = frames[0] != null ? cast frames[0] : null;
 		prevFrame.next = nextFrame;
 		nextFrame.prev = prevFrame;
-		
-		frames.fixed = true;
+
 	}
 }

@@ -162,7 +162,7 @@ import dragonBones.textures.TextureData;
 		}
 		
 		_armature = armature;
-		_rawBones.length = 0;
+		_rawBones = [];
 		
 		if (Reflect.hasField(rawData, DataParser.BONE))
 		{
@@ -219,7 +219,7 @@ import dragonBones.textures.TextureData;
 		}
 		
 		_armature = null;
-		_rawBones.length = 0;
+		_rawBones = [];
 		
 		return armature;
 	}
@@ -674,29 +674,29 @@ import dragonBones.textures.TextureData;
 	 */
 	private function _parseAnimation(rawData:Dynamic):AnimationData
 	{
-		var animation:AnimationData = cast BaseObject.borrowObject(AnimationData);
-		animation.name = _getString(rawData, DataParser.NAME, DataParser.DEFAULT_NAME);
-		if (animation.name == null) animation.name = DataParser.DEFAULT_NAME;
-		animation.frameCount = Std.int(Math.max(_getInt(rawData, DataParser.DURATION, 1), 1));
-		animation.duration = animation.frameCount / _armature.frameRate;
-		animation.playTimes = _getInt(rawData, DataParser.PLAY_TIMES, 1);
-		animation.fadeInTime = _getFloat(rawData, DataParser.FADE_IN_TIME, 0);
+		var animations:AnimationData = cast BaseObject.borrowObject(AnimationData);
+		animations.name = _getString(rawData, DataParser.NAME, DataParser.DEFAULT_NAME);
+		if (animations.name == null) animations.name = DataParser.DEFAULT_NAME;
+		animations.frameCount = Std.int(Math.max(_getInt(rawData, DataParser.DURATION, 1), 1));
+		animations.duration = animations.frameCount / _armature.frameRate;
+		animations.playTimes = _getInt(rawData, DataParser.PLAY_TIMES, 1);
+		animations.fadeInTime = _getFloat(rawData, DataParser.FADE_IN_TIME, 0);
 		
-		_animation = animation;
+		_animations = animations;
 		
-		_parseTimeline(rawData, animation, _parseAnimationFrame);
+		_parseTimeline(rawData, animations, _parseAnimationFrame);
 		
 		if (Reflect.hasField(rawData, DataParser.Z_ORDER)) 
 		{
-			animation.zOrderTimeline = cast BaseObject.borrowObject(ZOrderTimelineData);
-			_parseTimeline(Reflect.field(rawData, DataParser.Z_ORDER), animation.zOrderTimeline, _parseZOrderFrame);
+			animations.zOrderTimeline = cast BaseObject.borrowObject(ZOrderTimelineData);
+			_parseTimeline(Reflect.field(rawData, DataParser.Z_ORDER), animations.zOrderTimeline, _parseZOrderFrame);
 		}
 		
 		if (Reflect.hasField(rawData, DataParser.BONE))
 		{
 			for (rawBoneTimeline in cast(Reflect.field(rawData, DataParser.BONE), Array<Dynamic>))
 			{
-				animation.addBoneTimeline(_parseBoneTimeline(rawBoneTimeline));
+				animations.addBoneTimeline(_parseBoneTimeline(rawBoneTimeline));
 			}
 		}
 		
@@ -704,7 +704,7 @@ import dragonBones.textures.TextureData;
 		{
 			for (rawSlotTimeline in cast(Reflect.field(rawData, DataParser.SLOT), Array<Dynamic>))
 			{
-				animation.addSlotTimeline(_parseSlotTimeline(rawSlotTimeline));
+				animations.addSlotTimeline(_parseSlotTimeline(rawSlotTimeline));
 			}
 			
 		}
@@ -713,7 +713,7 @@ import dragonBones.textures.TextureData;
 		{
 			for (rawFFDTimeline in cast(Reflect.field(rawData, DataParser.FFD), Array<Dynamic>))
 			{
-				animation.addFFDTimeline(_parseFFDTimeline(rawFFDTimeline));
+				animations.addFFDTimeline(_parseFFDTimeline(rawFFDTimeline));
 			}
 		}
 		
@@ -721,19 +721,19 @@ import dragonBones.textures.TextureData;
 		{
 			_isAutoTween = _getBoolean(rawData, DataParser.AUTO_TWEEN, true);
 			_animationTweenEasing = _getFloat(rawData, DataParser.TWEEN_EASING, 0);
-			animation.playTimes = _getInt(rawData, DataParser.LOOP, 1);
+			animations.playTimes = _getInt(rawData, DataParser.LOOP, 1);
 			
 			if (Reflect.hasField(rawData, DataParser.TIMELINE)) 
 			{
 				var rawTimelines:Array<Dynamic> = Reflect.field(rawData, DataParser.TIMELINE);
 				var l:UInt = rawTimelines.length;
 				for (i in 0...l) {
-					animation.addBoneTimeline(_parseBoneTimeline(rawTimelines[i]));
+					animations.addBoneTimeline(_parseBoneTimeline(rawTimelines[i]));
 				}
 				
 				l = rawTimelines.length;
 				for (i in 0...l) {
-					animation.addSlotTimeline(_parseSlotTimeline(rawTimelines[i]));
+					animations.addSlotTimeline(_parseSlotTimeline(rawTimelines[i]));
 				}
 			}
 		} 
@@ -745,7 +745,7 @@ import dragonBones.textures.TextureData;
 		
 		for (bone in _armature.bones)
 		{
-			if (animation.getBoneTimeline(bone.name) == null)  // Add default bone timeline for cache if do not have one.
+			if (animations.getBoneTimeline(bone.name) == null)  // Add default bone timeline for cache if do not have one.
 			{
 				var boneTimeline:BoneTimelineData = cast BaseObject.borrowObject(BoneTimelineData);
 				var boneFrame:BoneFrameData = cast BaseObject.borrowObject(BoneFrameData);
@@ -753,13 +753,13 @@ import dragonBones.textures.TextureData;
 				boneTimeline.frames.fixed = false;
 				boneTimeline.frames[0] = boneFrame;
 				boneTimeline.frames.fixed = true;
-				animation.addBoneTimeline(boneTimeline);
+				animations.addBoneTimeline(boneTimeline);
 			}
 		}
 		
 		for (slot in _armature.slots)
 		{
-			if (animation.getSlotTimeline(slot.name) == null) // Add default slot timeline for cache if do not have one.
+			if (animations.getSlotTimeline(slot.name) == null) // Add default slot timeline for cache if do not have one.
 			{
 				var slotTimeline:SlotTimelineData = cast BaseObject.borrowObject(SlotTimelineData);
 				var slotFrame:SlotFrameData = cast BaseObject.borrowObject(SlotFrameData);
@@ -787,7 +787,7 @@ import dragonBones.textures.TextureData;
 				slotTimeline.frames.fixed = false;
 				slotTimeline.frames[0] = slotFrame;
 				slotTimeline.frames.fixed = true;
-				animation.addSlotTimeline(slotTimeline);
+				animations.addSlotTimeline(slotTimeline);
 				
 				if (_isOldData) // Support 2.x ~ 3.x data.
 				{
@@ -796,9 +796,9 @@ import dragonBones.textures.TextureData;
 			}
 		}
 		
-		_animation = null;
+		_animations = null;
 		
-		return animation;
+		return animations;
 	}
 	
 	/**
@@ -1020,7 +1020,7 @@ import dragonBones.textures.TextureData;
 		
 		if (actions.length > 0 || events.length > 0) 
 		{
-			_mergeFrameToAnimationTimeline(frame.position, actions, events); // Merge actions and events to animation timeline.
+			_mergeFrameToAnimationTimeline(frame.position, actions, events); // Merge actions and events to animations timeline.
 		}
 		
 		return frame;
@@ -1059,7 +1059,7 @@ import dragonBones.textures.TextureData;
 			var actions:Vector<ActionData> = new Vector<ActionData>();
 			_parseActionData(rawData, actions, slot.parent, slot);
 			
-			_mergeFrameToAnimationTimeline(frame.position, actions, null); // Merge actions and events to animation timeline.
+			_mergeFrameToAnimationTimeline(frame.position, actions, null); // Merge actions and events to animations timeline.
 		}
 		
 		return frame;
@@ -1145,7 +1145,7 @@ import dragonBones.textures.TextureData;
 				frame.tweenEasing = DragonBones.NO_TWEEN;
 			}
 			
-			if (_isOldData && _animation.scale == 1 && _timeline.scale == 1 && frame.duration * _armature.frameRate < 2) // Support 2.x ~ 3.x data.
+			if (_isOldData && _animations.scale == 1 && _timeline.scale == 1 && frame.duration * _armature.frameRate < 2) // Support 2.x ~ 3.x data.
 			{
 				frame.tweenEasing = DragonBones.NO_TWEEN;
 			}
@@ -1190,7 +1190,7 @@ import dragonBones.textures.TextureData;
 			}
 			else if (rawFrames.length > 1)
 			{
-				timeline.frames.length = _animation.frameCount + 1;
+				timeline.frames.length = _animations.frameCount + 1;
 				
 				var frameStart:Int = 0;
 				var frameCount:Int = 0;
@@ -1229,7 +1229,7 @@ import dragonBones.textures.TextureData;
 					timeline.frames[i] = frame;
 				}
 				
-				frame.duration = _animation.duration - frame.position; // Modify last frame duration
+				frame.duration = _animations.duration - frame.position; // Modify last frame duration
 				
 				frame = timeline.frames[0];
 				prevFrame.next = frame;
