@@ -18,12 +18,12 @@ import dragonBones.animations.WorldClock;
 
 class FlixelRender extends FlxState
 {
-    private var _factory:FlixelFactory = new FlixelFactory();
+  private var _factory:FlixelFactory = new FlixelFactory();
 	private var armatureGroup:FlxTypedGroup<FlixelArmatureDisplay>;
 
 	override public function create():Void
 	{
-        FlxG.cameras.bgColor = 0x666666;
+    FlxG.cameras.bgColor = 0x666666;
 
 		var dragonBonesData : DragonBonesData = _factory.parseDragonBonesData(
 			Json.parse(Assets.getText("assets/dragonboy_flixel_ske.json"))
@@ -61,9 +61,9 @@ class FlixelRender extends FlxState
         
 	}
 
-    private function _animationHandler(event:FlixelEvent): Void 
+  private function _animationHandler(event:FlixelEvent): Void 
 	{
-        trace(event);
+  	trace(event);
 		var eventObject:EventObject = event.eventObject;
 	}
 

@@ -27,9 +27,8 @@ import flixel.FlxG;
 
 @:allow(dragonBones) @:final class FlixelFactory extends BaseFactory {
 
-	private static var _eventManager:FlixelArmatureDisplay = new FlixelArmatureDisplay();
-	private static var _clock:WorldClock = new WorldClock();
-
+	public static var _eventManager:FlixelArmatureDisplay = new FlixelArmatureDisplay();
+	public static var _clock:WorldClock = new WorldClock();
 	public static var factory:FlixelFactory = new FlixelFactory();
 	public static var _flxSpriteGroup:FlxTypedGroup<FlixelMeshDisplay> = new FlxTypedGroup<FlixelMeshDisplay>();
 
