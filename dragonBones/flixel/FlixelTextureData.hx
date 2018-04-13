@@ -10,7 +10,7 @@ import dragonBones.textures.TextureData;
 @:allow(dragonBones) @:final class FlixelTextureData extends TextureData
 {
 	public var texture:BitmapData = null;
-	private function new()
+	@:keep private function new()
 	{
 		super();
 	}

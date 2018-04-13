@@ -209,10 +209,6 @@ import starling.styles.MeshStyle;
 		var isMeshDisplay:Bool = _meshData != null && _renderDisplay == _meshDisplay;
 		var currentTextureData:StarlingTextureData = _textureData != null ? cast _textureData : null;
 		var normalDisplay:Image;
-
-		#if (starling >= "2.0")
-		var meshDisplay:Mesh = cast _meshDisplay;
-		#end
 		
 		if (_displayIndex >= 0 && _display != null && currentTextureData != null)
 		{
@@ -244,6 +240,8 @@ import starling.styles.MeshStyle;
 				if (isMeshDisplay) // Mesh.
 				{
 					#if (starling >= "2.0")
+					var meshDisplay:Mesh = cast _meshDisplay;
+					
 					_indexData.clear();
 					_vertexData.clear();
 					
@@ -254,7 +252,7 @@ import starling.styles.MeshStyle;
 					}
 					
 					var meshStyle:MeshStyle = meshDisplay.style;
-					var i:UInt = 0;
+					i = 0;
 					l = _meshData.uvs.length;
 					var iH:UInt;
 					while (i < l)
@@ -320,7 +318,7 @@ import starling.styles.MeshStyle;
 		if (_meshData.skinned)
 		{
 			var boneIndices:Vector<UInt>, boneVertices:Vector<Float>, weights:Vector<Float>, lB:UInt;
-			var bone:Bone, matrix:Matrix, weight:Float, xL:Float, yL:Float;
+			var bone:Bone, matrix:Matrix, weight:FLoat, xL:Float, yL:Float;
 			i = 0;
 			while (i < l)
 			{
@@ -330,10 +328,8 @@ import starling.styles.MeshStyle;
 				boneVertices = _meshData.boneVertices[iH];
 				weights = _meshData.weights[iH];
 				
-				xG = 0;
-				yG = 0;
-				lB = boneIndices.length;
-
+				xG = 0, yG = 0;
+				
 				for (iB in 0...lB)
 				{
 					bone = _meshBones[boneIndices[iB]];
@@ -372,7 +368,7 @@ import starling.styles.MeshStyle;
 			{
 				xG = vertices[i] + _ffdVertices[i];
 				yG = vertices[i + 1] + _ffdVertices[i + 1];
-				meshStyle.setVertexPosition(Math.floor(i / 2), xG, yG);
+				meshStyle.setVertexPosition(i / 2, xG, yG);
 				i += 2;
 			}
 		}

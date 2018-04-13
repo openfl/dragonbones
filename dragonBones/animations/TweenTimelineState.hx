@@ -1,4 +1,4 @@
-package dragonBones.animation;
+package dragonBones.animations;
 
 import openfl.Vector;
 	

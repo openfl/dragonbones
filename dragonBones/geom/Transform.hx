@@ -73,7 +73,7 @@ import openfl.geom.Point;
 	/**
 	 * @private
 	 */
-	private function new() {}
+	@:keep private function new() {}
 	/**
 	 * @private
 	 */

@@ -5,7 +5,7 @@ import openfl.geom.Matrix;
 import openfl.geom.Point;
 import openfl.Vector;
 
-import dragonBones.animation.TweenTimelineState;
+import dragonBones.animations.TweenTimelineState;
 import dragonBones.core.BaseObject;
 import dragonBones.core.DragonBones;
 import dragonBones.enums.ActionType;
@@ -291,10 +291,10 @@ import dragonBones.textures.TextureAtlasData;
 	private var _armature:ArmatureData = null;
 	private var _skin:SkinData = null;
 	private var _skinSlotData:SkinSlotData = null;
-	private var _animation:AnimationData = null;
+	private var _animations:AnimationData = null;
 	private var _timeline:TimelineData = null;
 	
-	private function new() {}
+	@:keep private function new() {}
 	
 	/** 
 	 * @private 
@@ -440,7 +440,7 @@ import dragonBones.textures.TextureAtlasData;
 	private function _mergeFrameToAnimationTimeline(framePositon:Float, actions:Vector<ActionData>, events:Vector<EventData>):Void 
 	{
 		var frameStart:UInt = Math.floor(framePositon * _armature.frameRate); // uint()
-		var frames:Vector<FrameData> = _animation.frames;
+		var frames:Vector<FrameData> = _animations.frames;
 		
 		frames.fixed = false;
 		
@@ -448,14 +448,14 @@ import dragonBones.textures.TextureAtlasData;
 			var startFrame:AnimationFrameData = cast BaseObject.borrowObject(AnimationFrameData); // Add start frame.
 			startFrame.position = 0;
 			
-			if (_animation.frameCount > 1) {
-				frames.length = _animation.frameCount + 1; // One more count for zero duration frame.
+			if (_animations.frameCount > 1) {
+				frames.length = _animations.frameCount + 1; // One more count for zero duration frame.
 				
 				var endFrame:AnimationFrameData = cast BaseObject.borrowObject(AnimationFrameData); // Add end frame to keep animation timeline has two different frames atleast.
-				endFrame.position = _animation.frameCount / _armature.frameRate;
+				endFrame.position = _animations.frameCount / _armature.frameRate;
 				
 				frames[0] = startFrame;
-				frames[_animation.frameCount] = endFrame;
+				frames[_animations.frameCount] = endFrame;
 			}
 		}
 		
@@ -536,7 +536,7 @@ import dragonBones.textures.TextureAtlasData;
 			}
 		}
 		
-		nextFrame.duration = _animation.duration - nextFrame.position;
+		nextFrame.duration = _animations.duration - nextFrame.position;
 		
 		nextFrame = frames[0] != null ? cast frames[0] : null;
 		prevFrame.next = nextFrame;

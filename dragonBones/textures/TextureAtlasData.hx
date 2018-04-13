@@ -58,7 +58,7 @@ import dragonBones.core.DragonBones;
 	/**
 	 * @private
 	 */
-	private function new()
+	@:keep private function new()
 	{
 		super();
 	}
@@ -120,7 +120,7 @@ import dragonBones.core.DragonBones;
 	/**
 	 * @private
 	 */
-	private function copyFrom(value: TextureAtlasData):Void 
+	private function copyFrom(value:TextureAtlasData):Void 
 	{
 		autoSearch = value.autoSearch;
 		scale = value.scale;
