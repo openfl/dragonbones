@@ -148,7 +148,7 @@ import openfl.Vector;
 	/**
 	 * @private
 	 */
-	private function new() {}
+	@:keep private function new() {}
 	/**
 	 * @private
 	 */

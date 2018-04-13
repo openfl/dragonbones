@@ -213,7 +213,7 @@ import openfl.utils.ByteArray;
 	 */
 	public var textureAtlasBytes:ByteArray = null;
 	
-	private function new()
+	@:keep private function new()
 	{
 		super();
 	}

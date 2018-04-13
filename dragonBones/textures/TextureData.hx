@@ -21,7 +21,7 @@ import dragonBones.core.DragonBones;
 	public var frame:Rectangle;
 	public var parent:TextureAtlasData;
 	
-	private function new()
+	@:keep private function new()
 	{
 		super();
 	}

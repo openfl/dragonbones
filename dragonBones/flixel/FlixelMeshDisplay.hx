@@ -27,7 +27,7 @@ using Lambda;
 	/**
 	 * @private
 	 */
-	private function new()
+	@:keep private function new()
 	{
 		super();
 		this.solid = false;
