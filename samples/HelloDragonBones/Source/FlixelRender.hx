@@ -63,7 +63,6 @@ class FlixelRender extends FlxState
 
   private function _animationHandler(event:FlixelEvent): Void 
 	{
-  	trace(event);
 		var eventObject:EventObject = event.eventObject;
 	}
 

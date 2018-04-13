@@ -81,10 +81,7 @@ using flixel.util.FlxArrayUtil;
 			return;
 		}
 
-		//_flxArmatureGroup.members.splice(index, 1);
 		_flxArmatureGroup.members.fastSplice(_renderDisplay);
-
-		//_flxArmatureGroup.members.insert(_zOrder, _renderDisplay);
 		_flxArmatureGroup.insert(_zOrder, _renderDisplay);
 	}
 
@@ -146,13 +143,6 @@ using flixel.util.FlxArrayUtil;
 	override private function _updateFrame():Void
 	{
 		var isMeshDisplay:Bool = _meshData != null;
-		/*
-		trace({
-			name: this._displayData.name,
-			path: this._displayData.path,
-			texName: this._displayData.texture.name
-		});
-		*/
 		var lastSlotImage:String = this._displayData.texture.name;
 		var bitmapCrop:BitmapData;
 
@@ -170,8 +160,8 @@ using flixel.util.FlxArrayUtil;
 			textureCache.set(lastSlotImage, bitmapCrop);
 		}
 		
-		
-		/*
+		// Mesh results inconsistent until Flixel branch is stable.
+		/* 
 		if (isMeshDisplay) // Mesh.
 		{
 			_renderDisplay = new FlixelArmatureDisplay();
@@ -244,14 +234,14 @@ using flixel.util.FlxArrayUtil;
 
 		var normalDisplay:FlixelArmatureDisplay = _renderDisplay;
 		normalDisplay.loadGraphic(cast bitmapCrop);
-		//normalDisplay._armature = _armature;
 		
 		_updateVisible();
 	}
 
 	override private function _updateMesh():Void
 	{
-		/*
+		// Mesh results inconsistent until Flixel branch is stable.
+		/* 
 		var meshDisplay:FlixelArmatureDisplay = cast _renderDisplay;
 		var hasFFD:Bool = _ffdVertices.length > 0;
 		
@@ -292,16 +282,12 @@ using flixel.util.FlxArrayUtil;
 
 	private function updatePosition():Void
 	{
-		//_renderDisplay.x = (_renderDisplay.globalX + -(_pivotX) + getGlobalScaleX(globalTransformMatrix.tx));
-		//_renderDisplay.y = (_renderDisplay.globalY + -(_pivotY) + getGlobalScaleY(globalTransformMatrix.ty));
 		_renderDisplay.offset.x = -(-(_pivotX) + getGlobalScaleX(globalTransformMatrix.tx));
 		_renderDisplay.offset.y = -(-(_pivotY) + getGlobalScaleY(globalTransformMatrix.ty));
 	}
 
 	override private function _updateTransform(?isSkinnedMesh:Bool):Void
 	{
-		//_renderDisplay.x = (_renderDisplay.globalX + -(_pivotX) + //getGlobalScaleX(globalTransformMatrix.tx));
-		//_renderDisplay.y = (_renderDisplay.globalY + -(_pivotY) + //getGlobalScaleY(globalTransformMatrix.ty));
 		_renderDisplay.offset.x = -(-(_pivotX) + getGlobalScaleX(globalTransformMatrix.tx));
 		_renderDisplay.offset.y = -(-(_pivotY) + getGlobalScaleY(globalTransformMatrix.ty));
 
