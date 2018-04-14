@@ -25,7 +25,7 @@ import dragonBones.core.BaseObject;
 	public var bones:Vector<BoneData> = new Vector<BoneData>(); // bones
 	public var inverseBindPose:Vector<Matrix> = new Vector<Matrix>(); // bones
 	
-	private function new()
+	@:keep private function new()
 	{
 		super();
 	}

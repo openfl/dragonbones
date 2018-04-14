@@ -162,7 +162,7 @@ import dragonBones.core.BaseObject;
 	/**
 	 * @private
 	 */
-	private function new()
+	@:keep private function new()
 	{
 		super();
 	}

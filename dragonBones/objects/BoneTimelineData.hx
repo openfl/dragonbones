@@ -10,7 +10,7 @@ import dragonBones.geom.Transform;
 	public var originalTransform:Transform = new Transform();
 	public var bone:BoneData;
 	
-	private function new()
+	@:keep private function new()
 	{
 		super();
 	}
