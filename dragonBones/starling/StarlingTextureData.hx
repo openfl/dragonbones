@@ -11,7 +11,7 @@ import starling.textures.SubTexture;
 {
 	public var texture:SubTexture = null;
 	
-	@:keep private function new()
+	private function new()
 	{
 		super();
 	}
