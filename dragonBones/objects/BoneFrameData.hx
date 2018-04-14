@@ -11,7 +11,7 @@ import dragonBones.geom.Transform;
 	public var tweenRotate:Float;
 	public var transform:Transform = new Transform();
 	
-	@:keep private function new()
+	private function new()
 	{
 		super();
 	}

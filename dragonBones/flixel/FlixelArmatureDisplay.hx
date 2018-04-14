@@ -9,7 +9,7 @@ import flixel.FlxG;
 import dragonBones.Armature;
 import dragonBones.Bone;
 import dragonBones.Slot;
-import dragonBones.animations.Animation;
+import dragonBones.animation.Animation;
 import dragonBones.core.IArmatureDisplay;
 import dragonBones.enums.BoundingBoxType;
 import dragonBones.events.EventObject;

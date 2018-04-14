@@ -45,9 +45,9 @@ import dragonBones.textures.TextureData;
 	 * @language zh_CN
      * 显示对象受到控制的动画状态或混合组名称，设置为 null 则表示受所有的动画状态控制。
      * @default null
-	 * @see dragonBones.animations.AnimationState#displayControl
-	 * @see dragonBones.animations.AnimationState#name
-	 * @see dragonBones.animations.AnimationState#group
+	 * @see dragonBones.animation.AnimationState#displayControl
+	 * @see dragonBones.animation.AnimationState#name
+	 * @see dragonBones.animation.AnimationState#group
 	 * @version DragonBones 4.5
 	 */
 	public var displayController:String;
@@ -179,7 +179,6 @@ import dragonBones.textures.TextureData;
 	 * @private BoneTimelineState
 	 */
 	private var _cachedFrameIndices:Vector<Int>;
-
 	/**
 	 * @private
 	 */
@@ -368,7 +367,7 @@ import dragonBones.textures.TextureData;
 	/**
 	 * @private
 	 */
-	private function _updateTransform(?isSkinnedMesh:Bool):Void
+	private function _updateTransform(isSkinnedMesh:Bool):Void
 	{
 		throw new Error(DragonBones.ABSTRACT_METHOD_ERROR);
 	}

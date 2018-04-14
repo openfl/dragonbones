@@ -50,7 +50,7 @@ import dragonBones.objects.AnimationData;
 	/**
 	 * @private
 	 */
-	@:keep private function new()
+	private function new()
 	{
 		super();
 	}
@@ -167,7 +167,7 @@ import dragonBones.objects.AnimationData;
 		
 		if (_armature.inheritAnimation && _armature._parent != null) // Inherit parent animation timeScale.
 		{
-			passedTime *= _armature._parent._armature.animation.timeScale;
+			passedTime *= _armature._parent._armature.animations.timeScale;
 		}
 		
 		if (timeScale != 1.0) 
@@ -442,11 +442,11 @@ import dragonBones.objects.AnimationData;
 			childArmature = slots[i].childArmature;
 			if (
 				childArmature != null && childArmature.inheritAnimation &&
-				childArmature.animation.hasAnimation(animationName) &&
-				childArmature.animation.getState(animationName) == null
+				childArmature.animations.hasAnimation(animationName) &&
+				childArmature.animations.getState(animationName) == null
 			) 
 			{
-				childArmature.animation.fadeIn(animationName); //
+				childArmature.animations.fadeIn(animationName); //
 			}
 		}
 		

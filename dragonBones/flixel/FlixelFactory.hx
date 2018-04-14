@@ -8,7 +8,7 @@ import openfl.Vector;
 
 import dragonBones.Armature;
 import dragonBones.Slot;
-import dragonBones.animations.WorldClock;
+import dragonBones.animation.WorldClock;
 import dragonBones.core.BaseObject;
 import dragonBones.enums.DisplayType;
 import dragonBones.factories.BaseFactory;

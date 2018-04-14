@@ -14,7 +14,7 @@ import dragonBones.core.BaseObject;
 	public var meshs:Map<String, MeshData> = new Map<String, MeshData>();
 	public var slot:SlotData;
 	
-	@:keep private function new ()
+	private function new ()
 	{
 		super();
 	}

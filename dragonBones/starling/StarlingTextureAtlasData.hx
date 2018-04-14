@@ -39,7 +39,7 @@ import starling.textures.TextureAtlas;
 	/**
 	 * @private
 	 */
-	@:keep private function new()
+	private function new()
 	{
 		super();
 	}

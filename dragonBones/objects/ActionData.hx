@@ -13,7 +13,7 @@ import dragonBones.enums.ActionType;
 	public var slot:SlotData;
 	public var animationConfig:AnimationConfig;
 	
-	@:keep private function new()
+	private function new()
 	{
 		super();
 	}

@@ -11,7 +11,7 @@ import openfl.Vector;
 	public var actions:Vector<ActionData> = new Vector<ActionData>();
 	public var events:Vector<EventData> = new Vector<EventData>();
 	
-	@:keep private function new()
+	private function new()
 	{
 		super();
 	}

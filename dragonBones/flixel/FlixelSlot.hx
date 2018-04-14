@@ -286,7 +286,7 @@ using flixel.util.FlxArrayUtil;
 		_renderDisplay.offset.y = -(-(_pivotY) + getGlobalScaleY(globalTransformMatrix.ty));
 	}
 
-	override private function _updateTransform(?isSkinnedMesh:Bool):Void
+	override private function _updateTransform(isSkinnedMesh:Bool):Void
 	{
 		_renderDisplay.offset.x = -(-(_pivotX) + getGlobalScaleX(globalTransformMatrix.tx));
 		_renderDisplay.offset.y = -(-(_pivotY) + getGlobalScaleY(globalTransformMatrix.ty));

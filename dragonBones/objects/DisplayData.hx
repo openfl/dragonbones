@@ -25,7 +25,7 @@ import dragonBones.textures.TextureData;
 	public var mesh:MeshData;
 	public var boundingBox: BoundingBoxData;
 	
-	@:keep private function new()
+	private function new()
 	{
 		super();
 	}

@@ -3,7 +3,7 @@ package dragonBones.events;
 import dragonBones.Armature;
 import dragonBones.Bone;
 import dragonBones.Slot;
-import dragonBones.animations.AnimationState;
+import dragonBones.animation.AnimationState;
 import dragonBones.core.BaseObject;
 import dragonBones.objects.AnimationFrameData;
 import dragonBones.objects.CustomData;
@@ -120,7 +120,7 @@ import dragonBones.objects.CustomData;
 	/**
 	 * @private
 	 */
-	@:keep private function new()
+	private function new()
 	{
 		super();
 	}

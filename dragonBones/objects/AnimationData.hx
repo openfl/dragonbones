@@ -75,7 +75,7 @@ import openfl.Vector;
 	/**
 	 * @private
 	 */
-	@:keep private function new()
+	private function new()
 	{
 		super();
 	}
