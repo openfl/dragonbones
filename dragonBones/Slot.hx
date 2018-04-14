@@ -654,7 +654,7 @@ import dragonBones.textures.TextureData;
 				prevChildArmature._clock = null;
 				if (prevChildArmature.inheritAnimation)
 				{
-					prevChildArmature.animation.reset();
+					prevChildArmature.animations.reset();
 				}
 			}
 			
@@ -683,7 +683,7 @@ import dragonBones.textures.TextureData;
 					} 
 					else 
 					{
-						_childArmature.animation.play();
+						_childArmature.animations.play();
 					}
 				}
 			}

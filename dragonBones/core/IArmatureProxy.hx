@@ -38,5 +38,5 @@ import dragonBones.events.IEventDispatcher;
 	 * @see dragonBones.animation.Animation
 	 * @version DragonBones 4.5
 	 */
-	var animation(get, never):Animation;
+	var animations(get, never):Animation;
 }

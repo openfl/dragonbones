@@ -1,18 +1,19 @@
-package dragonBones.openfl;
+package dragonBones.flixel;
 
+import flixel.system.FlxAssets.FlxGraphicAsset;
 import openfl.display.BitmapData;
 
 import dragonBones.core.BaseObject;
 import dragonBones.textures.TextureAtlasData;
 import dragonBones.textures.TextureData;
 
-@:allow(dragonBones) @:final class OpenFLTextureAtlasData extends TextureAtlasData
+@:allow(dragonBones) @:final class FlixelTextureAtlasData extends TextureAtlasData
 {
 	public var texture:BitmapData;
 	/**
 	 * @private
 	 */
-	private function new()
+	@:keep private function new()
 	{
 		super();
 	}
@@ -34,6 +35,6 @@ import dragonBones.textures.TextureData;
 	 */
 	override public function generateTexture():TextureData
 	{
-		return cast BaseObject.borrowObject(OpenFLTextureData);
+		return cast BaseObject.borrowObject(FlixelTextureData);
 	}
 }

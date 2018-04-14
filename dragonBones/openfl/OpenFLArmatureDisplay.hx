@@ -198,10 +198,10 @@ import dragonBones.objects.BoundingBoxData;
 	/**
 	 * @inheritDoc
 	 */
-	public var animation(get, never):Animation;
+	public var animations(get, never):Animation;
 	private function get_animation():Animation
 	{
-		return _armature.animation;
+		return _armature.animations;
 	}
 	
 	/**

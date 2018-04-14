@@ -65,7 +65,7 @@ import dragonBones.enums.BlendMode;
 	/**
 	 * @private
 	 */
-	@:keep private function new()
+	private function new()
 	{
 		super();
 	}

@@ -53,7 +53,7 @@ import dragonBones.core.BaseObject;
 	/**
 	 * @private
 	 */
-	@:keep private function new()
+	private function new()
 	{
 		super();
 	}
