@@ -2,6 +2,10 @@ package dragonBones.flixel;
 
 import haxe.Constraints;
 
+import openfl.display.BlendMode;
+
+import flixel.system.FlxAssets;
+import flixel.FlxBasic;
 import flixel.FlxSprite;
 import flixel.group.FlxGroup;
 import flixel.FlxG;
@@ -17,15 +21,7 @@ import dragonBones.objects.BoundingBoxData;
 
 using Lambda;
 
-@:allow(dragonBones) @:final class FlixelArmatureDisplay extends FlxSprite implements IArmatureDisplay {
-
-	/**
-	 * Helper FlxObject, which you can use for colliding with other flixel objects.
-	 * Collider have additional offsetX and offsetY properties which helps you to adjust hitbox.
-	 * Change of position of this sprite causes change of collider's position and vice versa.
-	 * But you should apply velocity and acceleration to collider rather than to this spine sprite.
-	 */
-	//public var collider(default, null):FlixelArmatureCollider;
+@:allow(dragonBones) @:final class FlixelArmatureDisplay extends FlxBasic implements IArmatureDisplay {
 
 	/**
 	 * @private
@@ -35,10 +31,22 @@ using Lambda;
 	/**
 	 * @private
 	 */
+	public var flxProxy:FlxSprite;
+
+	/**
+	 * @private
+	 */
 	@:keep private function new()
 	{
 		super();
-		this.solid = false;
+		flxProxy = new FlxSprite();
+		flxProxy.solid = false;
+	}
+	/**
+	 * @private
+	 */
+	override public function draw() {
+		flxProxy.draw();
 	}
 	/**
 	 * @private
@@ -104,17 +112,61 @@ using Lambda;
 	{
 		FlxG.stage.removeEventListener(type, cast listener);
 	}
-	
+
+	public function loadGraphic(Graphic:FlxGraphicAsset, Animated:Bool = false, Width:Int = 0, Height:Int = 0, Unique:Bool = false, ?Key:String):FlxSprite {
+		return flxProxy.loadGraphic(Graphic, Animated, Width, Height, Unique, Key);
+	}
+
+	public var x(get, set):Float;
+	private function get_x():Float
+	{
+		return flxProxy.x;
+	}
+	private function set_x(x:Float):Float
+	{
+		return flxProxy.x = x;
+	}
+
+	public var y(get, set):Float;
+	private function get_y():Float
+	{
+		return flxProxy.y;
+	}
+	private function set_y(y:Float):Float
+	{
+		return flxProxy.y = y;
+	}
+
+	public var antialiasing(get, set):Bool;
+	private function get_antialiasing():Bool
+	{
+		return flxProxy.antialiasing;
+	}
+	private function set_antialiasing(isTrue:Bool):Bool
+	{
+		return flxProxy.antialiasing = isTrue;
+	}
+
+	public var blend(get, set):BlendMode;
+	private function get_blend():BlendMode
+	{
+		return flxProxy.blend;
+	}
+	private function set_blend(blendMode:BlendMode):BlendMode
+	{
+		return flxProxy.blend = blendMode;
+	}
+
 	public var armature(get, never):Armature;
 	private function get_armature():Armature
 	{
 		return _armature;
 	}
 
-	public var animations(get, never):Animation;
-	private function get_animations():Animation
+	public var animation(get, never):Animation;
+	private function get_animation():Animation
 	{
-		return _armature.animations;
+		return _armature.animation;
 	}
 
 	public var scaleX(default, set):Float = 1;

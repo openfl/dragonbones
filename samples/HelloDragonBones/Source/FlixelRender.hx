@@ -57,7 +57,7 @@ class FlixelRender extends FlxState
 
 	private function _playAnimation(display:FlixelArmatureDisplay):Void
 	{
-		display.animations.play(display.animations.animationNames[0]);
+		display.animation.play(display.animation.animationNames[0]);
         
 	}
 

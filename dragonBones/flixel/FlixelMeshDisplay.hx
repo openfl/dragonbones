@@ -2,6 +2,10 @@ package dragonBones.flixel;
 
 import haxe.Constraints;
 
+import openfl.display.BlendMode;
+
+import flixel.system.FlxAssets;
+import flixel.FlxBasic;
 import flixel.FlxStrip;
 import flixel.group.FlxGroup;
 import flixel.FlxG;
@@ -17,20 +21,27 @@ import dragonBones.objects.BoundingBoxData;
 
 using Lambda;
 
-@:allow(dragonBones) @:final class FlixelMeshDisplay extends FlxStrip implements IArmatureDisplay {
+@:allow(dragonBones) @:final class FlixelMeshDisplay extends FlxBasic implements IArmatureDisplay {
 	/**
 	 * @private
 	 */
-
 	private var _armature:Armature;
-
 	/**
 	 * @private
 	 */
+	public var flxProxy:FlxStrip;
+
 	@:keep private function new()
 	{
 		super();
 		this.solid = false;
+		this.flxProxy = new FlxStrip();
+	}
+	/**
+	 * @private
+	 */
+	override public function draw() {
+		flxProxy.draw();
 	}
 	/**
 	 * @private
@@ -102,22 +113,10 @@ using Lambda;
 		return _armature;
 	}
 
-	public var animations(get, never):Animation;
-	private function get_animations():Animation
+	public var animation(get, never):Animation;
+	private function get_animation():Animation
 	{
-		return _armature.animations;
-	}
-
-	public var globalX(default, set):Float = 0;
-	private function set_globalX(x:Float):Float
-	{
-		return globalX = x;
-	}
-
-	public var globalY(default, set):Float = 0;
-	private function set_globalY(y:Float):Float
-	{
-		return globalY = y;
+		return _armature.animation;
 	}
 
 	public var scaleX(default, set):Float = 1;
