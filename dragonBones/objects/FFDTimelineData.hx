@@ -9,7 +9,7 @@ package dragonBones.objects;
 	public var slot:SkinSlotData;
 	public var display:DisplayData;
 	
-	private function new()
+	@:keep private function new()
 	{
 		super();
 	}

@@ -7,7 +7,7 @@ import dragonBones.textures.TextureData;
  */
 @:allow(dragonBones) @:final class OpenFLTextureData extends TextureData
 {
-	private function new()
+	@:keep private function new()
 	{
 		super();
 	}

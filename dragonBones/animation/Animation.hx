@@ -50,7 +50,7 @@ import dragonBones.objects.AnimationData;
 	/**
 	 * @private
 	 */
-	private function new()
+	@:keep private function new()
 	{
 		super();
 	}

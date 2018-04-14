@@ -9,7 +9,7 @@ import openfl.Vector;
 {
 	public var zOrder:Vector<Int> = new Vector<Int>();
 	
-	private function new()
+	@:keep private function new()
 	{
 		super();
 	}

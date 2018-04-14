@@ -7,7 +7,7 @@ package dragonBones.objects;
 {
 	public var slot:SlotData;
 	
-	private function new()
+	@:keep private function new()
 	{
 		super();
 	}
