@@ -165,7 +165,7 @@ import dragonBones.textures.TextureAtlasData;
 							} 
 							else 
 							{
-								childArmature.animation.play();
+								childArmature.animations.play();
 							}
 						}
 						

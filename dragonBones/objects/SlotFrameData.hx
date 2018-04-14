@@ -17,7 +17,7 @@ import openfl.geom.ColorTransform;
 	public var displayIndex:Int;
 	public var color:ColorTransform;
 	
-	@:keep private function new()
+	private function new()
 	{
 		super();
 	}

@@ -93,7 +93,7 @@ import dragonBones.textures.TextureAtlasData;
 	/**
 	 * @private
 	 */
-	@:keep private function new()
+	private function new()
 	{
 		super();
 	}
@@ -886,8 +886,8 @@ import dragonBones.textures.TextureAtlasData;
 	 * @see dragonBones.animation.Animation
 	 * @version DragonBones 3.0
 	 */
-	public var animation(get, never):Animation;
-	private function get_animation():Animation	
+	public var animations(get, never):Animation;
+	private function get_animations():Animation	
 	{
 		return _animation;
 	}

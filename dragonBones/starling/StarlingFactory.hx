@@ -182,7 +182,7 @@ import starling.rendering.VertexData;
 							} 
 							else 
 							{
-								childArmature.animation.play();
+								childArmature.animations.play();
 							}
 						}
 						

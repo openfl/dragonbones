@@ -155,7 +155,7 @@ import dragonBones.objects.SlotTimelineData;
 	/**
 	 * @private
 	 */
-	@:keep private function new()
+	private function new()
 	{
 		super();
 	}
@@ -562,14 +562,14 @@ import dragonBones.objects.SlotTimelineData;
 			if (isCacheEnabled) 
 			{
 				var cacheFrameIndex:Int = Math.floor(_timeline._currentTime * cacheFrameRate); // uint
-				if (_armature.animation._cacheFrameIndex == cacheFrameIndex) // Same cache.
+				if (_armature.animations._cacheFrameIndex == cacheFrameIndex) // Same cache.
 				{
 					isUpdatesTimeline = false;
 					isUpdatesBoneTimeline = false;
 				}
 				else 
 				{
-					_armature.animation._cacheFrameIndex = cacheFrameIndex;
+					_armature.animations._cacheFrameIndex = cacheFrameIndex;
 					
 					if (_animationData.cachedFrames[cacheFrameIndex]) // Cached.
 					{

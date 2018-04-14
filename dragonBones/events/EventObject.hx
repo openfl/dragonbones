@@ -120,7 +120,7 @@ import dragonBones.objects.CustomData;
 	/**
 	 * @private
 	 */
-	@:keep private function new()
+	private function new()
 	{
 		super();
 	}

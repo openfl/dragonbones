@@ -2,17 +2,21 @@ package;
 
 
 import openfl.display.Sprite;
+#if !flixel
 import openfl.events.Event;
 import openfl.events.MouseEvent;
 import openfl.geom.Point;
 import openfl.text.TextField;
 
 import starling.core.Starling;
+#else
+import flixel.FlxGame;
+#end
 
 
 class Main extends Sprite {
 	
-	
+	#if !flixel
 	private var _isMoved:Bool = false;
 	private var _isHorizontalMoved:Bool = false;
 	private var _armatureIndex: Float = 0;
@@ -22,10 +26,16 @@ class Main extends Sprite {
 	private var _prevArmatureScale: Float = 1;
 	private var _prevAnimationScale: Float = 1;
 	private var _startPoint:Point = new Point();
-	
+	#end
+
 	public function new()
 	{
 		super();
+
+		#if flixel
+		// Render init.
+		_flixelInit();
+		#else
 		// Render init.
 		_flashInit();
 		_starlingInit();
@@ -44,8 +54,16 @@ class Main extends Sprite {
 		text.autoSize = "center";
 		text.text = "Touch screen left to change armature / right to change animation.\nTouch move to scale armature and animation.";
 		this.addChild(text);
+		#end
+
 	}
 	
+	#if flixel
+	private function _flixelInit(): Void
+	{
+		addChild(new FlxGame(800, 600, FlixelRender));
+	}
+	#else
 	private function _flashInit(): Void
 	{
 		var openFLRender: OpenFLRender = new OpenFLRender();
@@ -165,6 +183,5 @@ class Main extends Sprite {
 				}
 		}
 	}
-	
-	
+	#end
 }
