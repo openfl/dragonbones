@@ -6,9 +6,9 @@ import openfl.errors.Error;
 import openfl.geom.Point;
 import openfl.Vector;
 
-import dragonBones.animations.Animation;
-import dragonBones.animations.IAnimateble;
-import dragonBones.animations.WorldClock;
+import dragonBones.animation.Animation;
+import dragonBones.animation.IAnimateble;
+import dragonBones.animation.WorldClock;
 import dragonBones.core.BaseObject;
 import dragonBones.core.DragonBones;
 import dragonBones.core.IArmatureProxy;
@@ -28,7 +28,7 @@ import dragonBones.textures.TextureAtlasData;
  * @see dragonBones.objects.ArmatureData
  * @see dragonBones.Bone
  * @see dragonBones.Slot
- * @see dragonBones.animations.Animation
+ * @see dragonBones.animation.Animation
  * @version DragonBones 3.0
  */
 @:allow(dragonBones) @:final class Armature extends BaseObject implements IAnimateble
@@ -65,7 +65,7 @@ import dragonBones.textures.TextureAtlasData;
 	private var _slotsDirty:Bool;
 	private var _zOrderDirty:Bool;
 	private var _bones:Vector<Bone> = new Vector<Bone>();
-	public var _slots:Vector<Slot> = new Vector<Slot>();
+	private var _slots:Vector<Slot> = new Vector<Slot>();
 	private var _actions:Vector<ActionData> = new Vector<ActionData>();
 	private var _events:Vector<EventObject> = new Vector<EventObject>();
 	/**
@@ -76,7 +76,7 @@ import dragonBones.textures.TextureAtlasData;
 	 * @private
 	 */
 	private var _skinData:SkinData;
-	private var _animations:Animation;
+	private var _animation:Animation;
 	private var _proxy:IArmatureProxy;
 	private var _display:Dynamic;
 	private var _eventManager:IEventDispatcher;
@@ -93,7 +93,7 @@ import dragonBones.textures.TextureAtlasData;
 	/**
 	 * @private
 	 */
-	@:keep private function new()
+	private function new()
 	{
 		super();
 	}
@@ -135,9 +135,9 @@ import dragonBones.textures.TextureAtlasData;
 			_replaceTextureAtlasData.returnToPool();
 		}
 		
-		if (_animations != null) 
+		if (_animation != null) 
 		{
-			_animations.returnToPool();
+			_animation.returnToPool();
 		}
 		
 		inheritAnimation = true;
@@ -158,7 +158,7 @@ import dragonBones.textures.TextureAtlasData;
 		_events.length = 0;
 		_armatureData = null;
 		_skinData = null;
-		_animations = null;
+		_animation = null;
 		_proxy = null;
 		_display = null;
 		_eventManager = null;
@@ -175,12 +175,12 @@ import dragonBones.textures.TextureAtlasData;
 		{
 			return;
 		}
+		
 		var sortHelper:Vector<Bone> = _bones.concat();
 		var index:UInt = 0;
 		var count:UInt = 0;
-
+		
 		_bones.length = 0;
-
 		var bone:Bone;
 		
 		while(count < total)
@@ -231,7 +231,7 @@ import dragonBones.textures.TextureAtlasData;
 		switch (value.type) 
 		{
 			case ActionType.Play:
-				_animations.playConfig(value.animationConfig);
+				_animation.playConfig(value.animationConfig);
 			
 			default:
 		}
@@ -251,13 +251,13 @@ import dragonBones.textures.TextureAtlasData;
 		
 		_armatureData = armatureData;
 		_skinData = skinData;
-		_animations = cast BaseObject.borrowObject(Animation);
+		_animation = cast BaseObject.borrowObject(Animation);
 		_proxy = proxy;
 		_display = display;
 		_eventManager = eventManager;
 		
-		_animations._init(this);
-		_animations.animations = _armatureData.animations;
+		_animation._init(this);
+		_animation.animations = _armatureData.animations;
 	}
 	/**
 	 * @private
@@ -266,9 +266,11 @@ import dragonBones.textures.TextureAtlasData;
 	{
 		if (_bones.indexOf(value) < 0)
 		{
+			_bones.fixed = false;
+			
 			_bonesDirty = true;
 			_bones.push(value);
-			_animations._timelineStateDirty = true;
+			_animation._timelineStateDirty = true;
 		}
 	}
 	/**
@@ -280,9 +282,11 @@ import dragonBones.textures.TextureAtlasData;
 		if (index >= 0) 
 		{
 			_bones.fixed = false;
+			
 			_bones.splice(index, 1);
-			_animations._timelineStateDirty = true;
-			_bones.fixed = false;
+			_animation._timelineStateDirty = true;
+			
+			_bones.fixed = true;
 		}
 	}
 	/**
@@ -293,9 +297,10 @@ import dragonBones.textures.TextureAtlasData;
 		if (_slots.indexOf(value) < 0)
 		{
 			_slots.fixed = false;
+			
 			_slotsDirty = true;
 			_slots.push(value);
-			_animations._timelineStateDirty = true;
+			_animation._timelineStateDirty = true;
 		}
 	}
 	/**
@@ -306,11 +311,13 @@ import dragonBones.textures.TextureAtlasData;
 	{
 		var index:Int = _slots.indexOf(value);
 		if (index >= 0) 
-		{			
+		{
 			_slots.fixed = false;
+			
 			_slots.splice(index, 1);
-			_animations._timelineStateDirty = true;
-			_slots.fixed = false;
+			_animation._timelineStateDirty = true;
+			
+			_slots.fixed = true;
 		}
 	}
 	/**
@@ -384,8 +391,8 @@ import dragonBones.textures.TextureAtlasData;
 	 * @language zh_CN
 	 * 更新骨架和动画。
      * @param passedTime 两帧之间的时间间隔。 (以秒为单位)
-	 * @see dragonBones.animations.IAnimateble
-	 * @see dragonBones.animations.WorldClock
+	 * @see dragonBones.animation.IAnimateble
+	 * @see dragonBones.animation.WorldClock
 	 * @version DragonBones 3.0
 	 */
 	public function advanceTime(passedTime:Float):Void
@@ -399,12 +406,12 @@ import dragonBones.textures.TextureAtlasData;
 			throw new Error("The armature data has been disposed.");
 		}
 		
-		var prevCacheFrameIndex:Int = _animations._cacheFrameIndex;
+		var prevCacheFrameIndex:Int = _animation._cacheFrameIndex;
 		
 		// Update nimation.
-		_animations._advanceTime(passedTime);
+		_animation._advanceTime(passedTime);
 		
-		var currentCacheFrameIndex:Int = _animations._cacheFrameIndex;
+		var currentCacheFrameIndex:Int = _animation._cacheFrameIndex;
 		
 		// Sort bones and slots.
 		if (_bonesDirty)
@@ -468,6 +475,7 @@ import dragonBones.textures.TextureAtlasData;
 					
 					eventObject.returnToPool();
 				}
+				
 				_events.length = 0;
 			}
 			
@@ -508,6 +516,7 @@ import dragonBones.textures.TextureAtlasData;
 						_doAction(action);
 					}
 				}
+				
 				_actions.length = 0;
 			}
 			
@@ -874,13 +883,13 @@ import dragonBones.textures.TextureAtlasData;
 	/**
 	 * @language zh_CN
 	 * 获取动画控制器。
-	 * @see dragonBones.animations.Animation
+	 * @see dragonBones.animation.Animation
 	 * @version DragonBones 3.0
 	 */
 	public var animations(get, never):Animation;
 	private function get_animations():Animation	
 	{
-		return _animations;
+		return _animation;
 	}
 	/**
 	 * @language zh_CN

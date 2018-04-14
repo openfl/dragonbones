@@ -1,7 +1,7 @@
 package dragonBones.core;
 
 import dragonBones.Armature;
-import dragonBones.animations.Animation;
+import dragonBones.animation.Animation;
 import dragonBones.events.IEventDispatcher;
 
 /**
@@ -35,7 +35,7 @@ import dragonBones.events.IEventDispatcher;
 	/**
 	 * @language zh_CN
      * 获取动画控制器。
-	 * @see dragonBones.animations.Animation
+	 * @see dragonBones.animation.Animation
 	 * @version DragonBones 4.5
 	 */
 	var animations(get, never):Animation;

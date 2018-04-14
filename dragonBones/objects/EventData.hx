@@ -14,7 +14,7 @@ import dragonBones.enums.EventType;
 	public var slot:SlotData;
 	public var data:CustomData;
 	
-	@:keep private function new()
+	private function new()
 	{
 		super();
 	}

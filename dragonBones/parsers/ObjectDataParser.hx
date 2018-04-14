@@ -682,7 +682,7 @@ import dragonBones.textures.TextureData;
 		animation.playTimes = _getInt(rawData, DataParser.PLAY_TIMES, 1);
 		animation.fadeInTime = _getFloat(rawData, DataParser.FADE_IN_TIME, 0);
 		
-		_animations = animation;
+		_animation = animation;
 		
 		_parseTimeline(rawData, animation, _parseAnimationFrame);
 		
@@ -796,7 +796,7 @@ import dragonBones.textures.TextureData;
 			}
 		}
 		
-		_animations = null;
+		_animation = null;
 		
 		return animation;
 	}
@@ -1145,7 +1145,7 @@ import dragonBones.textures.TextureData;
 				frame.tweenEasing = DragonBones.NO_TWEEN;
 			}
 			
-			if (_isOldData && _animations.scale == 1 && _timeline.scale == 1 && frame.duration * _armature.frameRate < 2) // Support 2.x ~ 3.x data.
+			if (_isOldData && _animation.scale == 1 && _timeline.scale == 1 && frame.duration * _armature.frameRate < 2) // Support 2.x ~ 3.x data.
 			{
 				frame.tweenEasing = DragonBones.NO_TWEEN;
 			}
@@ -1190,7 +1190,7 @@ import dragonBones.textures.TextureData;
 			}
 			else if (rawFrames.length > 1)
 			{
-				timeline.frames.length = _animations.frameCount + 1;
+				timeline.frames.length = _animation.frameCount + 1;
 				
 				var frameStart:Int = 0;
 				var frameCount:Int = 0;
@@ -1229,7 +1229,7 @@ import dragonBones.textures.TextureData;
 					timeline.frames[i] = frame;
 				}
 				
-				frame.duration = _animations.duration - frame.position; // Modify last frame duration
+				frame.duration = _animation.duration - frame.position; // Modify last frame duration
 				
 				frame = timeline.frames[0];
 				prevFrame.next = frame;

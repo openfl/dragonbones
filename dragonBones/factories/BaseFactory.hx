@@ -250,7 +250,6 @@ import dragonBones.textures.TextureData;
 			if (slot != null)
 			{
 				armature._addSlot(slot, slotData.parent.name);
-				slot._armature = armature;
 				slot._setDisplayIndex(slotData.displayIndex);
 			}
 		}
@@ -285,7 +284,7 @@ import dragonBones.textures.TextureData;
 				var childArmature:Armature = buildArmature(displayData.path, dataPackage.dataName, null, dataPackage.textureAtlasName);
 				displayList[displayIndex] = childArmature;
 			}
-			else 	
+			else 
 			{
 				if (displayData.texture == null || dataPackage.textureAtlasName != null) 
 				{

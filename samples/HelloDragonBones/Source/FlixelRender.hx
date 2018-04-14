@@ -15,7 +15,7 @@ import dragonBones.flixel.FlixelArmatureCollider;
 import dragonBones.flixel.FlixelFactory;
 import dragonBones.flixel.FlixelEvent;
 import dragonBones.events.EventObject;
-import dragonBones.animations.WorldClock;
+import dragonBones.animation.WorldClock;
 
 class FlixelRender extends FlxState
 {

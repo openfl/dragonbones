@@ -68,7 +68,7 @@ import dragonBones.geom.Transform;
 	/**
 	 * @private
 	 */
- 	private function new()
+	private function new()
 	{
 		super();
 	}

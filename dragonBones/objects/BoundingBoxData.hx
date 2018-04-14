@@ -552,7 +552,7 @@ import dragonBones.enums.BoundingBoxType;
 	/**
 	 * @private
 	 */
-	@:keep private function new()
+	private function new()
 	{
 		super();
 	}

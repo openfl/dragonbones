@@ -4,7 +4,7 @@ import openfl.Vector;
 	
 import dragonBones.Armature;
 import dragonBones.Bone;
-import dragonBones.animations.AnimationFadeOutMode;
+import dragonBones.animation.AnimationFadeOutMode;
 import dragonBones.core.BaseObject;
 
 /**
@@ -25,8 +25,8 @@ import dragonBones.core.BaseObject;
 	/**
 	 * @language zh_CN
 	 * 淡出模式。
-	 * @default dragonBones.animations.AnimationFadeOutMode.All
-	 * @see dragonBones.animations.AnimationFadeOutMode
+	 * @default dragonBones.animation.AnimationFadeOutMode.All
+	 * @see dragonBones.animation.AnimationFadeOutMode
 	 * @version DragonBones 5.0
 	 */
 	public var fadeOutMode:Int;
@@ -162,7 +162,7 @@ import dragonBones.core.BaseObject;
 	/**
 	 * @private
 	 */
-	@:keep private function new()
+	private function new()
 	{
 		super();
 	}

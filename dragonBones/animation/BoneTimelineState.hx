@@ -25,7 +25,7 @@ import dragonBones.objects.TimelineData;
 	private var _boneTransform:Transform;
 	private var _originalTransform:Transform;
 	
-	@:keep private function new()
+	private function new()
 	{
 		super();
 	}
