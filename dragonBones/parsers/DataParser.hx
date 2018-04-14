@@ -294,7 +294,7 @@ import dragonBones.textures.TextureAtlasData;
 	private var _animations:AnimationData = null;
 	private var _timeline:TimelineData = null;
 	
-	@:keep private function new() {}
+	private function new() {}
 	
 	/** 
 	 * @private 

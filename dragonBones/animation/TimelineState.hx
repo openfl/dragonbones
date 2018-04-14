@@ -29,7 +29,7 @@ import dragonBones.objects.TimelineData;
 	private var _animationState:AnimationState;
 	private var _mainTimeline:AnimationTimelineState;
 	
-	@:keep private function new()
+	private function new()
 	{
 		super();
 	}

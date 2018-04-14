@@ -183,7 +183,7 @@ import dragonBones.textures.TextureData;
 	/**
 	 * @private
 	 */
-	@:keep private function new()
+	private function new()
 	{
 		super();
 	}

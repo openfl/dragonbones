@@ -22,7 +22,7 @@ import dragonBones.core.DragonBones;
 	/**
 	 * @private
 	 */
-	@:keep private function new()
+	private function new()
 	{
 		super();
 	}

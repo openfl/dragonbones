@@ -74,7 +74,7 @@ import dragonBones.core.DragonBones;
 	public var tweenEasing:Float;
 	public var curve:Vector<Float>;
 	
-	@:keep private function new()
+	private function new()
 	{
 		super();
 	}
