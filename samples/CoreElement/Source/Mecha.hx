@@ -53,8 +53,8 @@ class Mecha
 		_armatureDisplay.x = 400;
 		_armatureDisplay.y = Game.GROUND;
 		_armatureDisplay.scaleX = _armatureDisplay.scaleY = 1;
-		_armature.addEventListener(EventObject.FADE_IN_COMPLETE, _animationEventHandler);
-		_armature.addEventListener(EventObject.FADE_OUT_COMPLETE, _animationEventHandler);
+		_armature.eventDispatcher.addEvent(EventObject.FADE_IN_COMPLETE, _animationEventHandler);
+		_armature.eventDispatcher.addEvent(EventObject.FADE_OUT_COMPLETE, _animationEventHandler);
 
 		// Mecha effects only controled by normalAnimation.
 		_armature.getSlot("effects_1").displayController = NORMAL_ANIMATION_GROUP;
@@ -63,8 +63,8 @@ class Mecha
 		// Get weapon childArmature.
 		_weaponR = _armature.getSlot("weapon_r").childArmature;
 		_weaponL = _armature.getSlot("weapon_l").childArmature;
-		_weaponR.addEventListener(EventObject.FRAME_EVENT, _frameEventHandler);
-		_weaponL.addEventListener(EventObject.FRAME_EVENT, _frameEventHandler);
+		_weaponR.eventDispatcher.addEvent(EventObject.FRAME_EVENT, _frameEventHandler);
+		_weaponL.eventDispatcher.addEvent(EventObject.FRAME_EVENT, _frameEventHandler);
 
 		_updateAnimation();
 
@@ -131,12 +131,12 @@ class Mecha
 			_weaponRIndex = 0;
 		}
 
-		_weaponR.removeEventListener(EventObject.FRAME_EVENT, _frameEventHandler);
+		_weaponR.eventDispatcher.removeEvent(EventObject.FRAME_EVENT, _frameEventHandler);
 
 		var weaponName: String = WEAPON_R_LIST[_weaponRIndex];
 		_weaponR = Game.instance.factory.buildArmature(weaponName);
 		_armature.getSlot("weapon_r").childArmature = _weaponR;
-		_weaponR.addEventListener(EventObject.FRAME_EVENT, _frameEventHandler);
+		_weaponR.eventDispatcher.addEvent(EventObject.FRAME_EVENT, _frameEventHandler);
 	}
 
 	public function switchWeaponL(): Void
@@ -147,12 +147,12 @@ class Mecha
 			_weaponLIndex = 0;
 		}
 
-		_weaponL.removeEventListener(EventObject.FRAME_EVENT, _frameEventHandler);
+		_weaponL.eventDispatcher.removeEvent(EventObject.FRAME_EVENT, _frameEventHandler);
 
 		var weaponName: String = WEAPON_L_LIST[_weaponLIndex];
 		_weaponL = Game.instance.factory.buildArmature(weaponName);
 		_armature.getSlot("weapon_l").childArmature = _weaponL;
-		_weaponL.addEventListener(EventObject.FRAME_EVENT, _frameEventHandler);
+		_weaponL.eventDispatcher.addEvent(EventObject.FRAME_EVENT, _frameEventHandler);
 	}
 
 	public function aim(target: Point): Void

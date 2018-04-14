@@ -43,8 +43,8 @@ class Hero
 		_armatureDisplay.scaleX = _armatureDisplay.scaleY = 1;
 
 		_armArmature = _armature.getSlot("armOutside").childArmature;
-		_armArmature.addEventListener(EventObject.COMPLETE, _armEventHandler);
-		_armArmature.addEventListener(EventObject.FRAME_EVENT, _armEventHandler);
+		_armArmature.eventDispatcher.addEvent(EventObject.COMPLETE, _armEventHandler);
+		_armArmature.eventDispatcher.addEvent(EventObject.FRAME_EVENT, _armEventHandler);
 
 		_updateAnimation();
 
