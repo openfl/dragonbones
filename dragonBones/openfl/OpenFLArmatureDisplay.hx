@@ -30,7 +30,7 @@ import dragonBones.objects.BoundingBoxData;
 	/**
 	 * @private
 	 */
-	@:keep private function new()
+	private function new()
 	{
 		super();
 	}

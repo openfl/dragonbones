@@ -15,5 +15,5 @@ import dragonBones.objects.SkinData;
 	public var armature:ArmatureData = null;
 	public var skin:SkinData = null;
 	
-	@:keep private function new() {}
+	private function new() {}
 }

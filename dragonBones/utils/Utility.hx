@@ -3,17 +3,15 @@ import openfl.geom.Matrix;
 
 @:allow(dragonBones) class Utility 
 {
-    private static var degree:Float = (180 / Math.PI);
+  private static var degree:Float = (180 / Math.PI);
 	private static var radian:Float = (Math.PI / 180);
     
-    /**
+  /**
 	 * @private
 	 */
 	private static inline function getAngle(matrix:Matrix):Float
 	{
 		var scaleX:Float = Math.sqrt((matrix.a * matrix.a) + (matrix.c * matrix.c));
-		//var scaleY:Float = Math.sqrt((matrix.b * matrix.b) + (matrix.d * matrix.d));
-		
 		var sign:Float = Math.atan(-matrix.c / matrix.a);
 		var rad:Float  = Math.acos(matrix.a / scaleX);
 		var deg:Float  = rad * degree;

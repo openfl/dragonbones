@@ -82,7 +82,7 @@ import dragonBones.objects.TweenFrameData;
 	private var _tweenEasing:Float;
 	private var _curve:Vector<Float>;
 	
-	@:keep private function new()
+	private function new()
 	{
 		super();
 	}

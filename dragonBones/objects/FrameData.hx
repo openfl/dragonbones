@@ -13,7 +13,7 @@ import dragonBones.core.DragonBones;
 	public var prev:FrameData;
 	public var next:FrameData;
 	
-	@:keep private function new()
+	private function new()
 	{
 		super();
 	}
