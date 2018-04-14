@@ -675,15 +675,15 @@ import dragonBones.textures.TextureData;
 			var fromArmatureData:ArmatureData = dataPackage.armature;
 			if (ifRemoveOriginalAnimationList)
 			{
-				toArmature.animations.animations = fromArmatureData.animations;
+				toArmature.animation.animations = fromArmatureData.animations;
 			}
 			else
 			{
 				var animations = new Map<String, AnimationData>();
 				var animationName:String = null;
-				for (animationName in toArmature.animations.animations.keys())
+				for (animationName in toArmature.animation.animations.keys())
 				{
-					animations[animationName] = toArmature.animations.animations[animationName];
+					animations[animationName] = toArmature.animation.animations[animationName];
 				}
 				
 				for (animationName in fromArmatureData.animations.keys())
@@ -691,7 +691,7 @@ import dragonBones.textures.TextureData;
 					animations[animationName] = fromArmatureData.animations[animationName];
 				}
 				
-				toArmature.animations.animations = animations;
+				toArmature.animation.animations = animations;
 			}
 			
 			if (dataPackage.skin != null)

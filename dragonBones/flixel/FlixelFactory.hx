@@ -140,11 +140,11 @@ import flixel.FlxObject;
 							} 
 							else 
 							{
-								childArmature.animations.play();
+								childArmature.animation.play();
 							}
 						}
 						
-						displayData.armature = childArmature.armatureData; // 
+						displayData.armature = childArmature.armatureData;
 					}
 					
 					displayList[i] = childArmature;
