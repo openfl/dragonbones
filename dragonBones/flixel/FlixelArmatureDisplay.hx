@@ -4,6 +4,7 @@ import haxe.Constraints;
 
 import openfl.display.BlendMode;
 
+import flixel.math.FlxPoint;
 import flixel.system.FlxAssets;
 import flixel.FlxBasic;
 import flixel.FlxSprite;
@@ -27,12 +28,19 @@ using Lambda;
 	 * @private
 	 */
 	private var _armature:Armature;
-
 	/**
 	 * @private
 	 */
 	public var flxProxy:FlxSprite;
-
+	/**
+	 * @private
+	 */
+	public var offset:FlxPoint;
+	/**
+	 * @private
+	 */
+	public var scale:FlxPoint;
+	
 	/**
 	 * @private
 	 */
@@ -41,6 +49,8 @@ using Lambda;
 		super();
 		flxProxy = new FlxSprite();
 		flxProxy.solid = false;
+		offset = flxProxy.offset;
+		scale = flxProxy.scale;
 	}
 	/**
 	 * @private
@@ -117,6 +127,10 @@ using Lambda;
 		return flxProxy.loadGraphic(Graphic, Animated, Width, Height, Unique, Key);
 	}
 
+	public function setColorTransform(redMultiplier:Float = 1.0, greenMultiplier:Float = 1.0, blueMultiplier:Float = 1.0, alphaMultiplier:Float = 1.0, redOffset:Int = 0, greenOffset:Int = 0, blueOffset:Int = 0, alphaOffset:Int = 0):Void {
+		flxProxy.setColorTransform(redMultiplier, greenMultiplier, blueMultiplier, alphaMultiplier, redOffset, greenOffset, blueOffset, alphaOffset);
+	}
+
 	public var x(get, set):Float;
 	private function get_x():Float
 	{
@@ -135,6 +149,16 @@ using Lambda;
 	private function set_y(y:Float):Float
 	{
 		return flxProxy.y = y;
+	}
+
+	public var angle(get, set):Float;
+	private function get_angle():Float
+	{
+		return flxProxy.angle;
+	}
+	private function set_angle(angle:Float):Float
+	{
+		return flxProxy.angle = angle;
 	}
 
 	public var antialiasing(get, set):Bool;
