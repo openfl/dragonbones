@@ -4,6 +4,7 @@ import haxe.Constraints;
 
 import openfl.display.BlendMode;
 
+import flixel.math.FlxPoint;
 import flixel.system.FlxAssets;
 import flixel.FlxBasic;
 import flixel.FlxStrip;
@@ -30,12 +31,22 @@ using Lambda;
 	 * @private
 	 */
 	public var flxProxy:FlxStrip;
+	/**
+	 * @private
+	 */
+	public var offset:FlxPoint;
+	/**
+	 * @private
+	 */
+	public var scale:FlxPoint;
 
 	@:keep private function new()
 	{
 		super();
-		this.solid = false;
-		this.flxProxy = new FlxStrip();
+		flxProxy = new FlxStrip();
+		flxProxy.solid = false;
+		offset = flxProxy.offset;
+		scale = flxProxy.scale;
 	}
 	/**
 	 * @private
@@ -107,6 +118,64 @@ using Lambda;
 		FlxG.stage.removeEventListener(type, cast listener);
 	}
 	
+	public function loadGraphic(Graphic:FlxGraphicAsset, Animated:Bool = false, Width:Int = 0, Height:Int = 0, Unique:Bool = false, ?Key:String):FlxSprite {
+		return flxProxy.loadGraphic(Graphic, Animated, Width, Height, Unique, Key);
+	}
+
+	public function setColorTransform(redMultiplier:Float = 1.0, greenMultiplier:Float = 1.0, blueMultiplier:Float = 1.0, alphaMultiplier:Float = 1.0, redOffset:Int = 0, greenOffset:Int = 0, blueOffset:Int = 0, alphaOffset:Int = 0):Void {
+		flxProxy.setColorTransform(redMultiplier, greenMultiplier, blueMultiplier, alphaMultiplier, redOffset, greenOffset, blueOffset, alphaOffset);
+	}
+
+	public var x(get, set):Float;
+	private function get_x():Float
+	{
+		return flxProxy.x;
+	}
+	private function set_x(x:Float):Float
+	{
+		return flxProxy.x = x;
+	}
+
+	public var y(get, set):Float;
+	private function get_y():Float
+	{
+		return flxProxy.y;
+	}
+	private function set_y(y:Float):Float
+	{
+		return flxProxy.y = y;
+	}
+
+	public var angle(get, set):Float;
+	private function get_angle():Float
+	{
+		return flxProxy.angle;
+	}
+	private function set_angle(angle:Float):Float
+	{
+		return flxProxy.angle = angle;
+	}
+
+	public var antialiasing(get, set):Bool;
+	private function get_antialiasing():Bool
+	{
+		return flxProxy.antialiasing;
+	}
+	private function set_antialiasing(isTrue:Bool):Bool
+	{
+		return flxProxy.antialiasing = isTrue;
+	}
+
+	public var blend(get, set):BlendMode;
+	private function get_blend():BlendMode
+	{
+		return flxProxy.blend;
+	}
+	private function set_blend(blendMode:BlendMode):BlendMode
+	{
+		return flxProxy.blend = blendMode;
+	}
+
 	public var armature(get, never):Armature;
 	private function get_armature():Armature
 	{
