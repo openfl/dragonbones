@@ -2,6 +2,7 @@
 
 import openfl.display.BitmapData;
 import openfl.Vector;
+import openfl.utils.Object;
 
 import dragonBones.Armature;
 import dragonBones.Slot;
@@ -132,7 +133,7 @@ import starling.rendering.VertexData;
 	{
 		var slot:StarlingSlot = cast BaseObject.borrowObject(StarlingSlot);
 		var slotData:SlotData = skinSlotData.slot;
-		var displayList:Vector<Dynamic> = new Vector<Dynamic>(skinSlotData.displays.length, true);
+		var displayList:Vector<Object> = new Vector<Object>(skinSlotData.displays.length, true);
 		
 		#if (starling >= "2.0")
 		slot._indexData = new IndexData();
