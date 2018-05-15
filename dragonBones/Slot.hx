@@ -6,6 +6,7 @@ import openfl.geom.Matrix;
 import openfl.geom.Point;
 import openfl.geom.Rectangle;
 import openfl.Vector;
+import openfl.utils.Object;
 
 import dragonBones.core.DragonBones;
 import dragonBones.core.TransformObject;
@@ -122,7 +123,7 @@ import dragonBones.textures.TextureData;
 	/**
 	 * @private
 	 */
-	private var _displayList:Vector<Dynamic> = new Vector<Dynamic>();
+	private var _displayList:Vector<Object> = new Vector<Object>();
 	/**
 	 * @private
 	 */
@@ -193,7 +194,7 @@ import dragonBones.textures.TextureData;
 	{
 		super._onClear();
 		
-		var disposeDisplayList:Vector<Dynamic> = new Vector<Dynamic>();
+		var disposeDisplayList:Vector<Object> = new Vector<Object>();
 		var l:UInt = _displayList.length;
 		var eachDisplay:Dynamic;
 		for (i in 0...l)
@@ -910,7 +911,7 @@ import dragonBones.textures.TextureData;
 	/**
 	 * @private
 	 */
-	private function _setDisplayList(value:Vector<Dynamic>):Bool
+	private function _setDisplayList(value:Vector<Object>):Bool
 	{
 		if (value != null && value.length != 0)
 		{
@@ -1169,15 +1170,15 @@ import dragonBones.textures.TextureData;
 	 * 包含显示对象或子骨架的显示列表。
 	 * @version DragonBones 3.0
 	 */
-	public var displayList(get, set):Vector<Dynamic>;
-	private function get_displayList():Vector<Dynamic>
+	public var displayList(get, set):Vector<Object>;
+	private function get_displayList():Vector<Object>
 	{
 		return _displayList.concat();
 	}
-	private function set_displayList(value:Vector<Dynamic>):Vector<Dynamic>
+	private function set_displayList(value:Vector<Object>):Vector<Object>
 	{
-		var backupDisplayList:Vector<Dynamic> = _displayList.concat();
-		var disposeDisplayList:Vector<Dynamic> = new Vector<Dynamic>();
+		var backupDisplayList:Vector<Object> = _displayList.concat();
+		var disposeDisplayList:Vector<Object> = new Vector<Object>();
 		var eachDisplay:Dynamic;
 		
 		if (_setDisplayList(value))
@@ -1242,7 +1243,7 @@ import dragonBones.textures.TextureData;
 		}
 		else
 		{
-			var replaceDisplayList:Vector<Dynamic> = displayList; // copy
+			var replaceDisplayList:Vector<Object> = displayList; // copy
 			if (displayListLength <= _displayIndex)
 			{
 				replaceDisplayList.length = _displayIndex + 1;
