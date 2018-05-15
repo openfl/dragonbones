@@ -127,7 +127,7 @@ import dragonBones.objects.FrameData;
 						else 
 						{
 							if (
-								prevTime <= crossedFrame.position
+								prevTime < crossedFrame.position
 								// || prevPlayTimes != _currentPlayTimes ?
 							) 
 							{
