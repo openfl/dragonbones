@@ -476,7 +476,11 @@ import dragonBones.textures.TextureAtlasData;
 					eventObject.returnToPool();
 				}
 				
-				_events.length = 0;
+				//_events.length = 0; // this is "eating" events : for example if you listen to COMPLETE event and play a new animation from there, the START event will never go through and won't get pooled either
+				for (i in 0...l)
+				{
+					_events.shift();
+				}
 			}
 			
 			// Actions.
