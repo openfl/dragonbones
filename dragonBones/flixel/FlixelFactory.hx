@@ -5,6 +5,7 @@ import openfl.events.Event;
 import openfl.events.EventDispatcher;
 import openfl.Lib;
 import openfl.Vector;
+import openfl.utils.Object;
 
 import dragonBones.Armature;
 import dragonBones.Slot;
@@ -92,7 +93,7 @@ import flixel.FlxObject;
 	{
 		var slot:FlixelSlot = cast BaseObject.borrowObject(FlixelSlot);
 		var slotData:SlotData = skinSlotData.slot;
-		var displayList:Vector<Dynamic> = new Vector<Dynamic>();
+		var displayList:Vector<Object> = new Vector<Object>();
 		var flxDataPackage:FlixelBuildArmaturePackage = cast dataPackage;
 
 		// Make last parameter mesh display.
