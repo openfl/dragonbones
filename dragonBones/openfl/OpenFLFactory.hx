@@ -7,6 +7,7 @@ import openfl.geom.Matrix;
 //import openfl.utils.getTimer;
 import openfl.Lib;
 import openfl.Vector;
+import openfl.utils.Object;
 
 import dragonBones.Armature;
 import dragonBones.Slot;
@@ -111,7 +112,7 @@ import dragonBones.textures.TextureAtlasData;
 	{
 		var slot:OpenFLSlot = cast BaseObject.borrowObject(OpenFLSlot);
 		var slotData:SlotData = skinSlotData.slot;
-		var displayList:Vector<Dynamic> = new Vector<Dynamic>(skinSlotData.displays.length, true);
+		var displayList:Vector<Object> = new Vector<Object>(skinSlotData.displays.length, true);
 		var slotDisplay:Shape = new Shape();
 		
 		slot._init(skinSlotData, slotDisplay, slotDisplay);
