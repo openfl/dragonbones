@@ -2,7 +2,7 @@
 <project>
 	
 	<meta title="MultiResolutionTextureAtlas" package="dragonbones.sample.multiresolutiontextureatlas" version="1.0.0" company="" />
-	<app main="Main" path="Export" file="MultiResolutionTextureAtlas" swf-version="12.0" />
+	<app main="Main" path="Export" file="MultiResolutionTextureAtlas" />
 	
 	<window background="#666666" fps="60" />
 	

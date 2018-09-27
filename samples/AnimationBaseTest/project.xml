@@ -2,7 +2,7 @@
 <project>
 	
 	<meta title="AnimationBaseTest" package="dragonbones.sample.animationbasetest" version="1.0.0" company="" />
-	<app main="Main" path="Export" file="AnimationBaseTest" swf-version="12.0" />
+	<app main="Main" path="Export" file="AnimationBaseTest" />
 	
 	<window background="#666666" fps="60" />
 	

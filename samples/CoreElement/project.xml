@@ -2,7 +2,7 @@
 <project>
 	
 	<meta title="CoreElement" package="dragonbones.sample.coreelement" version="1.0.0" company="" />
-	<app main="Main" path="Export" file="CoreElement" swf-version="12.0" />
+	<app main="Main" path="Export" file="CoreElement" />
 	
 	<window background="#666666" fps="60" />
 	

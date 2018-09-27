@@ -2,7 +2,7 @@
 <project>
 	
 	<meta title="HelloDragonBones" package="dragonbones.sample.hellodragonbones" version="1.0.0" company="" />
-	<app main="Main" path="Export" file="HelloDragonBones" swf-version="12.0" />
+	<app main="Main" path="Export" file="HelloDragonBones" />
 	
 	<window background="#666666" fps="60" />
 	

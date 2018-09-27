@@ -242,7 +242,7 @@ import openfl.geom.Point;
 	 * 旋转。 (以弧度为单位)
 	 * @version DragonBones 3.0
 	 */
-	@:final public var rotation(get, set):Float;
+	/*@:final*/ public var rotation(get, set):Float;
 	private #if !js inline #end function get_rotation():Float
 	{
 		return skewY;

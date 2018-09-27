@@ -2,7 +2,7 @@
 <project>
 	
 	<meta title="Knight" package="dragonbones.sample.knight" version="1.0.0" company="" />
-	<app main="Main" path="Export" file="Knight" swf-version="12.0" />
+	<app main="Main" path="Export" file="Knight" />
 	
 	<window background="#666666" fps="60" />
 	
