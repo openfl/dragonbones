@@ -1039,7 +1039,7 @@ import dragonBones.textures.TextureData;
 		if (Reflect.hasField(rawData, DataParser.COLOR) || Reflect.hasField(rawData, DataParser.COLOR_TRANSFORM)) // Support 2.x ~ 3.x data. (colorTransform key)
 		{
 			frame.color = SlotFrameData.generateColor();
-			_parseColorTransform(Reflect.field(rawData, DataParser.COLOR) || Reflect.field(rawData, DataParser.COLOR_TRANSFORM), frame.color);
+			_parseColorTransform(Reflect.field(rawData, DataParser.COLOR) != null ? Reflect.field(rawData, DataParser.COLOR) : Reflect.field(rawData, DataParser.COLOR_TRANSFORM), frame.color);
 		}
 		else
 		{
