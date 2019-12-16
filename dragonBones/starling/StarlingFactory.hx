@@ -110,7 +110,7 @@ import starling.rendering.VertexData;
 	 */
 	override private function _generateArmature(dataPackage:BuildArmaturePackage):Armature
 	{
-		if (Starling.current != null && !Starling.current.stage.hasEventListener(EnterFrameEvent.ENTER_FRAME))
+		if (Starling.current != null && !Starling.current.stage.hasEventListener(EnterFrameEvent.ENTER_FRAME, _clockHandler))
 		{
 			Starling.current.stage.addEventListener(EnterFrameEvent.ENTER_FRAME, _clockHandler);
 		}
