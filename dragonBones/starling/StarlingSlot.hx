@@ -167,7 +167,7 @@ import starling.styles.MeshStyle;
 		switch (_blendMode) 
 		{
 			case dragonBones.enums.BlendMode.Normal:
-				_renderDisplay.blendMode = starling.display.BlendMode.NORMAL;
+				_renderDisplay.blendMode = starling.display.BlendMode.AUTO;
 			
 			case dragonBones.enums.BlendMode.Add:
 				_renderDisplay.blendMode = starling.display.BlendMode.ADD;
