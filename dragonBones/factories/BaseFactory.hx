@@ -13,6 +13,7 @@ import openfl.events.EventDispatcher;
 import openfl.geom.Matrix;
 import openfl.geom.Rectangle;
 import openfl.utils.ByteArray;
+import openfl.utils.Object;
 //import openfl.utils.clearTimeout;
 //import openfl.utils.setTimeout;
 import openfl.Vector;
@@ -266,7 +267,7 @@ import dragonBones.textures.TextureData;
 		
 		if (displayIndex >= 0) 
 		{
-			var displayList:Vector<Dynamic> = slot.displayList; // Copy.
+			var displayList:Vector<Object> = slot.displayList; // Copy.
 			if (displayList.length <= displayIndex) 
 			{
 				displayList.length = displayIndex + 1;
