@@ -105,13 +105,21 @@ import starling.rendering.VertexData;
 		
 		return textureAtlasData;
 	}
+
+	private static var _hasClockListener:Bool;
+	
 	/**
 	 * @private
 	 */
 	override private function _generateArmature(dataPackage:BuildArmaturePackage):Armature
 	{
-		if (Starling.current != null && !Starling.current.stage.hasEventListener(EnterFrameEvent.ENTER_FRAME, _clockHandler))
+		// if (Starling.current != null && !Starling.current.stage.hasEventListener(EnterFrameEvent.ENTER_FRAME, _clockHandler))
+		// {
+		// 	Starling.current.stage.addEventListener(EnterFrameEvent.ENTER_FRAME, _clockHandler);
+		// }
+		if (Starling.current != null && !_hasClockListener)
 		{
+			_hasClockListener = true;
 			Starling.current.stage.addEventListener(EnterFrameEvent.ENTER_FRAME, _clockHandler);
 		}
 		
