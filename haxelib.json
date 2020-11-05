@@ -4,8 +4,8 @@
 	"license": "MIT",
 	"tags": [],
 	"description": "DragonBones Haxe Runtime",
-	"version": "5.1.0",
-	"releasenote": "Add HaxeFlixel support",
+	"version": "5.1.1",
+	"releasenote": "Compile fixes",
 	"contributors": [
 		"singmajesty", "troyedwardsjr"
 	]
