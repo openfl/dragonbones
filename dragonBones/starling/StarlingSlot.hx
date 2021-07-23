@@ -191,7 +191,7 @@ import starling.styles.MeshStyle;
 	{
 		_renderDisplay.alpha = _colorTransform.alphaMultiplier;
 		
-		var quad:Quad = Std.is(_renderDisplay, Quad) ? cast _renderDisplay : null;
+		var quad:Quad = #if (haxe_ver >= 4.2) Std.isOfType #else Std.is #end(_renderDisplay, Quad) ? cast _renderDisplay : null;
 		if (quad != null)
 		{
 			var color:UInt = (Std.int(_colorTransform.redMultiplier * 0xFF) << 16) + (Std.int(_colorTransform.greenMultiplier * 0xFF) << 8) + Std.int(_colorTransform.blueMultiplier * 0xFF);

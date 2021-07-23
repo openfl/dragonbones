@@ -59,15 +59,15 @@ import dragonBones.textures.TextureData;
 		if (Reflect.hasField(rawData, key))
 		{
 			var value:Dynamic = Reflect.field(rawData, key);
-			if (Std.is(value, Bool))
+			if (#if (haxe_ver >= 4.2) Std.isOfType #else Std.is #end(value, Bool))
 			{
 				return value;
 			}
-			else if (Std.is(value, Float))
+			else if (#if (haxe_ver >= 4.2) Std.isOfType #else Std.is #end(value, Float))
 			{
 				return value != 0;
 			}
-			else if (Std.is(value, String))
+			else if (#if (haxe_ver >= 4.2) Std.isOfType #else Std.is #end(value, String))
 			{
 				switch(Std.string(value))
 				{
@@ -152,7 +152,7 @@ import dragonBones.textures.TextureData;
 		if (armature.frameRate == 0) armature.frameRate = _data.frameRate;
 		armature.scale = scale;
 		
-		if (Reflect.hasField(rawData, DataParser.TYPE) && Std.is(Reflect.field(rawData, DataParser.TYPE), String)) 
+		if (Reflect.hasField(rawData, DataParser.TYPE) && #if (haxe_ver >= 4.2) Std.isOfType #else Std.is #end(Reflect.field(rawData, DataParser.TYPE), String)) 
 		{
 			armature.type = DataParser._getArmatureType(Reflect.field(rawData, DataParser.TYPE));
 		} 
@@ -298,7 +298,7 @@ import dragonBones.textures.TextureData;
 			slot.color = SlotData.DEFAULT_COLOR;
 		}
 		
-		if (Reflect.hasField(rawData, DataParser.BLEND_MODE) && Std.is(Reflect.field(rawData, DataParser.BLEND_MODE), String))
+		if (Reflect.hasField(rawData, DataParser.BLEND_MODE) && #if (haxe_ver >= 4.2) Std.isOfType #else Std.is #end(Reflect.field(rawData, DataParser.BLEND_MODE), String))
 		{
 			
 			slot.blendMode = DataParser._getBlendMode(Reflect.field(rawData, DataParser.BLEND_MODE));
@@ -394,7 +394,7 @@ import dragonBones.textures.TextureData;
 		display.name = _getString(rawData, DataParser.NAME, null);
 		display.path = _getString(rawData, DataParser.PATH, display.name);
 		
-		if (Reflect.hasField(rawData, DataParser.TYPE) && Std.is(Reflect.field(rawData, DataParser.TYPE), String))
+		if (Reflect.hasField(rawData, DataParser.TYPE) && #if (haxe_ver >= 4.2) Std.isOfType #else Std.is #end(Reflect.field(rawData, DataParser.TYPE), String))
 		{
 			
 			display.type = DataParser._getDisplayType(Reflect.field(rawData, DataParser.TYPE));
@@ -457,7 +457,7 @@ import dragonBones.textures.TextureData;
 	{
 		var boundingBox:BoundingBoxData = cast BaseObject.borrowObject(BoundingBoxData);
 		
-		if (Reflect.hasField (rawData, DataParser.SUB_TYPE) && Std.is(Reflect.field(rawData, DataParser.SUB_TYPE), String)) {
+		if (Reflect.hasField (rawData, DataParser.SUB_TYPE) && #if (haxe_ver >= 4.2) Std.isOfType #else Std.is #end(Reflect.field(rawData, DataParser.SUB_TYPE), String)) {
 			boundingBox.type = DataParser._getBoundingBoxType(Reflect.field(rawData, DataParser.SUB_TYPE));
 		}
 		else 
@@ -1216,7 +1216,7 @@ import dragonBones.textures.TextureData;
 							
 							if (_isOldData) // Support 2.x ~ 3.x data.
 							{
-								if (Std.is(prevFrame, TweenFrameData) && _getInt(rawFrame, DataParser.DISPLAY_INDEX, 0) == -1) 
+								if (#if (haxe_ver >= 4.2) Std.isOfType #else Std.is #end(prevFrame, TweenFrameData) && _getInt(rawFrame, DataParser.DISPLAY_INDEX, 0) == -1) 
 								{
 									cast(prevFrame, TweenFrameData).tweenEasing = DragonBones.NO_TWEEN;
 								}
@@ -1237,7 +1237,7 @@ import dragonBones.textures.TextureData;
 				
 				if (_isOldData) // Support 2.x ~ 3.x data.
 				{
-					if (Std.is(prevFrame, TweenFrameData) && _getInt(rawFrames[0], DataParser.DISPLAY_INDEX, 0) == -1) 
+					if (#if (haxe_ver >= 4.2) Std.isOfType #else Std.is #end(prevFrame, TweenFrameData) && _getInt(rawFrames[0], DataParser.DISPLAY_INDEX, 0) == -1) 
 					{
 						cast(prevFrame, TweenFrameData).tweenEasing = DragonBones.NO_TWEEN;
 					}
@@ -1262,7 +1262,7 @@ import dragonBones.textures.TextureData;
 		else if (Reflect.hasField(rawData, DataParser.DEFAULT_ACTIONS)) Reflect.field(rawData, DataParser.DEFAULT_ACTIONS)
 		else null;
 		
-		if (Std.is(rawActions, String))
+		if (#if (haxe_ver >= 4.2) Std.isOfType #else Std.is #end(rawActions, String))
 		{
 			actionData = cast BaseObject.borrowObject(ActionData);
 			actionData.type = ActionType.Play;
@@ -1272,25 +1272,25 @@ import dragonBones.textures.TextureData;
 			actionData.animationConfig.animationName = cast rawActions;
 			actions.push(actionData);
 		}
-		else if (Std.is(rawActions, Array))
+		else if (#if (haxe_ver >= 4.2) Std.isOfType #else Std.is #end(rawActions, Array))
 		{
 			var l:UInt = rawActions.length;
 			var actionObject:Dynamic, isArray:Bool, animationName:String, actionType:Dynamic;
 			for (i in 0...l)
 			{
 				actionObject = rawActions[i];
-				isArray = Std.is(actionObject, Array);
+				isArray = #if (haxe_ver >= 4.2) Std.isOfType #else Std.is #end(actionObject, Array);
 				actionData = cast BaseObject.borrowObject(ActionData);
 				animationName = isArray ? actionObject[1] : _getString(actionObject, "gotoAndPlay", null);
 				
 				if (isArray) 
 				{
 					actionType = actionObject[0];
-					if (Std.is(actionType, String)) 
+					if (#if (haxe_ver >= 4.2) Std.isOfType #else Std.is #end(actionType, String)) 
 					{
 						actionData.type = DataParser._getActionType(Std.string(actionType));
 					} 
-					else if (Std.is(actionType, Float))
+					else if (#if (haxe_ver >= 4.2) Std.isOfType #else Std.is #end(actionType, Float))
 					{
 						actionData.type = Std.int(actionType);
 					}

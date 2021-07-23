@@ -349,7 +349,7 @@ import dragonBones.textures.TextureData;
 	{
 		//
 		var isComplete:Bool = true;
-		if (Std.is(rawData, ByteArrayData))
+		if (#if (haxe_ver >= 4.2) Std.isOfType #else Std.is #end(rawData, ByteArrayData))
 		{
 			var decodeData:DecodedData = DecodedData.decode(cast rawData);
 			if (decodeData != null)
@@ -405,11 +405,11 @@ import dragonBones.textures.TextureData;
 		var textureAtlasData:TextureAtlasData = _generateTextureAtlasData(null, null);
 		_dataParser.parseTextureAtlasData(rawData, textureAtlasData, scale, rawScale);
 		
-		if (Std.is(textureAtlas, Bitmap))
+		if (#if (haxe_ver >= 4.2) Std.isOfType #else Std.is #end(textureAtlas, Bitmap))
 		{
 			textureAtlas = cast(textureAtlas, Bitmap).bitmapData;
 		}
-		else if (Std.is(textureAtlas, DisplayObject))
+		else if (#if (haxe_ver >= 4.2) Std.isOfType #else Std.is #end(textureAtlas, DisplayObject))
 		{
 			var displayObject:DisplayObject = cast textureAtlas;
 			var rect:Rectangle = displayObject.getRect(displayObject);
@@ -708,7 +708,7 @@ import dragonBones.textures.TextureData;
 					for (iA in 0...lA)
 					{
 						toDisplayObject = toSlotDisplayList[iA];
-						if (Std.is(toDisplayObject, Armature))
+						if (#if (haxe_ver >= 4.2) Std.isOfType #else Std.is #end(toDisplayObject, Armature))
 						{
 							displays = dataPackage.skin.getSlot(toSlot.name).displays;
 							if (iA < displays.length)

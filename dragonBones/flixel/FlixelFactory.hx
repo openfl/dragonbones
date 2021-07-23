@@ -54,7 +54,7 @@ import flixel.FlxObject;
 	{
 		if (textureAtlasData != null)
 		{
-			if (Std.is(textureAtlas, BitmapData))
+			if (#if (haxe_ver >= 4.2) Std.isOfType #else Std.is #end(textureAtlas, BitmapData))
 			{
 				cast(textureAtlasData, FlixelTextureAtlasData).texture = cast textureAtlas;
 			}

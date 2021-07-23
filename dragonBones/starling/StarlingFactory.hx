@@ -80,7 +80,7 @@ import starling.rendering.VertexData;
 		{
 			var starlingTextureAtlasData:StarlingTextureAtlasData = cast textureAtlasData;
 			
-			if (Std.is(textureAtlas, BitmapData))
+			if (#if (haxe_ver >= 4.2) Std.isOfType #else Std.is #end(textureAtlas, BitmapData))
 			{
 				starlingTextureAtlasData.texture = Texture.fromBitmapData(cast textureAtlas, generateMipMaps, false, textureAtlasData.scale);
 				starlingTextureAtlasData._disposeTexture = true;
@@ -93,7 +93,7 @@ import starling.rendering.VertexData;
 				}
 				#end
 			}
-			else if (Std.is(textureAtlas, Texture))
+			else if (#if (haxe_ver >= 4.2) Std.isOfType #else Std.is #end(textureAtlas, Texture))
 			{
 				cast(textureAtlasData, StarlingTextureAtlasData).texture = cast textureAtlas;
 			}

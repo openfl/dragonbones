@@ -213,7 +213,7 @@ import dragonBones.textures.TextureData;
 		for (i in 0...l)
 		{
 			eachDisplay = disposeDisplayList[i];
-			if (Std.is(eachDisplay, Armature))
+			if (#if (haxe_ver >= 4.2) Std.isOfType #else Std.is #end(eachDisplay, Armature))
 			{
 				cast(eachDisplay, Armature).dispose();
 			}
@@ -606,7 +606,7 @@ import dragonBones.textures.TextureData;
 		if (_displayIndex >= 0 && _displayIndex < _displayList.length)
 		{
 			_display = _displayList[_displayIndex];
-			if (Std.is(_display, Armature))
+			if (#if (haxe_ver >= 4.2) Std.isOfType #else Std.is #end(_display, Armature))
 			{
 				_childArmature = cast _display;
 				_display = _childArmature.display;
@@ -926,7 +926,7 @@ import dragonBones.textures.TextureData;
 			{
 				eachDisplay = value[i];
 				if (eachDisplay != null && eachDisplay != _rawDisplay && eachDisplay != _meshDisplay && 
-					!Std.is(eachDisplay, Armature) && _displayList.indexOf(eachDisplay) < 0)
+					!#if (haxe_ver >= 4.2) Std.isOfType #else Std.is #end(eachDisplay, Armature) && _displayList.indexOf(eachDisplay) < 0)
 				{
 					_initDisplay(eachDisplay);
 				}
@@ -1203,7 +1203,7 @@ import dragonBones.textures.TextureData;
 		for (i in 0...l)
 		{
 			eachDisplay = disposeDisplayList[i];
-			if (Std.is(eachDisplay, Armature))
+			if (#if (haxe_ver >= 4.2) Std.isOfType #else Std.is #end(eachDisplay, Armature))
 			{
 				cast(eachDisplay, Armature).dispose();
 			}

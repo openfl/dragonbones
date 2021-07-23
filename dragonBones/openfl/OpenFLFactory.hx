@@ -71,7 +71,7 @@ import dragonBones.textures.TextureAtlasData;
 	{
 		if (textureAtlasData != null)
 		{
-			if (Std.is(textureAtlas, BitmapData))
+			if (#if (haxe_ver >= 4.2) Std.isOfType #else Std.is #end(textureAtlas, BitmapData))
 			{
 				cast(textureAtlasData, OpenFLTextureAtlasData).texture = cast textureAtlas;
 			}
