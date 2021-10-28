@@ -162,7 +162,7 @@ import starling.rendering.VertexData;
 				case DisplayType.Image:
 					if (displayData.texture == null || dataPackage.textureAtlasName != null)
 					{
-						displayData.texture = _getTextureData(dataPackage.textureAtlasName != null ? dataPackage.textureAtlasName : dataPackage.dataName, displayData.name);
+						displayData.texture = _getTextureData(dataPackage.textureAtlasName != null ? dataPackage.textureAtlasName : dataPackage.dataName, displayData.path);
 					}
 					
 					displayList[i] = slot.rawDisplay;
@@ -170,13 +170,13 @@ import starling.rendering.VertexData;
 				case DisplayType.Mesh:
 					if (displayData.texture == null #if (starling < "2.0") || dataPackage.textureAtlasName != null #end)
 					{
-						displayData.texture = _getTextureData(dataPackage.textureAtlasName != null ? dataPackage.textureAtlasName : dataPackage.dataName, displayData.name);
+						displayData.texture = _getTextureData(dataPackage.textureAtlasName != null ? dataPackage.textureAtlasName : dataPackage.dataName, displayData.path);
 					}
 					
 					displayList[i] = #if (starling >= "2.0") slot.meshDisplay #else slot.rawDisplay #end;
 				
 				case DisplayType.Armature:
-					childArmature = buildArmature(displayData.name, dataPackage.dataName, null, dataPackage.textureAtlasName);
+					childArmature = buildArmature(displayData.path, dataPackage.dataName, null, dataPackage.textureAtlasName);
 					if (childArmature != null) 
 					{
 						if (!childArmature.inheritAnimation)
