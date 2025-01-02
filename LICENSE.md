@@ -3,6 +3,7 @@ License
 
 The MIT License (MIT)
 
+Copyright (c) 2013-2025 Joshua Granick and other OpenFL contributors
 Copyright (c) 2012-2016 DragonBones team and other contributors
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of
